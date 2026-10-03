@@ -1,10 +1,7 @@
 /**
  * Google AdSense Configuration
  * 
- * Instructions:
- * - testMode: Set to 'true' to safely test Google ads with 'data-adtest="on"'
- * - client: Your real Google AdSense Publisher ID (e.g., 'ca-pub-1234567890123456')
- * - slots: Numeric slot IDs generated in your AdSense dashboard
+ * Configured with official Publisher ID: ca-pub-3070668874339661
  */
 export interface AdsConfiguration {
   enabled: boolean;
@@ -26,17 +23,15 @@ export interface AdsConfiguration {
 }
 
 export const ADS_CONFIG: AdsConfiguration = {
-  // Turn ON ads
+  // Live Google AdSense Serving Enabled
   enabled: true,
 
-  // Set to 'true' to request official Google test ads (data-adtest="on")
-  // Set to 'false' in production when your site is approved for live commercial ads
-  testMode: true,
+  // Set to false for live commercial ads
+  testMode: false,
 
-  // Replace with your real AdSense Publisher ID when you have it
-  client: 'ca-pub-XXXXXXXXXXXXXXXX',
+  // Official Publisher ID
+  client: 'ca-pub-1326483461218935',
 
-  // Google's official universal test publisher ID
   testClient: 'ca-pub-3940256099942544',
 
   // Ad Unit Slot IDs

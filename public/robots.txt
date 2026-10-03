@@ -3,4 +3,4 @@ User-agent: *
 Allow: /
 
 # Fast Indexing Sitemap Reference
-Sitemap: https://jsnsworks.com/sitemap.xml
+Sitemap: https://readmetopdf.jsnsworks.site/sitemap.xml
