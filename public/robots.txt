@@ -1,0 +1,6 @@
+# Robots.txt for jsnsworks - README to PDF Converter
+User-agent: *
+Allow: /
+
+# Fast Indexing Sitemap Reference
+Sitemap: https://jsnsworks.com/sitemap.xml

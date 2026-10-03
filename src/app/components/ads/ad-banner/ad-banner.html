@@ -1,0 +1,32 @@
+<div class="ad-container" [ngClass]="['ad-format-' + format, customClass]">
+  <!-- Official Ad Label Header -->
+  @if (adsService.config().policy.showAdLabel) {
+    <div class="ad-label">{{ adsService.config().policy.adLabelText }}</div>
+  }
+
+  <!-- Active Ad Unit -->
+  @if (adsService.config().enabled && adsService.config().client) {
+    <div class="ad-slot-active">
+      <ins class="adsbygoogle"
+           style="display:block"
+           [attr.data-ad-client]="adsService.config().client"
+           [attr.data-ad-slot]="resolvedSlotId"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+    </div>
+  } @else {
+    <!-- Clean Sponsored Banner Placeholder (Production Safe) -->
+    <div class="ad-slot-mock">
+      <div class="mock-badge">
+        <svg class="ad-icon" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+        </svg>
+        <span>Sponsored</span>
+      </div>
+      <div class="mock-content">
+        <span class="mock-title">Advertise Your Product Here</span>
+        <span class="mock-desc">Reach thousands of developers and tech professionals worldwide.</span>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,112 @@
+.ad-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 24px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ad-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #94a3b8;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.ad-slot-active {
+  width: 100%;
+  min-height: 90px;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Polished Sponsored Banner Placeholder */
+.ad-slot-mock {
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 20px;
+  box-sizing: border-box;
+  text-align: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.mock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #e2e8f0;
+  color: #475569;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.ad-icon {
+  fill: #64748b;
+}
+
+.mock-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mock-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.mock-desc {
+  font-size: 12px;
+  color: #64748b;
+  max-width: 450px;
+}
+
+/* Format specific styles */
+.ad-format-horizontal {
+  max-width: 728px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ad-format-horizontal .ad-slot-mock {
+  min-height: 90px;
+}
+
+.ad-format-rectangle {
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ad-format-rectangle .ad-slot-mock {
+  min-height: 250px;
+  padding: 24px 20px;
+}
+
+.ad-format-vertical {
+  max-width: 160px;
+}
+
+.ad-format-vertical .ad-slot-mock {
+  min-height: 600px;
+}

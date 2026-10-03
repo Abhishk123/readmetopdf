@@ -1,0 +1,301 @@
+<div class="converter-page">
+  <!-- Top Horizontal Leaderboard Ad -->
+  <div class="top-ad-wrapper">
+    <app-ad-banner slot="topBanner" format="horizontal"></app-ad-banner>
+  </div>
+
+  <main class="main-layout">
+    <!-- Center / Left: Conversion Workstation -->
+    <section class="converter-card">
+      <div class="card-header">
+        <div class="icon-bubble">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <h1 class="card-title">README to PDF Converter</h1>
+        <p class="card-subtitle">
+          Transform your GitHub README (.md) into a publication-ready, formatted PDF in seconds. Powered by <strong>jsnsworks</strong>.
+        </p>
+      </div>
+
+      <!-- File Upload / Dropzone -->
+      <div 
+        class="dropzone" 
+        [class.dragging]="isDragging"
+        [class.has-file]="!!state.selectedFile()"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event, fileInput)"
+        (click)="fileInput.click()">
+        
+        <input 
+          #fileInput 
+          type="file" 
+          accept=".md,.markdown,.txt,text/markdown,text/plain,*" 
+          (change)="onFileSelected($event)" 
+          style="display: none;" />
+
+        @if (!state.selectedFile()) {
+          <div class="dropzone-empty">
+            <div class="upload-icon-circle">
+              <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <p class="dropzone-primary-text">Drag & drop your README file here</p>
+            <p class="dropzone-secondary-text">Supports .md, .markdown, or .txt</p>
+            <button type="button" class="btn btn-choose" (click)="$event.stopPropagation(); fileInput.click()">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                <polyline points="13 2 13 9 20 9"></polyline>
+              </svg>
+              Choose File
+            </button>
+          </div>
+        } @else {
+          <div class="dropzone-selected">
+            <div class="file-details">
+              <div class="file-icon-badge">MD</div>
+              <div class="file-meta">
+                <span class="file-name">{{ selectedFileName }}</span>
+                <span class="file-size">{{ selectedFileSize }}</span>
+              </div>
+            </div>
+            <button 
+              type="button" 
+              class="btn-clear" 
+              (click)="clearSelectedFile($event)" 
+              title="Remove file">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- Conversion Progress Bar (Displayed Above Action Area when converting/completed) -->
+      @if (state.progress().status !== 'idle') {
+        <div class="progress-section">
+          <app-progress-bar 
+            [percentage]="state.progress().percentage"
+            [status]="state.progress().status"
+            [message]="state.progress().message">
+          </app-progress-bar>
+        </div>
+      }
+
+      <!-- Actions Area -->
+      <div class="action-buttons-group">
+        <!-- Convert to PDF Button -->
+        @if (state.progress().status !== 'completed') {
+          <button 
+            type="button" 
+            class="btn btn-convert" 
+            [disabled]="state.progress().status === 'converting' || state.progress().status === 'reading'"
+            (click)="convertToPdf(fileInput)">
+            @if (state.progress().status === 'converting' || state.progress().status === 'reading') {
+              <span class="btn-spinner"></span>
+              Converting to PDF...
+            } @else {
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              {{ state.selectedFile() ? 'Convert to PDF' : 'Choose File & Convert' }}
+            }
+          </button>
+        }
+
+        <!-- Once Done: Display View PDF and Download PDF Buttons -->
+        @if (state.progress().status === 'completed') {
+          <div class="completed-actions">
+            <button type="button" class="btn btn-view" (click)="viewPdf()">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              View PDF
+            </button>
+
+            <button type="button" class="btn btn-download" (click)="downloadPdf()">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Download PDF
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- Feature Badges -->
+      <div class="features-row">
+        <div class="feature-item">
+          <span class="feature-dot"></span> Full Markdown & Table Support
+        </div>
+        <div class="feature-item">
+          <span class="feature-dot"></span> Code Syntax Highlighting
+        </div>
+        <div class="feature-item">
+          <span class="feature-dot"></span> 100% Client-Side Privacy
+        </div>
+      </div>
+    </section>
+
+    <!-- Right: Sidebar Ad (Policy Compliant, Buffer Spaced) -->
+    <aside class="sidebar-ad-card">
+      <app-ad-banner slot="homeSidebar" format="rectangle"></app-ad-banner>
+    </aside>
+  </main>
+
+  <!-- Mid-Page Ad Placement -->
+  <div class="mid-ad-wrapper">
+    <app-ad-banner slot="midBanner" format="horizontal"></app-ad-banner>
+  </div>
+
+  <!-- How It Works Section -->
+  <section id="how-it-works" class="how-it-works-section">
+    <div class="section-badge">Simple 3-Step Process</div>
+    <h2 class="section-title">How It Works</h2>
+    <p class="section-description">Convert any Markdown documentation or README into a clean PDF document effortlessly.</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+          </svg>
+        </div>
+        <h3 class="step-heading">Choose README File</h3>
+        <p class="step-text">Click "Choose File" or drag & drop your <code>README.md</code>, Markdown, or text file directly into the converter.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+        </div>
+        <h3 class="step-heading">Instant Conversion</h3>
+        <p class="step-text">Click "Convert to PDF" and watch the real-time progress bar parse your markdown tables, code blocks, and headings.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-icon">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+        </div>
+        <h3 class="step-heading">View & Download</h3>
+        <p class="step-text">Inspect the document in the dedicated PDF viewer or download your multi-page PDF immediately.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Us Section (Crucial for Ad Network Monetization Approval) -->
+  <section id="about" class="about-section">
+    <div class="section-badge">About jsnsworks</div>
+    <h2 class="section-title">Built by Developers, Engineered for Privacy</h2>
+    <p class="section-description">
+      <strong>jsnsworks</strong> creates lightweight, dependable, client-first developer tools. We believe powerful utilities shouldn't require complex software installations or risk your intellectual property on remote servers.
+    </p>
+
+    <div class="about-grid">
+      <div class="about-card">
+        <div class="about-icon-wrapper">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <h3>100% In-Browser Privacy</h3>
+        <p>Your documents, proprietary code, and README notes are parsed entirely inside your browser. No files are ever uploaded or retained on our infrastructure.</p>
+      </div>
+
+      <div class="about-card">
+        <div class="about-icon-wrapper">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+        </div>
+        <h3>High-Performance Rendering</h3>
+        <p>Engineered using modern web technologies to translate markdown formatting, tables, lists, and code syntax into pixel-perfect vector PDF documents in seconds.</p>
+      </div>
+
+      <div class="about-card">
+        <div class="about-icon-wrapper">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <h3>Production Quality Output</h3>
+        <p>Multi-page automatic pagination, clean margins, standard A4 layout, and legible page numbering make your documentation ready for client delivery.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section (Provides Rich Valuable Content for Approval) -->
+  <section id="faq" class="faq-section">
+    <div class="section-badge">Got Questions?</div>
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <p class="section-description">Answers to common questions about README to PDF conversion and jsnsworks tools.</p>
+
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3 class="faq-question">Are my files or documentation stored on your servers?</h3>
+        <p class="faq-answer">
+          No. All processing happens 100% locally within your browser using client-side JavaScript. Your file data never leaves your computer, making it safe for private repositories, internal project docs, and confidential notes.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="faq-question">What file formats are supported?</h3>
+        <p class="faq-answer">
+          You can upload <code>.md</code>, <code>.markdown</code>, <code>.txt</code> files, or files simply named <code>README</code> with no extension. Full GitHub Flavored Markdown (tables, checklists, syntax blocks) is parsed automatically.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="faq-question">How does multi-page pagination work?</h3>
+        <p class="faq-answer">
+          Long documentation files automatically break across standardized A4 pages with balanced margins. Page numbers (e.g., "Page 1 of 4") are automatically added to the footer of each sheet.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="faq-question">Is this converter completely free?</h3>
+        <p class="faq-answer">
+          Yes! README to PDF by jsnsworks is completely free for individual, educational, and commercial use. The service is supported by minimal, non-intrusive advertisements.
+        </p>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="faq-question">How can I contact jsnsworks for support or feature requests?</h3>
+        <p class="faq-answer">
+          We welcome your feedback! You can reach our team anytime via email at <strong>support&#64;jsnsworks.com</strong>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom Page Ad Placement (Above Footer) -->
+  <div class="bottom-ad-wrapper">
+    <app-ad-banner slot="bottomBanner" format="horizontal"></app-ad-banner>
+  </div>
+</div>

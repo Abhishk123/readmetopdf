@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#1e40af"/>
+    </linearGradient>
+    <linearGradient id="foldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#93c5fd"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Rounded App Icon Background -->
+  <rect width="64" height="64" rx="14" fill="url(#bgGrad)"/>
+  
+  <!-- Document Sheet -->
+  <path d="M18 12 H38 L48 22 V50 A2 2 0 0 1 46 52 H18 A2 2 0 0 1 16 50 V14 A2 2 0 0 1 18 12 Z" fill="#ffffff"/>
+  
+  <!-- Folded Corner -->
+  <path d="M38 12 V20 A2 2 0 0 0 40 22 H48 Z" fill="url(#foldGrad)"/>
+  
+  <!-- Document Text Lines -->
+  <rect x="22" y="22" width="12" height="2.5" rx="1" fill="#cbd5e1"/>
+  <rect x="22" y="28" width="20" height="2.5" rx="1" fill="#94a3b8"/>
+  <rect x="22" y="34" width="20" height="2.5" rx="1" fill="#94a3b8"/>
+  
+  <!-- Red PDF Badge -->
+  <rect x="20" y="40" width="24" height="9" rx="2" fill="#ef4444"/>
+  <text x="32" y="47" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="6.5" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">PDF</text>
+</svg>
