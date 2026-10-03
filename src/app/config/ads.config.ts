@@ -1,14 +1,16 @@
 /**
- * Advertising Configuration
+ * Google AdSense Configuration
  * 
  * Instructions:
- * 1. Set 'enabled: true' when your ad network is active.
- * 2. Set 'client' to your publisher ID.
- * 3. Set slot IDs for each ad placement.
+ * - testMode: Set to 'true' to safely test Google ads with 'data-adtest="on"'
+ * - client: Your real Google AdSense Publisher ID (e.g., 'ca-pub-1234567890123456')
+ * - slots: Numeric slot IDs generated in your AdSense dashboard
  */
 export interface AdsConfiguration {
   enabled: boolean;
+  testMode: boolean;
   client: string;
+  testClient: string;
   slots: {
     topBanner: string;
     homeSidebar: string;
@@ -24,13 +26,20 @@ export interface AdsConfiguration {
 }
 
 export const ADS_CONFIG: AdsConfiguration = {
-  // Set to true when publishing live with active ad network
-  enabled: false,
+  // Turn ON ads
+  enabled: true,
 
-  // Publisher ID
+  // Set to 'true' to request official Google test ads (data-adtest="on")
+  // Set to 'false' in production when your site is approved for live commercial ads
+  testMode: true,
+
+  // Replace with your real AdSense Publisher ID when you have it
   client: 'ca-pub-XXXXXXXXXXXXXXXX',
 
-  // Numeric Ad Unit Slot IDs
+  // Google's official universal test publisher ID
+  testClient: 'ca-pub-3940256099942544',
+
+  // Ad Unit Slot IDs
   slots: {
     topBanner: '1000000001',
     homeSidebar: '2000000002',

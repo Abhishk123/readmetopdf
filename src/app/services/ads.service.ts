@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 import { ADS_CONFIG, AdsConfiguration } from '../config/ads.config';
 
 declare global {
@@ -13,6 +13,15 @@ declare global {
 export class AdsService {
   private readonly configState = signal<AdsConfiguration>(ADS_CONFIG);
   public readonly config = this.configState.asReadonly();
+  
+  public readonly effectiveClient = computed(() => {
+    const cfg = this.config();
+    if (cfg.testMode && (!cfg.client || cfg.client === 'ca-pub-XXXXXXXXXXXXXXXX')) {
+      return cfg.testClient;
+    }
+    return cfg.client;
+  });
+
   private scriptLoaded = false;
 
   constructor() {
@@ -22,13 +31,20 @@ export class AdsService {
   }
 
   public initGoogleAdSense(): void {
-    if (this.scriptLoaded || !this.config().enabled || !this.config().client) {
+    if (this.scriptLoaded || !this.config().enabled || !this.effectiveClient()) {
       return;
     }
 
     try {
+      // Check if already in DOM from index.html
+      const existingScript = document.querySelector('script[src*="adsbygoogle.js"]');
+      if (existingScript) {
+        this.scriptLoaded = true;
+        return;
+      }
+
       const script = document.createElement('script');
-      script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${this.config().client}`;
+      script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${this.effectiveClient()}`;
       script.async = true;
       script.crossOrigin = 'anonymous';
       script.onload = () => {
@@ -48,7 +64,7 @@ export class AdsService {
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch (err) {
-      console.warn('Ad push deferred or blocked by browser/extension:', err);
+      // Safe catch for adblockers or initial script delay
     }
   }
 }
