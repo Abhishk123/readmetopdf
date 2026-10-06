@@ -22,6 +22,8 @@ lerna-debug.log*
 .env.local
 .env.*.local
 *.env
+*environment.secret.ts
+*secrets.ts
 
 # IDEs and Editors
 .idea/

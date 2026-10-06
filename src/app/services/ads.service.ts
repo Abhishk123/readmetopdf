@@ -1,5 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { ADS_CONFIG, AdsConfiguration } from '../config/ads.config';
+import { ADS_CONFIG, AdsConfiguration, AdProviderType } from '../config/ads.config';
 
 declare global {
   interface Window {
@@ -16,8 +16,8 @@ export class AdsService {
   
   public readonly effectiveClient = computed(() => {
     const cfg = this.config();
-    if (cfg.testMode && (!cfg.client || cfg.client === 'ca-pub-XXXXXXXXXXXXXXXX')) {
-      return cfg.testClient;
+    if (cfg.testMode) {
+      return 'ca-pub-3940256099942544'; // Google Official Test Publisher
     }
     return cfg.client;
   });
@@ -36,7 +36,7 @@ export class AdsService {
     }
 
     try {
-      // Check if already in DOM from index.html
+      // Check if already present in DOM from index.html
       const existingScript = document.querySelector('script[src*="adsbygoogle.js"]');
       if (existingScript) {
         this.scriptLoaded = true;
@@ -64,7 +64,11 @@ export class AdsService {
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch (err) {
-      // Safe catch for adblockers or initial script delay
+      // Safe catch for adblockers or browser extensions
     }
+  }
+
+  public getProvider(override?: AdProviderType): AdProviderType {
+    return override || this.config().defaultProvider;
   }
 }

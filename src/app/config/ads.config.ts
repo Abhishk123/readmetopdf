@@ -1,20 +1,28 @@
-/**
- * Google AdSense Configuration
- * 
- * Configured with official Publisher ID: ca-pub-3070668874339661
- */
+import { environment } from '../../environments/environment';
+
+export type AdProviderType = 'adsense' | 'carbon' | 'sponsor' | 'custom';
+
 export interface AdsConfiguration {
   enabled: boolean;
-  testMode: boolean;
+  defaultProvider: AdProviderType;
   client: string;
-  testClient: string;
-  slots: {
-    topBanner: string;
-    homeSidebar: string;
-    midBanner: string;
-    bottomBanner: string;
-    viewerSidebar: string;
-    viewerBottomBanner: string;
+  testMode: boolean;
+  slots: Record<string, string>;
+  carbon?: {
+    enabled: boolean;
+    serveCode: string;
+    placementCode: string;
+  };
+  sponsor?: {
+    enabled: boolean;
+    imageUrl: string;
+    targetUrl: string;
+    altText: string;
+    tagline: string;
+  };
+  custom?: {
+    enabled: boolean;
+    htmlSnippet: string;
   };
   policy: {
     showAdLabel: boolean;
@@ -22,28 +30,18 @@ export interface AdsConfiguration {
   };
 }
 
+/**
+ * Global Ads Configuration linked strictly to environment secrets
+ */
 export const ADS_CONFIG: AdsConfiguration = {
-  // Live Google AdSense Serving Enabled
-  enabled: true,
-
-  // Set to false for live commercial ads
-  testMode: false,
-
-  // Official Publisher ID
-  client: 'ca-pub-1326483461218935',
-
-  testClient: 'ca-pub-3940256099942544',
-
-  // Ad Unit Slot IDs
-  slots: {
-    topBanner: '1000000001',
-    homeSidebar: '2000000002',
-    midBanner: '3000000003',
-    bottomBanner: '4000000004',
-    viewerSidebar: '5000000005',
-    viewerBottomBanner: '6000000006'
-  },
-
+  enabled: environment.ads.enabled,
+  defaultProvider: environment.ads.defaultProvider,
+  client: environment.ads.adsense.client,
+  testMode: environment.ads.adsense.testMode,
+  slots: environment.ads.adsense.slots as Record<string, string>,
+  carbon: environment.ads.carbon,
+  sponsor: environment.ads.sponsor,
+  custom: environment.ads.custom,
   policy: {
     showAdLabel: true,
     adLabelText: 'ADVERTISEMENT'

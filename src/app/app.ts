@@ -1,6 +1,8 @@
 import { Component, signal, inject } from '@angular/core';
-import { RouterOutlet, RouterLink, Router } from '@angular/router';
+import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { filter } from 'rxjs/operators';
+import { TOOLS_CONFIG } from './config/tools.config';
 
 @Component({
   selector: 'app-root',
@@ -11,50 +13,35 @@ import { CommonModule } from '@angular/common';
 })
 export class App {
   private router = inject(Router);
-  protected readonly title = signal('README to PDF Converter by jsnsworks');
+  public readonly toolsList = signal(TOOLS_CONFIG);
+  public mobileMenuOpen = signal<boolean>(false);
+  public toolsDropdownOpen = signal<boolean>(false);
 
-  showPrivacyModal = false;
-  showTermsModal = false;
-  showContactModal = false;
-
-  navigateToSection(sectionId: string, event: Event): void {
-    event.preventDefault();
-    if (this.router.url.includes('/viewer')) {
-      this.router.navigate(['/'], { fragment: sectionId });
-    } else {
-      const el = document.getElementById(sectionId);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else {
-        this.router.navigate(['/'], { fragment: sectionId });
-      }
-    }
+  constructor() {
+    // Close mobile menu and dropdown on page navigation
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.mobileMenuOpen.set(false);
+      this.toolsDropdownOpen.set(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   }
 
-  openPrivacyModal(event: Event): void {
-    event.preventDefault();
-    this.showPrivacyModal = true;
+  public toggleMobileMenu(): void {
+    this.mobileMenuOpen.update(v => !v);
   }
 
-  closePrivacyModal(): void {
-    this.showPrivacyModal = false;
+  public closeMobileMenu(): void {
+    this.mobileMenuOpen.set(false);
   }
 
-  openTermsModal(event: Event): void {
-    event.preventDefault();
-    this.showTermsModal = true;
+  public toggleToolsDropdown(event: Event): void {
+    event.stopPropagation();
+    this.toolsDropdownOpen.update(v => !v);
   }
 
-  closeTermsModal(): void {
-    this.showTermsModal = false;
-  }
-
-  openContactModal(event: Event): void {
-    event.preventDefault();
-    this.showContactModal = true;
-  }
-
-  closeContactModal(): void {
-    this.showContactModal = false;
+  public closeToolsDropdown(): void {
+    this.toolsDropdownOpen.set(false);
   }
 }

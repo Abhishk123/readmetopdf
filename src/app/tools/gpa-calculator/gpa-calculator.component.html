@@ -1,0 +1,164 @@
+<div class="tool-page-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span class="current">Student GPA & Grade Calculator</span>
+  </nav>
+
+  <!-- Top Ad Banner -->
+  <app-ad-banner slot="topBanner"></app-ad-banner>
+
+  <!-- Tool Hero Header -->
+  <div class="tool-header">
+    <div class="tool-badge">Academic & College Utility</div>
+    <h1 class="tool-title">Student GPA & Grade Calculator</h1>
+    <p class="tool-subtitle">
+      Calculate semester GPA, cumulative CGPA, and equivalent percentage with customizable credit hours and letter grade scales.
+    </p>
+  </div>
+
+  <!-- Scale Selector Buttons -->
+  <div class="scale-toggle-row">
+    <button type="button" class="btn-toggle" [class.active]="scale() === '4.0'" (click)="switchScale('4.0')">
+      Standard 4.0 GPA Scale (US / International)
+    </button>
+    <button type="button" class="btn-toggle" [class.active]="scale() === '10.0'" (click)="switchScale('10.0')">
+      10.0 CGPA Scale (Colleges & Universities)
+    </button>
+  </div>
+
+  <!-- Calculator Dashboard -->
+  <div class="gpa-grid">
+    <!-- Courses Table Card -->
+    <div class="courses-card">
+      <div class="card-header">
+        <h3>Enrolled Courses</h3>
+        <button type="button" class="btn-reset" (click)="resetCourses()">Reset Defaults</button>
+      </div>
+
+      <div class="courses-table">
+        <div class="table-header">
+          <span class="th col-name">Course Name</span>
+          <span class="th col-credits">Credits</span>
+          <span class="th col-grade">Grade / Points</span>
+          <span class="th col-action"></span>
+        </div>
+
+        @for (course of courses(); track course.id; let idx = $index) {
+          <div class="table-row">
+            <div class="td col-name">
+              <input type="text"
+                     [(ngModel)]="course.name"
+                     (ngModelChange)="saveToStorage()"
+                     class="input-course-name"
+                     placeholder="e.g. Biology 101">
+            </div>
+
+            <div class="td col-credits">
+              <input type="number"
+                     min="1"
+                     max="10"
+                     [(ngModel)]="course.credits"
+                     (ngModelChange)="saveToStorage()"
+                     class="input-credits">
+            </div>
+
+            <div class="td col-grade">
+              <select [(ngModel)]="course.gradeValue" (ngModelChange)="saveToStorage()" class="select-grade">
+                @if (scale() === '4.0') {
+                  @for (opt of gradeScale4; track opt.label) {
+                    <option [value]="opt.value">{{ opt.label }}</option>
+                  }
+                } @else {
+                  @for (opt of gradeScale10; track opt.label) {
+                    <option [value]="opt.value">{{ opt.label }}</option>
+                  }
+                }
+              </select>
+            </div>
+
+            <div class="td col-action">
+              <button type="button"
+                      class="btn-del"
+                      (click)="removeCourse(course.id)"
+                      [disabled]="courses().length <= 1"
+                      title="Remove course">✕</button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="card-footer">
+        <button type="button" class="btn-add-row" (click)="addCourse()">
+          <span>+ Add Another Course</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Results Summary Card -->
+    <div class="results-card">
+      <div class="gpa-display-circle">
+        <span class="gpa-score">{{ calculatedGpa() }}</span>
+        <span class="gpa-max">out of {{ scale() }}</span>
+      </div>
+
+      <div class="academic-badge">
+        {{ academicStanding() }}
+      </div>
+
+      <div class="stats-breakdown">
+        <div class="breakdown-item">
+          <span class="lbl">Total Credits:</span>
+          <strong class="val">{{ totalCredits() }} hrs</strong>
+        </div>
+        <div class="breakdown-item">
+          <span class="lbl">Total Grade Points:</span>
+          <strong class="val">{{ totalGradePoints() | number:'1.1-1' }}</strong>
+        </div>
+        <div class="breakdown-item">
+          <span class="lbl">Est. Percentage:</span>
+          <strong class="val">{{ estimatedPercentage() }}%</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mid Content Ad Banner -->
+  <app-ad-banner slot="midContent"></app-ad-banner>
+
+  <!-- Educational SEO Content -->
+  <div class="seo-guide">
+    <h2>How Is College GPA Calculated?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>Weighted Credit Hours</h3>
+        <p>A 4-credit calculus course impacts your GPA twice as much as a 2-credit seminar. Multiplying credit hours by grade points produces weighted grade point totals.</p>
+      </div>
+      <div class="feature-card">
+        <h3>The 4.0 Standard Scale</h3>
+        <p>In the standard US grading system, an A is 4.0, B is 3.0, C is 2.0, and D is 1.0. Pluses and minuses typically add or subtract 0.3 grade points.</p>
+      </div>
+      <div class="feature-card">
+        <h3>10.0 CGPA to Percentage</h3>
+        <p>In many Indian and global universities (such as CBSE/AICTE), standard percentage conversion uses the formula: <strong>Percentage = CGPA × 9.5</strong>.</p>
+      </div>
+    </div>
+
+    <!-- FAQ Accordion -->
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h3>How can I raise my cumulative GPA?</h3>
+        <p>To improve your GPA, focus on scoring high marks in higher-credit subjects (3 and 4 credit courses), as they carry more weight in the final calculation.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Are my grades stored securely?</h3>
+        <p>Yes. Your course grades are stored locally in your browser cache and never sent to any server.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Ad Banner -->
+  <app-ad-banner slot="bottomBanner"></app-ad-banner>
+</div>

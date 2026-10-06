@@ -1,0 +1,114 @@
+<div class="tool-page-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span class="current">JSON Formatter & CSV Converter</span>
+  </nav>
+
+  <!-- Top Ad Banner -->
+  <app-ad-banner slot="topBanner"></app-ad-banner>
+
+  <!-- Tool Hero Header -->
+  <div class="tool-header">
+    <div class="tool-badge">Developer & Data Utility</div>
+    <h1 class="tool-title">JSON Formatter & CSV Converter</h1>
+    <p class="tool-subtitle">
+      Prettify, validate, minify JSON code, and convert JSON arrays directly into clean CSV spreadsheets in-browser.
+    </p>
+  </div>
+
+  <!-- Status Bar Message -->
+  @if (statusMessage()) {
+    <div class="status-alert" [class.error]="isError()" [class.success]="!isError()">
+      <span>{{ statusMessage() }}</span>
+      <button type="button" class="btn-close-alert" (click)="statusMessage.set('')">✕</button>
+    </div>
+  }
+
+  <!-- Main JSON Card -->
+  <div class="tool-card">
+    <div class="editor-toolbar">
+      <div class="toolbar-actions">
+        <button type="button" class="btn-primary" (click)="formatJson()">
+          <span>⚡ Format JSON</span>
+        </button>
+        <button type="button" class="btn-action" (click)="validateJson()">
+          <span>✓ Validate</span>
+        </button>
+        <button type="button" class="btn-action" (click)="minifyJson()">
+          <span>Compact / Minify</span>
+        </button>
+        <button type="button" class="btn-accent" (click)="convertToCsv()">
+          <span>📊 Export to CSV</span>
+        </button>
+      </div>
+
+      <div class="toolbar-options">
+        <select [(ngModel)]="indentation" (ngModelChange)="formatJson()" class="select-spaces">
+          <option [value]="2">2 Spaces</option>
+          <option [value]="4">4 Spaces</option>
+        </select>
+        <button type="button" class="btn-ghost" (click)="loadSample()">Sample Data</button>
+        <button type="button" class="btn-ghost" (click)="downloadJson()">Download .json</button>
+        <button type="button" class="btn-ghost danger" (click)="clearText()">Clear</button>
+        <button type="button" class="btn-copy" (click)="copyJson()">
+          @if (copiedMessage()) {
+            <span>✓ Copied!</span>
+          } @else {
+            <span>📋 Copy</span>
+          }
+        </button>
+      </div>
+    </div>
+
+    <textarea class="code-editor"
+              rows="16"
+              placeholder="Paste raw or messy JSON here..."
+              [ngModel]="inputJson()"
+              (ngModelChange)="inputJson.set($event)"></textarea>
+
+    <div class="editor-footer">
+      <span>Lines: {{ inputJson().split('\n').length }} • Characters: {{ inputJson().length }}</span>
+      <span>100% In-Browser & Private</span>
+    </div>
+  </div>
+
+  <!-- Mid Content Ad Banner -->
+  <app-ad-banner slot="midContent"></app-ad-banner>
+
+  <!-- Educational SEO Guide -->
+  <div class="seo-guide">
+    <h2>Why Use JSNS Works JSON Formatter?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>Instant Syntax Validation</h3>
+        <p>Pinpoint syntax bugs, unescaped characters, missing trailing commas, and incorrect quotation marks with detailed parser feedback.</p>
+      </div>
+      <div class="feature-card">
+        <h3>One-Click CSV Export</h3>
+        <p>Instantly convert database queries or API JSON array payloads into clean tabular CSV files compatible with Excel and Google Sheets.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Confidential & Offline Safe</h3>
+        <p>No backend servers or cloud logging. All JSON parsing and formatting execute 100% client-side in your local browser sandbox.</p>
+      </div>
+    </div>
+
+    <!-- FAQ Accordion -->
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h3>Why does my JSON say "Unexpected token"?</h3>
+        <p>Standard JSON strictly requires double quotes <code>"</code> around keys and strings. Single quotes <code>'</code> and trailing commas after the last item will trigger syntax errors.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Can I export nested JSON to CSV?</h3>
+        <p>Yes, nested objects or arrays are serialized into JSON string cells, making them easy to view in Excel or CSV readers.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Ad Banner -->
+  <app-ad-banner slot="bottomBanner"></app-ad-banner>
+</div>

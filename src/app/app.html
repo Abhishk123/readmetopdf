@@ -1,154 +1,132 @@
-<div class="app-container">
+<div class="app-container" (click)="closeToolsDropdown()">
   <!-- Top Navigation Header -->
   <header class="site-header">
     <div class="nav-content">
-      <a routerLink="/" class="brand-logo">
+      <a routerLink="/" class="brand-logo" (click)="closeMobileMenu()">
         <div class="logo-mark">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <polyline points="14 2 14 8 20 8"></polyline>
-            <line x1="16" y1="13" x2="8" y2="13"></line>
-            <line x1="16" y1="17" x2="8" y2="17"></line>
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
           </svg>
         </div>
         <div class="brand-text">
-          <span class="brand-name">README to PDF</span>
-          <span class="brand-badge">by jsnsworks</span>
+          <span class="brand-name">JSNS Works</span>
+          <span class="brand-badge">Free Tools Hub</span>
         </div>
       </a>
 
+      <!-- Desktop Navigation Links -->
       <nav class="nav-links">
-        <a href="#how-it-works" (click)="navigateToSection('how-it-works', $event)" class="nav-link">How it Works</a>
-        <a href="#about" (click)="navigateToSection('about', $event)" class="nav-link">About</a>
-        <a href="#faq" (click)="navigateToSection('faq', $event)" class="nav-link">FAQ</a>
-        <a href="#" (click)="openPrivacyModal($event)" class="nav-link">Privacy Policy</a>
+        <!-- Tools Dropdown -->
+        <div class="dropdown-wrapper">
+          <button type="button" class="nav-link dropdown-toggle" (click)="toggleToolsDropdown($event)">
+            <span>Tools</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+
+          @if (toolsDropdownOpen()) {
+            <div class="dropdown-menu">
+              @for (tool of toolsList(); track tool.id) {
+                <a [routerLink]="tool.route" class="dropdown-item" (click)="closeToolsDropdown()">
+                  <strong>{{ tool.title }}</strong>
+                  <small>{{ tool.shortDescription }}</small>
+                </a>
+              }
+            </div>
+          }
+        </div>
+
+        <a routerLink="/" class="nav-link">Home</a>
+        <a routerLink="/about" class="nav-link">About</a>
+        <a routerLink="/contact" class="nav-link">Contact</a>
+        <a routerLink="/privacy-policy" class="nav-link">Privacy</a>
       </nav>
+
+      <!-- Mobile Hamburger Button -->
+      <button type="button" class="btn-hamburger" (click)="toggleMobileMenu()" aria-label="Toggle navigation">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+          @if (!mobileMenuOpen()) {
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          } @else {
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          }
+        </svg>
+      </button>
     </div>
+
+    <!-- Mobile Drawer Navigation -->
+    @if (mobileMenuOpen()) {
+      <div class="mobile-drawer">
+        <div class="drawer-section-title">Tools</div>
+        <div class="drawer-tools">
+          @for (tool of toolsList(); track tool.id) {
+            <a [routerLink]="tool.route" class="drawer-item" (click)="closeMobileMenu()">
+              {{ tool.title }}
+            </a>
+          }
+        </div>
+        <hr class="drawer-sep">
+        <div class="drawer-links">
+          <a routerLink="/" class="drawer-item" (click)="closeMobileMenu()">Home</a>
+          <a routerLink="/about" class="drawer-item" (click)="closeMobileMenu()">About Us</a>
+          <a routerLink="/contact" class="drawer-item" (click)="closeMobileMenu()">Contact & Support</a>
+          <a routerLink="/privacy-policy" class="drawer-item" (click)="closeMobileMenu()">Privacy Policy</a>
+          <a routerLink="/terms" class="drawer-item" (click)="closeMobileMenu()">Terms of Service</a>
+        </div>
+      </div>
+    }
   </header>
 
   <!-- Routed Page View -->
-  <div class="content-body">
+  <main class="content-body">
     <router-outlet></router-outlet>
-  </div>
+  </main>
 
-  <!-- Trust-Building Footer for Monetization Approval -->
+  <!-- Global Footer -->
   <footer class="site-footer">
     <div class="footer-content">
-      <div class="footer-left">
-        <p class="footer-brand">README to PDF Converter • jsnsworks</p>
+      <!-- Col 1: Brand -->
+      <div class="footer-col brand-col">
+        <div class="footer-brand-title">
+          <span class="logo-circle">⚡</span>
+          <span>JSNS Works</span>
+        </div>
         <p class="footer-copy">
-          Professional client-side documentation tools. 100% in-browser processing with zero server uploads.
+          Free, in-browser online tools for developers, students, and digital creators. Built for 100% privacy with zero server uploads.
         </p>
-        <p class="footer-copyright">
-          © 2026 <strong>jsnsworks</strong>. All rights reserved.
-        </p>
+        <span class="privacy-pill">🔒 100% Local In-Browser Processing</span>
       </div>
 
-      <div class="footer-links">
-        <a routerLink="/">Home</a>
-        <span class="divider">•</span>
-        <a href="#how-it-works" (click)="navigateToSection('how-it-works', $event)">How it Works</a>
-        <span class="divider">•</span>
-        <a href="#about" (click)="navigateToSection('about', $event)">About</a>
-        <span class="divider">•</span>
-        <a href="#faq" (click)="navigateToSection('faq', $event)">FAQ</a>
-        <span class="divider">•</span>
-        <a href="#" (click)="openPrivacyModal($event)">Privacy Policy</a>
-        <span class="divider">•</span>
-        <a href="#" (click)="openTermsModal($event)">Terms</a>
-        <span class="divider">•</span>
-        <a href="#" (click)="openContactModal($event)">Contact</a>
+      <!-- Col 2: Quick Tools -->
+      <div class="footer-col">
+        <h4>Popular Tools</h4>
+        <ul class="footer-nav">
+          @for (tool of toolsList(); track tool.id) {
+            <li>
+              <a [routerLink]="tool.route">{{ tool.title }}</a>
+            </li>
+          }
+        </ul>
       </div>
+
+      <!-- Col 3: Company & Trust -->
+      <div class="footer-col">
+        <h4>Company & Legal</h4>
+        <ul class="footer-nav">
+          <li><a routerLink="/about">About Us</a></li>
+          <li><a routerLink="/contact">Contact & Support</a></li>
+          <li><a routerLink="/privacy-policy">Privacy Policy</a></li>
+          <li><a routerLink="/terms">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 <strong>jsnsworks</strong>. All rights reserved.</p>
     </div>
   </footer>
-
-  <!-- Privacy Policy Modal -->
-  @if (showPrivacyModal) {
-    <div class="modal-backdrop" (click)="closePrivacyModal()">
-      <div class="modal-window" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-          <h2>Privacy Policy</h2>
-          <button type="button" class="btn-close-modal" (click)="closePrivacyModal()">✕</button>
-        </div>
-        <div class="modal-body">
-          <h3>1. Local & Client-Side Processing</h3>
-          <p>
-            Your privacy is our highest priority at <strong>jsnsworks</strong>. All README conversions, Markdown parsing, and PDF rendering are performed entirely within your web browser. Your files, documents, and code are never transmitted, uploaded, or stored on external servers.
-          </p>
-
-          <h3>2. Cookies & Advertising</h3>
-          <p>
-            This website displays advertisements to keep the tool freely accessible. Non-personally identifiable cookies and web beacons may be utilized by advertising partners to measure campaign effectiveness and deliver relevant content.
-          </p>
-          <p>
-            You can manage or disable cookies at any time via your browser settings.
-          </p>
-
-          <h3>3. Data Collection</h3>
-          <p>
-            We do not collect personal names, email addresses, or document contents. Standard anonymous web traffic statistics may be monitored solely to ensure website availability and performance.
-          </p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn-primary" (click)="closePrivacyModal()">I Understand</button>
-        </div>
-      </div>
-    </div>
-  }
-
-  <!-- Terms of Service Modal (Ad Network Requirement) -->
-  @if (showTermsModal) {
-    <div class="modal-backdrop" (click)="closeTermsModal()">
-      <div class="modal-window" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-          <h2>Terms of Service</h2>
-          <button type="button" class="btn-close-modal" (click)="closeTermsModal()">✕</button>
-        </div>
-        <div class="modal-body">
-          <h3>1. Acceptance of Terms</h3>
-          <p>
-            By accessing or using the README to PDF converter provided by <strong>jsnsworks</strong>, you agree to comply with and be bound by these terms.
-          </p>
-
-          <h3>2. Permitted Use</h3>
-          <p>
-            This tool is provided free of charge for personal, educational, and commercial purposes. You agree not to abuse, reverse-engineer, or attempt to disrupt the availability of the web service.
-          </p>
-
-          <h3>3. Disclaimer of Warranties</h3>
-          <p>
-            This service is provided "as is" and "as available" without warranties of any kind. <strong>jsnsworks</strong> does not guarantee that file parsing will be completely error-free for every custom markdown extension.
-          </p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn-primary" (click)="closeTermsModal()">Close</button>
-        </div>
-      </div>
-    </div>
-  }
-
-  <!-- Contact Us Modal (Ad Network Requirement) -->
-  @if (showContactModal) {
-    <div class="modal-backdrop" (click)="closeContactModal()">
-      <div class="modal-window" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-          <h2>Contact jsnsworks Support</h2>
-          <button type="button" class="btn-close-modal" (click)="closeContactModal()">✕</button>
-        </div>
-        <div class="modal-body">
-          <p>
-            Have a question, feedback, or need help with README to PDF conversion? We'd love to hear from you.
-          </p>
-          <div class="contact-box">
-            <div class="contact-label">Official Support Email:</div>
-            <a href="mailto:support@jsnsworks.site" class="contact-email">support&#64;jsnsworks.site</a>
-            <div class="contact-hint">Domain: <strong>jsnsworks</strong> • Response time within 24–48 hours</div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn-primary" (click)="closeContactModal()">Close</button>
-        </div>
-      </div>
-    </div>
-  }
 </div>

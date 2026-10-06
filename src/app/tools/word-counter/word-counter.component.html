@@ -1,0 +1,122 @@
+<div class="tool-page-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span class="current">Word & Character Counter</span>
+  </nav>
+
+  <!-- Top Ad Banner -->
+  <app-ad-banner slot="topBanner"></app-ad-banner>
+
+  <!-- Tool Hero Header -->
+  <div class="tool-header">
+    <div class="tool-badge">Student & Content Creator Utility</div>
+    <h1 class="tool-title">Word & Character Counter</h1>
+    <p class="tool-subtitle">
+      Check real-time word counts, character limits with/without spaces, estimated reading time, and change text case instantly.
+    </p>
+  </div>
+
+  <!-- Live Statistics Cards -->
+  <div class="stats-row">
+    <div class="stat-card primary">
+      <span class="stat-num">{{ wordsCount() }}</span>
+      <span class="stat-title">Words</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">{{ charsWithSpaces() }}</span>
+      <span class="stat-title">Characters</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">{{ charsWithoutSpaces() }}</span>
+      <span class="stat-title">No Spaces</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">{{ sentencesCount() }}</span>
+      <span class="stat-title">Sentences</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">{{ paragraphsCount() }}</span>
+      <span class="stat-title">Paragraphs</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">~{{ readingTimeMinutes() }}m</span>
+      <span class="stat-title">Reading Time</span>
+    </div>
+  </div>
+
+  <!-- Main Editor Card -->
+  <div class="tool-card">
+    <div class="editor-toolbar">
+      <div class="toolbar-group">
+        <button type="button" class="btn-action" (click)="toSentenceCase()">Sentence case</button>
+        <button type="button" class="btn-action" (click)="toUpperCase()">UPPERCASE</button>
+        <button type="button" class="btn-action" (click)="toLowerCase()">lowercase</button>
+        <button type="button" class="btn-action" (click)="toTitleCase()">Title Case</button>
+        <button type="button" class="btn-action" (click)="cleanSpaces()">Clean Spaces</button>
+      </div>
+
+      <div class="toolbar-group right">
+        <button type="button" class="btn-ghost" (click)="loadSampleText()">Sample Text</button>
+        <button type="button" class="btn-ghost danger" (click)="clearText()">Clear</button>
+        <button type="button" class="btn-copy" (click)="copyText()">
+          @if (copiedMessage()) {
+            <span>✓ Copied!</span>
+          } @else {
+            <span>📋 Copy Text</span>
+          }
+        </button>
+      </div>
+    </div>
+
+    <textarea class="text-editor"
+              rows="12"
+              placeholder="Paste or start typing your essay, article, or document text here..."
+              [ngModel]="text()"
+              (ngModelChange)="text.set($event)"></textarea>
+
+    <div class="editor-footer">
+      <span>Speaking Time: ~{{ speakingTimeMinutes() }} min</span>
+      <span>100% In-Browser & Private</span>
+    </div>
+  </div>
+
+  <!-- Mid Content Ad Banner -->
+  <app-ad-banner slot="midContent"></app-ad-banner>
+
+  <!-- Educational SEO Section -->
+  <div class="seo-guide">
+    <h2>Why Word & Character Count Matters for Students</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>College & Scholarship Limits</h3>
+        <p>University admission portals and Common App prompts enforce strict 250, 500, or 650-word caps. Avoid penalties by keeping essays within target ranges.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Character Counts for Portals</h3>
+        <p>Many government job forms, LinkedIn bios, and Twitter/X posts count characters without spaces. Instantly verify character restrictions before submitting.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Presentation & Speech Timing</h3>
+        <p>Prepare timed class presentations with our accurate speaking duration estimates calculated at the standard conversational rate of 130 words per minute.</p>
+      </div>
+    </div>
+
+    <!-- FAQ Accordion -->
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h3>How are words counted?</h3>
+        <p>Words are determined by splitting contiguous non-whitespace character clusters. Hyphenated compound words like "well-known" are calculated as standard word tokens.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Is my essay saved or uploaded to the cloud?</h3>
+        <p>No. Your writing stays 100% in your browser session. When you refresh or close the tab, nothing is stored or transmitted.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Ad Banner -->
+  <app-ad-banner slot="bottomBanner"></app-ad-banner>
+</div>

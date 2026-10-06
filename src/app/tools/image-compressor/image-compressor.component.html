@@ -1,0 +1,213 @@
+<div class="tool-page-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span class="current">Image & File Size Reducer</span>
+  </nav>
+
+  <!-- Top Header Ad Slot -->
+  <app-ad-banner slot="topBanner"></app-ad-banner>
+
+  <!-- Tool Hero Header -->
+  <div class="tool-header">
+    <div class="tool-badge">100% In-Browser & Private</div>
+    <h1 class="tool-title">Image & File Size Reducer</h1>
+    <p class="tool-subtitle">
+      Shrink JPG, PNG, and WebP file sizes instantly without uploading your private photos to external servers.
+    </p>
+  </div>
+
+  <!-- Main Interactive Area -->
+  <div class="tool-card">
+    @if (errorMessage()) {
+      <div class="alert-error">
+        <span>⚠️ {{ errorMessage() }}</span>
+        <button type="button" class="btn-dismiss" (click)="errorMessage.set('')">✕</button>
+      </div>
+    }
+
+    <!-- Uploader / Drop Zone (when no image selected) -->
+    @if (!result()) {
+      <div class="drop-zone"
+           [class.dragging]="isDragging()"
+           (dragover)="onDragOver($event)"
+           (dragleave)="onDragLeave()"
+           (drop)="onDrop($event)">
+        <div class="drop-content">
+          <div class="drop-icon">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+          </div>
+          <h3>Drag and drop your image here</h3>
+          <p>Supports JPG, PNG, and WebP (up to 25 MB)</p>
+          <label class="btn-browse">
+            <span>Browse Image</span>
+            <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onFileSelected($event)" hidden>
+          </label>
+        </div>
+      </div>
+    } @else {
+      <!-- Active Image Editor & Compression Dashboard -->
+      <div class="compression-workspace">
+        <!-- Controls Panel -->
+        <div class="controls-panel">
+          <div class="panel-header">
+            <h3>Compression Settings</h3>
+            <button type="button" class="btn-link" (click)="reset()">Choose Another Image</button>
+          </div>
+
+          <!-- Quality Slider -->
+          <div class="control-group">
+            <div class="control-label">
+              <span>Compression Quality</span>
+              <strong class="quality-val">{{ quality() }}%</strong>
+            </div>
+            <input type="range"
+                   min="10"
+                   max="95"
+                   step="5"
+                   [ngModel]="quality()"
+                   (ngModelChange)="quality.set($event); onSettingChange()"
+                   class="range-slider">
+            <div class="presets-row">
+              <button type="button" class="btn-chip" [class.active]="quality() === 50" (click)="setPresetQuality(50)">Small Size (50%)</button>
+              <button type="button" class="btn-chip" [class.active]="quality() === 75" (click)="setPresetQuality(75)">Balanced (75%)</button>
+              <button type="button" class="btn-chip" [class.active]="quality() === 90" (click)="setPresetQuality(90)">High Quality (90%)</button>
+            </div>
+          </div>
+
+          <!-- Output Format Selector -->
+          <div class="control-group">
+            <label class="control-label">Convert Format</label>
+            <div class="format-options">
+              <label class="radio-option">
+                <input type="radio" name="format" value="image/jpeg"
+                       [checked]="outputFormat() === 'image/jpeg'"
+                       (change)="outputFormat.set('image/jpeg'); onSettingChange()">
+                <span>JPEG (Smallest)</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="format" value="image/webp"
+                       [checked]="outputFormat() === 'image/webp'"
+                       (change)="outputFormat.set('image/webp'); onSettingChange()">
+                <span>WebP (Modern)</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="format" value="image/png"
+                       [checked]="outputFormat() === 'image/png'"
+                       (change)="outputFormat.set('image/png'); onSettingChange()">
+                <span>PNG (Lossless)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Max Dimension Resize -->
+          <div class="control-group">
+            <label class="control-label">Max Dimension (Resize)</label>
+            <select [ngModel]="maxDimension()"
+                    (ngModelChange)="maxDimension.set($event); onSettingChange()"
+                    class="select-input">
+              <option [value]="0">Original Dimensions</option>
+              <option [value]="1920">Full HD (Max 1920px)</option>
+              <option [value]="1280">Standard Web (Max 1280px)</option>
+              <option [value]="800">Email / Form (Max 800px)</option>
+              <option [value]="400">Thumbnail (Max 400px)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Comparison & Download Area -->
+        <div class="preview-panel">
+          <div class="stats-card">
+            <div class="stat-col">
+              <span class="stat-label">Original Size</span>
+              <span class="stat-value">{{ formatBytes(result()!.originalSize) }}</span>
+              <span class="stat-sub">{{ result()!.originalWidth }} × {{ result()!.originalHeight }}px</span>
+            </div>
+            <div class="stat-arrow">➔</div>
+            <div class="stat-col highlighted">
+              <span class="stat-label">Compressed Size</span>
+              <span class="stat-value green">
+                @if (isProcessing()) {
+                  <span>Calculating...</span>
+                } @else {
+                  <span>{{ formatBytes(result()!.compressedSize) }}</span>
+                }
+              </span>
+              @if (result()!.reductionPercent > 0) {
+                <span class="savings-badge">Saved {{ result()!.reductionPercent }}%</span>
+              }
+            </div>
+          </div>
+
+          <!-- Image Preview -->
+          <div class="image-preview-wrapper">
+            <img [src]="result()!.compressedUrl || result()!.originalUrl" alt="Compressed Preview" class="preview-img">
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="actions-row">
+            <button type="button" class="btn-download" (click)="downloadCompressed()" [disabled]="isProcessing() || !result()!.compressedBlob">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Download Compressed Image</span>
+            </button>
+            <button type="button" class="btn-secondary" (click)="reset()">Upload New</button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Mid-Page Content Ad Slot -->
+  <app-ad-banner slot="midContent"></app-ad-banner>
+
+  <!-- Educational & SEO Content (Guarantees High AdSense Value) -->
+  <div class="seo-guide">
+    <h2>Why Compress Images with JSNS Works?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>100% In-Browser Privacy</h3>
+        <p>Your photos never leave your device. All compression runs via HTML5 Canvas in your local browser.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Instant & Zero Upload Lag</h3>
+        <p>Because there is no server upload or download wait, compression is instant—even on slow mobile connections.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3>Target Sizing for Portals</h3>
+        <p>Easily reduce image sizes to under 100KB, 200KB, or 500KB required by exam portals, job boards, and visa forms.</p>
+      </div>
+    </div>
+
+    <!-- FAQ Accordion -->
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h3>How do I reduce my photo size to under 100 KB?</h3>
+        <p>Upload your photo, set the quality slider to 60% or select "Max 1280px" dimension. Check the compressed size readout; once it drops below 100 KB, click Download.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Which format is best: JPEG, PNG, or WebP?</h3>
+        <p><strong>WebP</strong> provides the highest compression efficiency. <strong>JPEG</strong> is universally compatible with every portal. <strong>PNG</strong> is best if your image has sharp text or transparent backgrounds.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Is this image compressor free?</h3>
+        <p>Yes, completely free with no daily limits or watermarks.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Ad Banner -->
+  <app-ad-banner slot="bottomBanner"></app-ad-banner>
+</div>

@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdsService } from '../../../services/ads.service';
+import { AdProviderType } from '../../../config/ads.config';
 import { AdFormat } from '../../../models/conversion.model';
 
 @Component({
@@ -17,13 +18,26 @@ export class AdBannerComponent implements OnInit, AfterViewInit {
   @Input() format: AdFormat = 'horizontal';
   @Input() label: string = 'ADVERTISEMENT';
   @Input() customClass: string = '';
+  @Input() provider?: AdProviderType;
+
+  get activeProvider(): AdProviderType {
+    return this.adsService.getProvider(this.provider);
+  }
 
   get resolvedSlotId(): string {
-    const slots = this.adsService.config().slots as Record<string, string>;
+    const slots = this.adsService.config().slots;
     if (this.slot && slots[this.slot]) {
       return slots[this.slot];
     }
     return this.slot || slots['topBanner'] || '';
+  }
+
+  get sponsorConfig() {
+    return this.adsService.config().sponsor;
+  }
+
+  get carbonConfig() {
+    return this.adsService.config().carbon;
   }
 
   ngOnInit(): void {
@@ -33,10 +47,10 @@ export class AdBannerComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    if (this.adsService.config().enabled) {
+    if (this.adsService.config().enabled && this.activeProvider === 'adsense') {
       setTimeout(() => {
         this.adsService.pushAd();
-      }, 50);
+      }, 80);
     }
   }
 }
