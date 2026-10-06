@@ -1,0 +1,234 @@
+.tool-page-container {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 20px;
+}
+
+.breadcrumb a { color: #2563eb; text-decoration: none; }
+.sep { color: #cbd5e1; }
+.current { color: #0f172a; font-weight: 500; }
+
+.tool-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.tool-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fde68a;
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+.tool-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 10px;
+  letter-spacing: -0.02em;
+}
+
+.tool-subtitle {
+  font-size: 16px;
+  color: #64748b;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.calculator-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.inputs-card h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 20px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.input-num {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  font-size: 18px;
+  font-weight: 700;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  outline: none;
+}
+
+.input-num:focus {
+  border-color: #2563eb;
+}
+
+.tip-chips {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-chip {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #475569;
+}
+
+.btn-chip.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+.slider {
+  width: 100%;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+.people-counter {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.btn-step {
+  background: #f1f5f9;
+  border: none;
+  font-size: 18px;
+  font-weight: 700;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+}
+
+.btn-step:hover {
+  background: #e2e8f0;
+}
+
+.people-count {
+  padding: 0 20px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+/* Results Card */
+.results-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.highlight-box {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.h-lbl {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #1d4ed8;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.h-val {
+  font-size: 36px;
+  font-weight: 900;
+  color: #1d4ed8;
+}
+
+.h-sub {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 4px;
+  display: block;
+}
+
+.summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #475569;
+}
+
+.summary-row.total {
+  border-top: 1px solid #f1f5f9;
+  padding-top: 12px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.summary-row .green { color: #059669; }
+.summary-row .primary { font-size: 20px; color: #2563eb; }
+
+/* SEO Section */
+.seo-guide { margin: 40px 0; }
+.seo-guide h2 { font-size: 22px; font-weight: 800; color: #0f172a; text-align: center; margin-bottom: 24px; }
+.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.feature-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; }
+.feature-card h3 { font-size: 15px; font-weight: 700; color: #1e293b; margin: 0 0 8px; }
+.feature-card p { font-size: 13px; color: #64748b; line-height: 1.5; margin: 0; }
+
+@media (max-width: 768px) {
+  .calculator-grid { grid-template-columns: 1fr; }
+  .features-grid { grid-template-columns: 1fr; }
+}

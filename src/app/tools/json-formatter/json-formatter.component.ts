@@ -27,7 +27,7 @@ export class JsonFormatterComponent {
       const formatted = JSON.stringify(parsed, null, this.indentation());
       this.inputJson.set(formatted);
       this.isError.set(false);
-      this.statusMessage.set('✓ Valid JSON formatted successfully.');
+      this.statusMessage.set('Valid JSON formatted successfully.');
     } catch (err: any) {
       this.isError.set(true);
       this.statusMessage.set(`Syntax Error: ${err.message}`);
@@ -43,7 +43,7 @@ export class JsonFormatterComponent {
       const minified = JSON.stringify(parsed);
       this.inputJson.set(minified);
       this.isError.set(false);
-      this.statusMessage.set('✓ JSON minified into a single line.');
+      this.statusMessage.set('JSON minified into a single line.');
     } catch (err: any) {
       this.isError.set(true);
       this.statusMessage.set(`Syntax Error: ${err.message}`);
@@ -61,7 +61,7 @@ export class JsonFormatterComponent {
     try {
       JSON.parse(raw);
       this.isError.set(false);
-      this.statusMessage.set('✓ JSON is completely valid and well-formed!');
+      this.statusMessage.set('JSON syntax is valid and well-formed.');
     } catch (err: any) {
       this.isError.set(true);
       this.statusMessage.set(`Invalid JSON: ${err.message}`);
@@ -102,7 +102,7 @@ export class JsonFormatterComponent {
       const csvContent = csvRows.join('\n');
       this.downloadBlob(csvContent, 'data.csv', 'text/csv');
       this.isError.set(false);
-      this.statusMessage.set('✓ Successfully converted and downloaded as data.csv');
+      this.statusMessage.set('Converted and downloaded as data.csv.');
     } catch (err: any) {
       this.isError.set(true);
       this.statusMessage.set(`Unable to convert to CSV: ${err.message}`);
@@ -152,7 +152,7 @@ export class JsonFormatterComponent {
         2
       )
     );
-    this.statusMessage.set('✓ Sample JSON loaded (try "Export to CSV")');
+    this.statusMessage.set('Sample JSON dataset loaded.');
     this.isError.set(false);
   }
 }

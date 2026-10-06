@@ -1,0 +1,117 @@
+<div class="tool-page-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span class="current">Universal Unit Converter</span>
+  </nav>
+
+  <!-- Top Ad Banner -->
+  <app-ad-banner slot="topBanner"></app-ad-banner>
+
+  <!-- Tool Hero Header -->
+  <div class="tool-header">
+    <div class="tool-badge">Measurement & Conversion Utility</div>
+    <h1 class="tool-title">Universal Unit Converter</h1>
+    <p class="tool-subtitle">
+      Convert measurements instantly across Length, Weight, Temperature, Area, Digital Storage, and Speed.
+    </p>
+  </div>
+
+  <!-- Category Selection Tabs -->
+  <div class="category-tabs">
+    <button type="button" class="tab-chip" [class.active]="activeCategory() === 'length'" (click)="setCategory('length')">
+      Length
+    </button>
+    <button type="button" class="tab-chip" [class.active]="activeCategory() === 'weight'" (click)="setCategory('weight')">
+      Weight & Mass
+    </button>
+    <button type="button" class="tab-chip" [class.active]="activeCategory() === 'temperature'" (click)="setCategory('temperature')">
+      Temperature
+    </button>
+    <button type="button" class="tab-chip" [class.active]="activeCategory() === 'storage'" (click)="setCategory('storage')">
+      Digital Storage
+    </button>
+    <button type="button" class="tab-chip" [class.active]="activeCategory() === 'area'" (click)="setCategory('area')">
+      Area
+    </button>
+    <button type="button" class="tab-chip" [class.active]="activeCategory() === 'speed'" (click)="setCategory('speed')">
+      Speed
+    </button>
+  </div>
+
+  <!-- Main Conversion Card -->
+  <div class="tool-card">
+    <div class="converter-box">
+      <!-- Left / From Unit -->
+      <div class="unit-box">
+        <label class="unit-label">From</label>
+        <input type="number"
+               [ngModel]="fromValue()"
+               (ngModelChange)="fromValue.set($event)"
+               class="unit-input">
+        <select [(ngModel)]="fromUnit" class="unit-select">
+          @for (u of currentUnitList(); track u.id) {
+            <option [value]="u.id">{{ u.name }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Swap Button -->
+      <div class="swap-col">
+        <button type="button" class="btn-swap" (click)="swapUnits()" title="Swap Units">
+          ⇄
+        </button>
+      </div>
+
+      <!-- Right / To Unit Result -->
+      <div class="unit-box highlighted">
+        <label class="unit-label">To (Converted Result)</label>
+        <div class="unit-result-val">{{ convertedValue() }}</div>
+        <select [(ngModel)]="toUnit" class="unit-select">
+          @for (u of currentUnitList(); track u.id) {
+            <option [value]="u.id">{{ u.name }}</option>
+          }
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mid Content Ad Banner -->
+  <app-ad-banner slot="midContent"></app-ad-banner>
+
+  <!-- Educational SEO Guide -->
+  <div class="seo-guide">
+    <h2>Measurement Systems & Conversion Formulas</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>Metric vs Imperial Units</h3>
+        <p>The metric system is decimal-based (meters, grams, liters), while the imperial system uses traditional British and US customary units (miles, pounds, feet).</p>
+      </div>
+      <div class="feature-card">
+        <h3>Temperature Calculations</h3>
+        <p>Converting between Celsius and Fahrenheit uses the exact formula: <code>°F = (°C × 9/5) + 32</code>. Absolute zero is benchmarked at 0 Kelvin (-273.15°C).</p>
+      </div>
+      <div class="feature-card">
+        <h3>Binary Digital Storage (Base-2)</h3>
+        <p>Unlike decimal metric prefixes where 1 kilo = 1,000, computer data storage operates on powers of two: 1 Kilobyte = 1,024 Bytes, and 1 Megabyte = 1,024 KB.</p>
+      </div>
+    </div>
+
+    <!-- FAQ Accordion -->
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h3>How many feet are in a meter?</h3>
+        <p>1 meter equals approximately 3.28084 feet (or 39.37 inches).</p>
+      </div>
+      <div class="faq-item">
+        <h3>How do I convert pounds (lbs) to kilograms (kg)?</h3>
+        <p>Divide the weight in pounds by 2.20462. For example, 150 lbs is approximately 68.04 kg.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Ad Banner -->
+  <app-ad-banner slot="bottomBanner"></app-ad-banner>
+</div>

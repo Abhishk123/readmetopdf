@@ -1,4 +1,4 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -14,16 +14,20 @@ import { AdBannerComponent } from '../ads/ad-banner/ad-banner';
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
+  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
+
   public tools = signal<ToolItem[]>(TOOLS_CONFIG);
   public searchQuery = signal<string>('');
   public selectedCategory = signal<ToolCategory>('all');
 
   public readonly categories: { label: string; value: ToolCategory }[] = [
     { label: 'All Tools', value: 'all' },
+    { label: 'Finance & Loans', value: 'finance' },
+    { label: 'Media & Graphics', value: 'media' },
     { label: 'Documents & PDF', value: 'documents' },
-    { label: 'Media & Files', value: 'media' },
-    { label: 'Student Utilities', value: 'student' },
-    { label: 'Developer Tools', value: 'developer' }
+    { label: 'Converters & Math', value: 'utilities' },
+    { label: 'Developer', value: 'developer' },
+    { label: 'Writing & Student', value: 'student' }
   ];
 
   public filteredTools = computed(() => {
@@ -43,6 +47,15 @@ export class HomeComponent {
       return titleMatch || descMatch || kwMatch;
     });
   });
+
+  // Hotkey listener: Press '/' or 'Ctrl+K' to focus search
+  @HostListener('window:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent): void {
+    if ((event.key === '/' || (event.ctrlKey && event.key === 'k')) && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+      event.preventDefault();
+      this.searchInput?.nativeElement.focus();
+    }
+  }
 
   public setCategory(cat: ToolCategory): void {
     this.selectedCategory.set(cat);

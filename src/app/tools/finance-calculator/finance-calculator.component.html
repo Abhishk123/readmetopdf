@@ -1,0 +1,369 @@
+<div class="tool-page-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span class="current">Financial & Investment Calculators</span>
+  </nav>
+
+  <!-- Top Ad Banner -->
+  <app-ad-banner slot="topBanner"></app-ad-banner>
+
+  <!-- Tool Hero Header -->
+  <div class="tool-header">
+    <div class="tool-badge">Financial Planning Suite</div>
+    <h1 class="tool-title">Loan EMI, FD, RD & Investment Calculators</h1>
+    <p class="tool-subtitle">
+      Plan your finances with accurate calculators for Home/Car Loan EMI, Fixed Deposits (FD), Recurring Deposits (RD), and Public Provident Fund (PPF).
+    </p>
+  </div>
+
+  <!-- Finance Category Tabs -->
+  <div class="finance-tabs">
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'emi'" (click)="setTab('emi')">
+      <span>Loan & EMI</span>
+    </button>
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'fd'" (click)="setTab('fd')">
+      <span>Fixed Deposit (FD)</span>
+    </button>
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'rd'" (click)="setTab('rd')">
+      <span>Recurring Deposit (RD)</span>
+    </button>
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'ppf'" (click)="setTab('ppf')">
+      <span>PPF Scheme</span>
+    </button>
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'interest'" (click)="setTab('interest')">
+      <span>Simple vs Compound</span>
+    </button>
+  </div>
+
+  <!-- TAB 1: LOAN / EMI CALCULATOR -->
+  @if (activeTab() === 'emi') {
+    <div class="calculator-layout">
+      <!-- Inputs Column -->
+      <div class="card inputs-card">
+        <h3>Loan Details</h3>
+
+        <div class="input-field">
+          <div class="field-label">
+            <span>Loan Amount</span>
+            <strong>₹ {{ formatCurrency(loanAmount()) }}</strong>
+          </div>
+          <input type="range" min="10000" max="10000000" step="10000"
+                 [ngModel]="loanAmount()" (ngModelChange)="loanAmount.set($event)" class="slider">
+        </div>
+
+        <div class="input-field">
+          <div class="field-label">
+            <span>Interest Rate (p.a)</span>
+            <strong>{{ loanInterestRate() }}%</strong>
+          </div>
+          <input type="range" min="1" max="25" step="0.1"
+                 [ngModel]="loanInterestRate()" (ngModelChange)="loanInterestRate.set($event)" class="slider">
+        </div>
+
+        <div class="input-field">
+          <div class="field-label">
+            <span>Tenure (Years)</span>
+            <strong>{{ loanTenureYears() }} Years ({{ loanTenureYears() * 12 }} Months)</strong>
+          </div>
+          <input type="range" min="1" max="30" step="1"
+                 [ngModel]="loanTenureYears()" (ngModelChange)="loanTenureYears.set($event)" class="slider">
+        </div>
+      </div>
+
+      <!-- Results Column -->
+      <div class="card results-card">
+        <div class="highlight-result">
+          <span class="res-label">Monthly EMI</span>
+          <div class="res-amount primary">₹ {{ formatCurrency(emiResults().monthlyEmi) }}</div>
+        </div>
+
+        <div class="breakdown-list">
+          <div class="breakdown-row">
+            <span>Principal Loan Amount:</span>
+            <strong>₹ {{ formatCurrency(loanAmount()) }}</strong>
+          </div>
+          <div class="breakdown-row">
+            <span>Total Interest Payable:</span>
+            <strong class="orange">₹ {{ formatCurrency(emiResults().totalInterest) }}</strong>
+          </div>
+          <div class="breakdown-row total">
+            <span>Total Payment:</span>
+            <strong>₹ {{ formatCurrency(emiResults().totalPayment) }}</strong>
+          </div>
+        </div>
+
+        <!-- Visual Ratio Bar -->
+        <div class="ratio-bar-wrapper">
+          <div class="ratio-labels">
+            <span class="lbl-p">Principal: {{ emiResults().principalPercent }}%</span>
+            <span class="lbl-i">Interest: {{ emiResults().interestPercent }}%</span>
+          </div>
+          <div class="ratio-bar">
+            <div class="bar-principal" [style.width.%]="emiResults().principalPercent"></div>
+            <div class="bar-interest" [style.width.%]="emiResults().interestPercent"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- TAB 2: FIXED DEPOSIT (FD) CALCULATOR -->
+  @if (activeTab() === 'fd') {
+    <div class="calculator-layout">
+      <div class="card inputs-card">
+        <h3>Fixed Deposit Setup</h3>
+
+        <div class="input-field">
+          <div class="field-label">
+            <span>Deposit Amount</span>
+            <strong>₹ {{ formatCurrency(fdDeposit()) }}</strong>
+          </div>
+          <input type="range" min="5000" max="5000000" step="5000"
+                 [ngModel]="fdDeposit()" (ngModelChange)="fdDeposit.set($event)" class="slider">
+        </div>
+
+        <div class="input-field">
+          <div class="field-label">
+            <span>Interest Rate (% p.a)</span>
+            <strong>{{ fdRate() }}%</strong>
+          </div>
+          <input type="range" min="2" max="15" step="0.1"
+                 [ngModel]="fdRate()" (ngModelChange)="fdRate.set($event)" class="slider">
+        </div>
+
+        <div class="input-field">
+          <div class="field-label">
+            <span>Tenure (Years)</span>
+            <strong>{{ fdYears() }} Years</strong>
+          </div>
+          <input type="range" min="1" max="10" step="1"
+                 [ngModel]="fdYears()" (ngModelChange)="fdYears.set($event)" class="slider">
+        </div>
+      </div>
+
+      <div class="card results-card">
+        <div class="highlight-result">
+          <span class="res-label">Maturity Value</span>
+          <div class="res-amount green">₹ {{ formatCurrency(fdResults().maturityValue) }}</div>
+        </div>
+
+        <div class="breakdown-list">
+          <div class="breakdown-row">
+            <span>Invested Amount:</span>
+            <strong>₹ {{ formatCurrency(fdDeposit()) }}</strong>
+          </div>
+          <div class="breakdown-row">
+            <span>Total Interest Earned:</span>
+            <strong class="green">₹ {{ formatCurrency(fdResults().totalInterest) }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- TAB 3: RECURRING DEPOSIT (RD) CALCULATOR -->
+  @if (activeTab() === 'rd') {
+    <div class="calculator-layout">
+      <div class="card inputs-card">
+        <h3>Recurring Deposit Setup</h3>
+
+        <div class="input-field">
+          <div class="field-label">
+            <span>Monthly Deposit</span>
+            <strong>₹ {{ formatCurrency(rdMonthly()) }}</strong>
+          </div>
+          <input type="range" min="500" max="100000" step="500"
+                 [ngModel]="rdMonthly()" (ngModelChange)="rdMonthly.set($event)" class="slider">
+        </div>
+
+        <div class="input-field">
+          <div class="field-label">
+            <span>Interest Rate (% p.a)</span>
+            <strong>{{ rdRate() }}%</strong>
+          </div>
+          <input type="range" min="2" max="15" step="0.1"
+                 [ngModel]="rdRate()" (ngModelChange)="rdRate.set($event)" class="slider">
+        </div>
+
+        <div class="input-field">
+          <div class="field-label">
+            <span>Tenure (Months)</span>
+            <strong>{{ rdMonths() }} Months ({{ rdMonths() / 12 | number:'1.1-1' }} Yrs)</strong>
+          </div>
+          <input type="range" min="6" max="120" step="6"
+                 [ngModel]="rdMonths()" (ngModelChange)="rdMonths.set($event)" class="slider">
+        </div>
+      </div>
+
+      <div class="card results-card">
+        <div class="highlight-result">
+          <span class="res-label">Total Maturity Value</span>
+          <div class="res-amount green">₹ {{ formatCurrency(rdResults().maturityValue) }}</div>
+        </div>
+
+        <div class="breakdown-list">
+          <div class="breakdown-row">
+            <span>Total Invested:</span>
+            <strong>₹ {{ formatCurrency(rdResults().totalInvested) }}</strong>
+          </div>
+          <div class="breakdown-row">
+            <span>Interest Return:</span>
+            <strong class="green">₹ {{ formatCurrency(rdResults().totalInterest) }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- TAB 4: PPF (PROVIDENT FUND) CALCULATOR -->
+  @if (activeTab() === 'ppf') {
+    <div class="calculator-layout">
+      <div class="card inputs-card">
+        <h3>PPF Scheme Parameters</h3>
+
+        <div class="input-field">
+          <div class="field-label">
+            <span>Yearly Deposit (Max ₹1.5L)</span>
+            <strong>₹ {{ formatCurrency(ppfYearly()) }}</strong>
+          </div>
+          <input type="range" min="500" max="150000" step="500"
+                 [ngModel]="ppfYearly()" (ngModelChange)="ppfYearly.set($event)" class="slider">
+        </div>
+
+        <div class="input-field">
+          <div class="field-label">
+            <span>Current Interest Rate</span>
+            <strong>{{ ppfRate }}% (Govt. Benchmark)</strong>
+          </div>
+          <p class="field-note">PPF interest is compounded annually and completely tax-exempt (EEE Status).</p>
+        </div>
+
+        <div class="input-field">
+          <div class="field-label">
+            <span>Tenure (Years)</span>
+            <strong>{{ ppfYears() }} Years</strong>
+          </div>
+          <input type="range" min="15" max="30" step="5"
+                 [ngModel]="ppfYears()" (ngModelChange)="ppfYears.set($event)" class="slider">
+        </div>
+      </div>
+
+      <div class="card results-card">
+        <div class="highlight-result">
+          <span class="res-label">Maturity Corpus</span>
+          <div class="res-amount green">₹ {{ formatCurrency(ppfResults().maturityValue) }}</div>
+        </div>
+
+        <div class="breakdown-list">
+          <div class="breakdown-row">
+            <span>Total Investment:</span>
+            <strong>₹ {{ formatCurrency(ppfResults().totalInvested) }}</strong>
+          </div>
+          <div class="breakdown-row">
+            <span>Total Compound Interest:</span>
+            <strong class="green">₹ {{ formatCurrency(ppfResults().totalInterest) }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- TAB 5: SIMPLE VS COMPOUND INTEREST -->
+  @if (activeTab() === 'interest') {
+    <div class="calculator-layout">
+      <div class="card inputs-card">
+        <h3>Principal & Growth Rate</h3>
+
+        <div class="input-field">
+          <div class="field-label">
+            <span>Principal Amount</span>
+            <strong>₹ {{ formatCurrency(interestPrincipal()) }}</strong>
+          </div>
+          <input type="range" min="1000" max="1000000" step="1000"
+                 [ngModel]="interestPrincipal()" (ngModelChange)="interestPrincipal.set($event)" class="slider">
+        </div>
+
+        <div class="input-field">
+          <div class="field-label">
+            <span>Annual Interest Rate</span>
+            <strong>{{ interestRate() }}%</strong>
+          </div>
+          <input type="range" min="1" max="25" step="0.5"
+                 [ngModel]="interestRate()" (ngModelChange)="interestRate.set($event)" class="slider">
+        </div>
+
+        <div class="input-field">
+          <div class="field-label">
+            <span>Time Period (Years)</span>
+            <strong>{{ interestTimeYears() }} Years</strong>
+          </div>
+          <input type="range" min="1" max="20" step="1"
+                 [ngModel]="interestTimeYears()" (ngModelChange)="interestTimeYears.set($event)" class="slider">
+        </div>
+      </div>
+
+      <div class="card results-card">
+        <div class="comparison-row">
+          <div class="comp-box">
+            <span class="comp-label">Simple Interest Total</span>
+            <strong class="comp-val">₹ {{ formatCurrency(interestResults().simpleTotal) }}</strong>
+            <small>Earned: ₹ {{ formatCurrency(interestResults().simpleInterest) }}</small>
+          </div>
+          <div class="comp-box highlighted">
+            <span class="comp-label">Compound Interest Total</span>
+            <strong class="comp-val green">₹ {{ formatCurrency(interestResults().compoundTotal) }}</strong>
+            <small>Earned: ₹ {{ formatCurrency(interestResults().compoundInterest) }}</small>
+          </div>
+        </div>
+
+        <div class="comp-diff-banner">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+            <polyline points="17 6 23 6 23 12"></polyline>
+          </svg>
+          <span>Compounding yield advantage: <strong>₹ {{ formatCurrency(interestResults().compoundDifference) }}</strong></span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Mid Content Ad Banner -->
+  <app-ad-banner slot="midContent"></app-ad-banner>
+
+  <!-- Educational SEO Section -->
+  <div class="seo-guide">
+    <h2>Financial Planning Formulas & Guides</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>How EMI Is Calculated</h3>
+        <p>The standard Equated Monthly Installment (EMI) formula applies reducing balance interest, where early payments cover more interest and later payments pay down principal.</p>
+      </div>
+      <div class="feature-card">
+        <h3>The Power of Compounding</h3>
+        <p>In Fixed Deposits and PPF, interest is earned on both the initial principal and accumulated interest, generating exponential wealth over multi-year horizons.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Tax-Saving with PPF</h3>
+        <p>Public Provident Fund (PPF) deposits qualify for tax deductions under Section 80C, with both interest and maturity payouts 100% tax-free under Indian law.</p>
+      </div>
+    </div>
+
+    <!-- FAQ Accordion -->
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h3>Can I pay extra principal to reduce my loan EMI?</h3>
+        <p>Yes! Making prepayments directly reduces your principal loan balance, which dramatically cuts down total interest paid and shortens loan duration.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How often is FD interest compounded?</h3>
+        <p>Most commercial banks compound Fixed Deposit interest quarterly (every 3 months), giving a slightly higher effective annual return than simple interest.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Ad Banner -->
+  <app-ad-banner slot="bottomBanner"></app-ad-banner>
+</div>

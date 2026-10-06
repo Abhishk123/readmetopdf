@@ -1,0 +1,127 @@
+<div class="tool-page-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span class="current">Age & Date Duration Calculator</span>
+  </nav>
+
+  <!-- Top Ad Banner -->
+  <app-ad-banner slot="topBanner"></app-ad-banner>
+
+  <!-- Tool Hero Header -->
+  <div class="tool-header">
+    <div class="tool-badge">Everyday Utility</div>
+    <h1 class="tool-title">Age & Date Duration Calculator</h1>
+    <p class="tool-subtitle">
+      Calculate your exact age in years, months, days, hours, and minutes, plus days remaining until your next birthday.
+    </p>
+  </div>
+
+  <!-- Calculator Dashboard -->
+  <div class="calculator-grid">
+    <!-- Input Card -->
+    <div class="card inputs-card">
+      <h3>Select Dates</h3>
+
+      <div class="input-group">
+        <label>Date of Birth</label>
+        <input type="date"
+               [ngModel]="birthDate()"
+               (ngModelChange)="birthDate.set($event)"
+               class="date-input">
+      </div>
+
+      <div class="input-group">
+        <label>Age as of Date</label>
+        <input type="date"
+               [ngModel]="targetDate()"
+               (ngModelChange)="targetDate.set($event)"
+               class="date-input">
+      </div>
+    </div>
+
+    <!-- Results Card -->
+    <div class="card results-card">
+      @if (ageResult(); as res) {
+        <div class="main-age-box">
+          <span class="age-label">Exact Age</span>
+          <div class="age-main-text">
+            <span><strong>{{ res.years }}</strong> Years</span>
+            <span><strong>{{ res.months }}</strong> Months</span>
+            <span><strong>{{ res.days }}</strong> Days</span>
+          </div>
+        </div>
+
+        <div class="bday-countdown">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span>Next birthday milestone: <strong>{{ res.daysToNextBday }} days away</strong></span>
+        </div>
+
+        <div class="mini-metrics-grid">
+          <div class="metric-box">
+            <span class="m-val">{{ res.totalMonths | number }}</span>
+            <span class="m-lbl">Total Months</span>
+          </div>
+          <div class="metric-box">
+            <span class="m-val">{{ res.totalWeeks | number }}</span>
+            <span class="m-lbl">Total Weeks</span>
+          </div>
+          <div class="metric-box">
+            <span class="m-val">{{ res.totalDays | number }}</span>
+            <span class="m-lbl">Total Days</span>
+          </div>
+          <div class="metric-box">
+            <span class="m-val">{{ res.totalHours | number }}</span>
+            <span class="m-lbl">Total Hours</span>
+          </div>
+        </div>
+      } @else {
+        <div class="invalid-date-msg">
+          Please select a birth date that occurs on or before the target date.
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Mid Content Ad Banner -->
+  <app-ad-banner slot="midContent"></app-ad-banner>
+
+  <!-- Educational SEO Section -->
+  <div class="seo-guide">
+    <h2>Why Use JSNS Works Age Calculator?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>Government & Exam Portals</h3>
+        <p>Many government exams, visa applications, and competitive tests require age verification as of a specific cutoff date. Quickly confirm eligibility down to the exact day.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Leap Year Accuracy</h3>
+        <p>Our algorithm accounts for varying month lengths (28, 29, 30, and 31 days) and leap years to calculate astronomical precision without approximation rounding.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Milestone Tracking</h3>
+        <p>Track baby milestones in months and weeks, or calculate countdowns for retirement, anniversaries, and major life celebrations.</p>
+      </div>
+    </div>
+
+    <!-- FAQ Accordion -->
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h3>How does leap year affect age calculation?</h3>
+        <p>A leap year has 366 days instead of 365. The calculator dynamically considers whether February 29th falls within your age interval.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Can I calculate age for historical dates?</h3>
+        <p>Yes. You can select any Gregorian calendar date to find the time difference between historical events.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Ad Banner -->
+  <app-ad-banner slot="bottomBanner"></app-ad-banner>
+</div>

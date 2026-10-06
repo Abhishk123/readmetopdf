@@ -31,16 +31,27 @@
     <div class="editor-toolbar">
       <div class="toolbar-actions">
         <button type="button" class="btn-primary" (click)="formatJson()">
-          <span>⚡ Format JSON</span>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+          </svg>
+          <span>Prettify JSON</span>
         </button>
         <button type="button" class="btn-action" (click)="validateJson()">
-          <span>✓ Validate</span>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>Validate</span>
         </button>
         <button type="button" class="btn-action" (click)="minifyJson()">
-          <span>Compact / Minify</span>
+          <span>Minify</span>
         </button>
         <button type="button" class="btn-accent" (click)="convertToCsv()">
-          <span>📊 Export to CSV</span>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+          </svg>
+          <span>Export to CSV</span>
         </button>
       </div>
 
@@ -54,9 +65,16 @@
         <button type="button" class="btn-ghost danger" (click)="clearText()">Clear</button>
         <button type="button" class="btn-copy" (click)="copyJson()">
           @if (copiedMessage()) {
-            <span>✓ Copied!</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Copied</span>
           } @else {
-            <span>📋 Copy</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span>Copy</span>
           }
         </button>
       </div>

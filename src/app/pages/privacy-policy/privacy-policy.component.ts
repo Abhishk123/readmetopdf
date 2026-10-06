@@ -31,10 +31,10 @@ import { AdBannerComponent } from '../../components/ads/ad-banner/ad-banner';
         <section class="section">
           <h2>2. 100% In-Browser & Local Processing</h2>
           <p>
-            Our core utilities—including the <strong>README to PDF Converter</strong>, <strong>Image & File Size Reducer</strong>, <strong>Word Counter</strong>, <strong>GPA Calculator</strong>, and <strong>JSON Formatter</strong>—operate strictly client-side within your browser sandbox.
+            All utilities provided by JSNS Works—including financial calculators (EMI, FD, RD, PPF), document and media processors (PDF merger, image compressor, format converter, favicon generator, color picker), developer tools (JWT decoder, Base64 & URL converters, JSON formatter, README to PDF), and measurement utilities—operate strictly client-side within your browser sandbox.
           </p>
           <p>
-            <strong>Your files, documents, essays, photos, and source code are never uploaded, transmitted, or stored on external servers or databases.</strong> Processing occurs in volatile browser memory and is discarded upon closing or reloading the page.
+            <strong>Your files, documents, financial inputs, images, and source code are never uploaded, transmitted, or stored on external servers or databases.</strong> Computational processing executes directly in volatile browser memory and is discarded upon closing or reloading the session.
           </p>
         </section>
 

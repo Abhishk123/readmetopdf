@@ -1,4 +1,4 @@
-export type ToolCategory = 'all' | 'documents' | 'media' | 'student' | 'developer' | 'utilities';
+export type ToolCategory = 'all' | 'documents' | 'media' | 'student' | 'developer' | 'finance' | 'utilities';
 
 export interface ToolHowToStep {
   name: string;
@@ -17,7 +17,7 @@ export interface ToolItem {
   fullDescription: string;
   category: ToolCategory;
   route: string;
-  icon: string; // SVG path or identifier
+  icon: string;
   badge?: string;
   isPopular?: boolean;
   keywords: string[];

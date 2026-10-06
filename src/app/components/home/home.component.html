@@ -4,31 +4,37 @@
 
   <!-- Hero Section -->
   <section class="hero-section">
-    <div class="hero-badge">⚡ 100% In-Browser • Free • No Logins Needed</div>
-    <h1 class="hero-title">Free Online Tools for Developers, Students & Creators</h1>
+    <div class="hero-chip">
+      <span class="chip-pulse"></span>
+      <span>Local-first architecture</span>
+    </div>
+    <h1 class="hero-title">No uploads. No logins. Just tools.</h1>
     <p class="hero-subtitle">
-      Professional document converters, photo & file compressors, academic calculators, and developer utilities. Private, fast, and entirely client-side.
+      Fast, private web utilities for financial calculations, file conversions, and developer tasks. Everything runs directly inside your browser memory.
     </p>
 
-    <!-- Live Search Bar -->
+    <!-- Search Bar with Keyboard Shortcut -->
     <div class="search-box-wrapper">
       <div class="search-input-box">
-        <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+        <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
-        <input type="text"
-               placeholder="Search tools (e.g. 'image', 'pdf', 'word counter', 'gpa')..."
+        <input #searchInput
+               type="text"
+               placeholder="Search tools by name, formula, or format..."
                [ngModel]="searchQuery()"
                (ngModelChange)="searchQuery.set($event)"
                class="search-input">
         @if (searchQuery()) {
           <button type="button" class="btn-clear-search" (click)="clearSearch()">✕</button>
+        } @else {
+          <kbd class="kbd-shortcut">/</kbd>
         }
       </div>
     </div>
 
-    <!-- Category Pills -->
+    <!-- Category Filter Pills -->
     <div class="category-pills">
       @for (cat of categories; track cat.value) {
         <button type="button"
@@ -44,59 +50,72 @@
   <!-- Tools Catalog Grid -->
   <section class="tools-section">
     <div class="section-header">
-      <h2>Available Tools ({{ filteredTools().length }})</h2>
+      <div class="header-left">
+        <h2>Available Utilities</h2>
+        <span class="count-badge">{{ filteredTools().length }}</span>
+      </div>
       @if (searchQuery()) {
-        <span class="search-indicator">Showing results for "{{ searchQuery() }}"</span>
+        <span class="search-indicator">Filtering by "{{ searchQuery() }}"</span>
       }
     </div>
 
     @if (filteredTools().length === 0) {
       <div class="empty-results">
-        <p>No tools matched your search query.</p>
-        <button type="button" class="btn-reset-filters" (click)="clearSearch(); setCategory('all')">View All Tools</button>
+        <p>No tools matched your search.</p>
+        <button type="button" class="btn-reset-filters" (click)="clearSearch(); setCategory('all')">Show all utilities</button>
       </div>
     } @else {
       <div class="tools-grid">
         @for (tool of filteredTools(); track tool.id) {
           <a [routerLink]="tool.route" class="tool-card-link">
-            <div class="tool-card">
-              <div class="card-top">
-                <div class="tool-icon-box">
-                  <!-- Dynamic SVG Icon Based on Category/Id -->
-                  @if (tool.id === 'readme-to-pdf') {
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+            <div class="tool-card" [attr.data-cat]="tool.category">
+              <div class="card-header">
+                <div class="tool-icon-box" [ngClass]="'icon-' + tool.category">
+                  @if (tool.id === 'finance-calculator') {
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="12" y1="1" x2="12" y2="23"></line>
+                      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                  } @else if (tool.id === 'pdf-merger' || tool.id === 'readme-to-pdf') {
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                       <polyline points="14 2 14 8 20 8"></polyline>
-                      <line x1="16" y1="13" x2="8" y2="13"></line>
-                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                      <line x1="12" y1="18" x2="12" y2="12"></line>
                     </svg>
-                  } @else if (tool.id === 'image-compressor') {
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                  } @else if (tool.id === 'image-compressor' || tool.id === 'image-converter') {
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
                       <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                       <circle cx="8.5" cy="8.5" r="1.5"></circle>
                       <polyline points="21 15 16 10 5 21"></polyline>
                     </svg>
-                  } @else if (tool.id === 'word-counter') {
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-                      <polyline points="4 7 4 4 20 4 20 7"></polyline>
-                      <line x1="9" y1="20" x2="15" y2="20"></line>
-                      <line x1="12" y1="4" x2="12" y2="20"></line>
-                    </svg>
-                  } @else if (tool.id === 'gpa-calculator') {
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-                      <circle cx="12" cy="8" r="7"></circle>
-                      <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-                    </svg>
-                  } @else {
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                  } @else if (tool.id === 'base64-tool' || tool.id === 'json-formatter') {
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="16 18 22 12 16 6"></polyline>
                       <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                  } @else if (tool.id === 'color-picker') {
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="m15 11-1 1-5.5-5.5a1.5 1.5 0 0 1 0-2.12l.88-.88a1.5 1.5 0 0 1 2.12 0L15 7.5"></path>
+                      <path d="M19 15v4a2 2 0 0 1-2 2H7"></path>
+                    </svg>
+                  } @else if (tool.id === 'unit-converter') {
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M4 14h6v6"></path>
+                      <path d="M20 10h-6V4"></path>
+                      <path d="m14 10 7-7"></path>
+                      <path d="m3 21 7-7"></path>
+                    </svg>
+                  } @else {
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                      <line x1="9" y1="9" x2="15" y2="15"></line>
+                      <line x1="15" y1="9" x2="9" y2="15"></line>
                     </svg>
                   }
                 </div>
 
                 @if (tool.badge) {
-                  <span class="badge" [class.popular]="tool.isPopular">{{ tool.badge }}</span>
+                  <span class="tag-chip">{{ tool.badge }}</span>
                 }
               </div>
 
@@ -104,7 +123,13 @@
               <p class="card-desc">{{ tool.shortDescription }}</p>
 
               <div class="card-footer">
-                <span class="btn-launch">Open Tool ➔</span>
+                <span class="action-link">
+                  <span>Open utility</span>
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" class="arrow-icon">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </span>
               </div>
             </div>
           </a>
@@ -116,32 +141,30 @@
   <!-- Mid-Page Content Ad Slot -->
   <app-ad-banner slot="midContent"></app-ad-banner>
 
-  <!-- Trust & Value Proposition Section (Crucial for AdSense Quality Review) -->
-  <section class="trust-section">
-    <h2>Why Choose JSNS Works?</h2>
-    <div class="trust-grid">
-      <div class="trust-card">
-        <div class="trust-icon">🔒</div>
-        <h3>100% Client-Side Privacy</h3>
-        <p>Your documents, photos, essays, and code are processed entirely inside your local browser. No files are ever uploaded or saved on external servers.</p>
+  <!-- Technical Transparency Section (Builds Genuine Authority) -->
+  <section class="tech-section">
+    <div class="tech-header">
+      <h2>Engineered for privacy and zero latency</h2>
+      <p>How JSNS Works operates under the hood</p>
+    </div>
+
+    <div class="tech-grid">
+      <div class="tech-card">
+        <div class="tech-badge">01</div>
+        <h3>In-Memory Execution</h3>
+        <p>File compression, PDF assembly, and string parsing run exclusively within your local browser sandbox via modern WebAssembly and HTML5 Canvas.</p>
       </div>
 
-      <div class="trust-card">
-        <div class="trust-icon">⚡</div>
-        <h3>Blazing Fast & Zero Latency</h3>
-        <p>Because processing runs locally with modern Web APIs, conversions and calculations happen instantaneously without waiting for slow server queues.</p>
+      <div class="tech-card">
+        <div class="tech-badge">02</div>
+        <h3>Zero Cloud Ingestion</h3>
+        <p>No backend servers store or log your documents, photos, or authentication tokens. Your proprietary information never leaves your device RAM.</p>
       </div>
 
-      <div class="trust-card">
-        <div class="trust-icon">💸</div>
-        <h3>Completely Free Forever</h3>
-        <p>No paywalls, subscriptions, or credit card requirements. All tools are open and accessible to students, freelancers, and developers worldwide.</p>
-      </div>
-
-      <div class="trust-card">
-        <div class="trust-icon">📱</div>
-        <h3>Mobile & Desktop Friendly</h3>
-        <p>Optimized for seamless performance on smartphones, tablets, laptops, and desktop computers alike.</p>
+      <div class="tech-card">
+        <div class="tech-badge">03</div>
+        <h3>No Authentication Walls</h3>
+        <p>No accounts, passwords, or rate limits. Immediate access to every calculator and file tool without marketing gatekeeping.</p>
       </div>
     </div>
   </section>

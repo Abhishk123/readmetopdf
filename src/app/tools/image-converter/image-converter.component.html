@@ -1,0 +1,129 @@
+<div class="tool-page-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span class="current">Image Format Converter</span>
+  </nav>
+
+  <!-- Top Ad Banner -->
+  <app-ad-banner slot="topBanner"></app-ad-banner>
+
+  <!-- Tool Hero Header -->
+  <div class="tool-header">
+    <div class="tool-badge">100% In-Browser & Private</div>
+    <h1 class="tool-title">Image Format Converter (PNG ⇄ JPG ⇄ WebP)</h1>
+    <p class="tool-subtitle">
+      Convert any image instantly between PNG, JPEG, and WebP formats without uploading private files to external servers.
+    </p>
+  </div>
+
+  <div class="tool-card">
+    @if (errorMessage()) {
+      <div class="alert-error">{{ errorMessage() }}</div>
+    }
+
+    @if (!originalFile()) {
+      <div class="upload-zone">
+        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+          <polyline points="21 15 16 10 5 21"></polyline>
+        </svg>
+        <h3>Choose an image to convert</h3>
+        <p>Supports PNG, JPG, JPEG, and WebP</p>
+        <label class="btn-browse">
+          <span>Select Image File</span>
+          <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden>
+        </label>
+      </div>
+    } @else {
+      <div class="conversion-workspace">
+        <div class="controls-col">
+          <h3>Target Format</h3>
+          <div class="format-chips">
+            <button type="button" class="btn-chip"
+                    [class.active]="targetFormat() === 'image/webp'"
+                    (click)="targetFormat.set('image/webp'); convertImage()">
+              WebP (Modern & Compact)
+            </button>
+            <button type="button" class="btn-chip"
+                    [class.active]="targetFormat() === 'image/jpeg'"
+                    (click)="targetFormat.set('image/jpeg'); convertImage()">
+              JPEG (Universal)
+            </button>
+            <button type="button" class="btn-chip"
+                    [class.active]="targetFormat() === 'image/png'"
+                    (click)="targetFormat.set('image/png'); convertImage()">
+              PNG (Lossless Quality)
+            </button>
+          </div>
+
+          @if (targetFormat() !== 'image/png') {
+            <div class="quality-control">
+              <label>Quality: <strong>{{ quality() }}%</strong></label>
+              <input type="range" min="10" max="100" step="5"
+                     [ngModel]="quality()" (ngModelChange)="quality.set($event); convertImage()" class="slider">
+            </div>
+          }
+
+          <div class="file-summary">
+            <div class="summary-item">
+              <span class="lbl">Original:</span>
+              <span>{{ formatBytes(originalFile()!.size) }} ({{ originalFile()!.type.split('/')[1].toUpperCase() }})</span>
+            </div>
+            @if (convertedBlob()) {
+              <div class="summary-item">
+                <span class="lbl">Converted:</span>
+                <strong class="green">{{ formatBytes(convertedBlob()!.size) }} ({{ targetFormat().split('/')[1].toUpperCase() }})</strong>
+              </div>
+            }
+          </div>
+
+          <div class="actions-row">
+            <button type="button" class="btn-download" (click)="downloadConverted()" [disabled]="!convertedUrl() || isProcessing()">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>{{ isProcessing() ? 'Converting...' : 'Download Converted Image' }}</span>
+            </button>
+            <button type="button" class="btn-reset" (click)="reset()">Upload Another</button>
+          </div>
+        </div>
+
+        <div class="preview-col">
+          <div class="preview-box">
+            <img [src]="convertedUrl() || originalPreview()" alt="Preview" class="preview-img">
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Mid Content Ad Banner -->
+  <app-ad-banner slot="midContent"></app-ad-banner>
+
+  <!-- Educational SEO Section -->
+  <div class="seo-guide">
+    <h2>Choosing the Best Image Format</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>WebP: The Modern Web Standard</h3>
+        <p>Developed by Google, WebP provides 25%–35% smaller file sizes than comparable JPEGs and PNGs while retaining crisp visual quality and transparency support.</p>
+      </div>
+      <div class="feature-card">
+        <h3>JPEG: Maximum Compatibility</h3>
+        <p>Best for standard photography, government portals, school admissions, and passport forms that reject newer formats.</p>
+      </div>
+      <div class="feature-card">
+        <h3>PNG: Lossless Transparency</h3>
+        <p>Ideal for logos, charts, illustrations, and user interface screenshots where pixel-perfect edges and transparent backgrounds are vital.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Ad Banner -->
+  <app-ad-banner slot="bottomBanner"></app-ad-banner>
+</div>

@@ -1,0 +1,103 @@
+<div class="tool-page-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span class="current">Tip & Bill Splitter</span>
+  </nav>
+
+  <!-- Top Ad Banner -->
+  <app-ad-banner slot="topBanner"></app-ad-banner>
+
+  <!-- Tool Hero Header -->
+  <div class="tool-header">
+    <div class="tool-badge">Everyday Dining Utility</div>
+    <h1 class="tool-title">Tip & Bill Splitter</h1>
+    <p class="tool-subtitle">
+      Calculate tip amounts and split restaurant or party bills evenly between friends with customizable tip percentages.
+    </p>
+  </div>
+
+  <div class="calculator-grid">
+    <!-- Left Card: Inputs -->
+    <div class="card inputs-card">
+      <h3>Bill Details</h3>
+
+      <div class="input-group">
+        <label>Total Bill Amount ($ / ₹)</label>
+        <input type="number" min="0" [(ngModel)]="billAmount" class="input-num">
+      </div>
+
+      <div class="input-group">
+        <label>Tip Percentage: {{ tipPercent() }}%</label>
+        <div class="tip-chips">
+          @for (p of presets; track p) {
+            <button type="button" class="btn-chip" [class.active]="tipPercent() === p" (click)="setTipPreset(p)">
+              {{ p }}%
+            </button>
+          }
+        </div>
+        <input type="range" min="0" max="40" step="1"
+               [ngModel]="tipPercent()" (ngModelChange)="tipPercent.set($event)" class="slider">
+      </div>
+
+      <div class="input-group">
+        <label>Number of People</label>
+        <div class="people-counter">
+          <button type="button" class="btn-step" (click)="decrementPeople()">−</button>
+          <span class="people-count">{{ peopleCount() }}</span>
+          <button type="button" class="btn-step" (click)="incrementPeople()">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Card: Results -->
+    <div class="card results-card">
+      <div class="highlight-box">
+        <span class="h-lbl">Total Per Person</span>
+        <div class="h-val">₹ / $ {{ results().totalPerPerson }}</div>
+        <span class="h-sub">Tip per person: {{ results().tipPerPerson }}</span>
+      </div>
+
+      <div class="summary-list">
+        <div class="summary-row">
+          <span>Total Bill (Before Tip):</span>
+          <strong>{{ billAmount() }}</strong>
+        </div>
+        <div class="summary-row">
+          <span>Total Tip ({{ tipPercent() }}%):</span>
+          <strong class="green">+ {{ results().totalTip }}</strong>
+        </div>
+        <div class="summary-row total">
+          <span>Grand Total:</span>
+          <strong class="primary">{{ results().totalBill }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mid Content Ad Banner -->
+  <app-ad-banner slot="midContent"></app-ad-banner>
+
+  <!-- Educational SEO Section -->
+  <div class="seo-guide">
+    <h2>Tipping Etiquette & Common Practices</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>Standard Tipping Norms</h3>
+        <p>In the United States and Canada, 15% to 20% is standard for sit-down dining. In many other countries, service charges are already included or tipping is optional.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Even Bill Splitting</h3>
+        <p>Splitting evenly eliminates awkward group calculations when dining with friends, family, or colleagues.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Pre-Tax vs Post-Tax Tipping</h3>
+        <p>Tradition dictates calculating tips on the subtotal before taxes, though calculating on the final total is common practice.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Ad Banner -->
+  <app-ad-banner slot="bottomBanner"></app-ad-banner>
+</div>

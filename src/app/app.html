@@ -4,13 +4,16 @@
     <div class="nav-content">
       <a routerLink="/" class="brand-logo" (click)="closeMobileMenu()">
         <div class="logo-mark">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5">
-            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+            <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
           </svg>
         </div>
         <div class="brand-text">
           <span class="brand-name">JSNS Works</span>
-          <span class="brand-badge">Free Tools Hub</span>
+          <span class="brand-badge">Local-first utilities</span>
         </div>
       </a>
 
@@ -20,7 +23,7 @@
         <div class="dropdown-wrapper">
           <button type="button" class="nav-link dropdown-toggle" (click)="toggleToolsDropdown($event)">
             <span>Tools</span>
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
           </button>
@@ -29,8 +32,8 @@
             <div class="dropdown-menu">
               @for (tool of toolsList(); track tool.id) {
                 <a [routerLink]="tool.route" class="dropdown-item" (click)="closeToolsDropdown()">
-                  <strong>{{ tool.title }}</strong>
-                  <small>{{ tool.shortDescription }}</small>
+                  <span class="item-title">{{ tool.title }}</span>
+                  <span class="item-desc">{{ tool.shortDescription }}</span>
                 </a>
               }
             </div>
@@ -39,13 +42,13 @@
 
         <a routerLink="/" class="nav-link">Home</a>
         <a routerLink="/about" class="nav-link">About</a>
-        <a routerLink="/contact" class="nav-link">Contact</a>
+        <a routerLink="/contact" class="nav-link">Support</a>
         <a routerLink="/privacy-policy" class="nav-link">Privacy</a>
       </nav>
 
       <!-- Mobile Hamburger Button -->
       <button type="button" class="btn-hamburger" (click)="toggleMobileMenu()" aria-label="Toggle navigation">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
           @if (!mobileMenuOpen()) {
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -61,7 +64,7 @@
     <!-- Mobile Drawer Navigation -->
     @if (mobileMenuOpen()) {
       <div class="mobile-drawer">
-        <div class="drawer-section-title">Tools</div>
+        <div class="drawer-section-title">All Tools</div>
         <div class="drawer-tools">
           @for (tool of toolsList(); track tool.id) {
             <a [routerLink]="tool.route" class="drawer-item" (click)="closeMobileMenu()">
@@ -72,8 +75,8 @@
         <hr class="drawer-sep">
         <div class="drawer-links">
           <a routerLink="/" class="drawer-item" (click)="closeMobileMenu()">Home</a>
-          <a routerLink="/about" class="drawer-item" (click)="closeMobileMenu()">About Us</a>
-          <a routerLink="/contact" class="drawer-item" (click)="closeMobileMenu()">Contact & Support</a>
+          <a routerLink="/about" class="drawer-item" (click)="closeMobileMenu()">About JSNS Works</a>
+          <a routerLink="/contact" class="drawer-item" (click)="closeMobileMenu()">Support & Contact</a>
           <a routerLink="/privacy-policy" class="drawer-item" (click)="closeMobileMenu()">Privacy Policy</a>
           <a routerLink="/terms" class="drawer-item" (click)="closeMobileMenu()">Terms of Service</a>
         </div>
@@ -86,47 +89,61 @@
     <router-outlet></router-outlet>
   </main>
 
-  <!-- Global Footer -->
+  <!-- Clean, Authentic Product Footer -->
   <footer class="site-footer">
     <div class="footer-content">
-      <!-- Col 1: Brand -->
+      <!-- Col 1: Brand & Philosophy -->
       <div class="footer-col brand-col">
         <div class="footer-brand-title">
-          <span class="logo-circle">⚡</span>
+          <span class="logo-circle">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
+              <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+              <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+              <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+              <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+            </svg>
+          </span>
           <span>JSNS Works</span>
         </div>
         <p class="footer-copy">
-          Free, in-browser online tools for developers, students, and digital creators. Built for 100% privacy with zero server uploads.
+          A collection of private, client-side web tools built for developers, students, and creators. All calculations and file conversions execute entirely in your browser memory. No cloud uploads. No account required.
         </p>
-        <span class="privacy-pill">🔒 100% Local In-Browser Processing</span>
+        <div class="status-indicator">
+          <span class="live-pulse"></span>
+          <span>100% In-Browser Execution • Zero Server Ingestion</span>
+        </div>
       </div>
 
-      <!-- Col 2: Quick Tools -->
+      <!-- Col 2: Tools Directory -->
       <div class="footer-col">
-        <h4>Popular Tools</h4>
+        <h4>Directory</h4>
         <ul class="footer-nav">
-          @for (tool of toolsList(); track tool.id) {
-            <li>
-              <a [routerLink]="tool.route">{{ tool.title }}</a>
-            </li>
-          }
+          <li><a routerLink="/tools/finance-calculator">Loan EMI & FD Calculator</a></li>
+          <li><a routerLink="/tools/pdf-merger">PDF Merger & Combiner</a></li>
+          <li><a routerLink="/tools/image-compressor">Image Size Reducer</a></li>
+          <li><a routerLink="/tools/base64-tool">JWT Decoder & Base64</a></li>
+          <li><a routerLink="/tools/unit-converter">Universal Unit Converter</a></li>
+          <li><a routerLink="/tools/readme-to-pdf">README to PDF Converter</a></li>
         </ul>
       </div>
 
       <!-- Col 3: Company & Trust -->
       <div class="footer-col">
-        <h4>Company & Legal</h4>
+        <h4>About & Policies</h4>
         <ul class="footer-nav">
-          <li><a routerLink="/about">About Us</a></li>
-          <li><a routerLink="/contact">Contact & Support</a></li>
-          <li><a routerLink="/privacy-policy">Privacy Policy</a></li>
+          <li><a routerLink="/about">About JSNS Works</a></li>
+          <li><a routerLink="/contact">Contact Support</a></li>
+          <li><a routerLink="/privacy-policy">Privacy & Cookies</a></li>
           <li><a routerLink="/terms">Terms of Service</a></li>
         </ul>
       </div>
     </div>
 
     <div class="footer-bottom">
-      <p>© 2026 <strong>jsnsworks</strong>. All rights reserved.</p>
+      <div class="footer-bottom-content">
+        <span>© 2026 JSNS Works. All rights reserved.</span>
+        <span>Built with Angular & modern Web APIs.</span>
+      </div>
     </div>
   </footer>
 </div>

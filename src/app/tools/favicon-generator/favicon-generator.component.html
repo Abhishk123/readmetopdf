@@ -1,0 +1,94 @@
+<div class="tool-page-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span class="current">SVG to Favicon & Multi-Res Icon Generator</span>
+  </nav>
+
+  <!-- Top Ad Banner -->
+  <app-ad-banner slot="topBanner"></app-ad-banner>
+
+  <!-- Tool Hero Header -->
+  <div class="tool-header">
+    <div class="tool-badge">Web Developer & Design Utility</div>
+    <h1 class="tool-title">Favicon & Multi-Resolution Icon Generator</h1>
+    <p class="tool-subtitle">
+      Convert SVG, PNG, or JPG images into publication-ready favicon icons (16x16, 32x32, 48x48, 180x180) for websites and mobile apps.
+    </p>
+  </div>
+
+  <div class="tool-card">
+    @if (!sourceFile()) {
+      <div class="upload-zone">
+        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <h3>Upload SVG or Square Image</h3>
+        <p>Best results with transparent SVGs or 512×512 PNGs</p>
+        <label class="btn-browse">
+          <span>Choose Image File</span>
+          <input type="file" accept="image/svg+xml,image/png,image/jpeg" (change)="onFileSelected($event)" hidden>
+        </label>
+      </div>
+    } @else {
+      <div class="results-layout">
+        <div class="source-col">
+          <h3>Original Upload</h3>
+          <div class="preview-box">
+            <img [src]="originalPreview()" alt="Source" class="orig-img">
+          </div>
+          <button type="button" class="btn-reset" (click)="reset()">Choose Another Image</button>
+        </div>
+
+        <div class="sizes-col">
+          <h3>Generated Icon Resolutions</h3>
+          <div class="sizes-grid">
+            @for (opt of sizes(); track opt.size) {
+              <div class="size-card">
+                <div class="icon-holder">
+                  @if (opt.dataUrl) {
+                    <img [src]="opt.dataUrl" [alt]="opt.label" class="rendered-icon">
+                  }
+                </div>
+                <div class="size-meta">
+                  <strong>{{ opt.label }}</strong>
+                </div>
+                <button type="button" class="btn-dl-size" (click)="downloadIcon(opt)" [disabled]="!opt.dataUrl">
+                  Download PNG
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Mid Content Ad Banner -->
+  <app-ad-banner slot="midContent"></app-ad-banner>
+
+  <!-- Educational SEO Section -->
+  <div class="seo-guide">
+    <h2>Favicon Implementation Guidelines</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>Standard 32×32 and 16×16</h3>
+        <p>Modern browsers display the 32×32 favicon in browser tabs and bookmark lists, scaling down to 16×16 for compact taskbar shortcuts.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Apple Touch Icon (180×180)</h3>
+        <p>iOS and Safari require a 180×180 high-resolution icon when users save web applications or bookmarks to their iPhone or iPad home screens.</p>
+      </div>
+      <div class="feature-card">
+        <h3>HTML Link Code</h3>
+        <p>Include <code>&lt;link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"&gt;</code> in your website header for seamless cross-browser branding.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Ad Banner -->
+  <app-ad-banner slot="bottomBanner"></app-ad-banner>
+</div>

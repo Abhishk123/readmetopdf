@@ -61,7 +61,9 @@
               "canvg",
               "core-js",
               "raf",
-              "rgbcolor"
+              "rgbcolor",
+              "pako",
+              "pdf-lib"
             ]
           },
           "configurations": {

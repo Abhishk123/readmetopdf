@@ -1,0 +1,114 @@
+<div class="tool-page-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span class="current">Percentage & Discount Calculator</span>
+  </nav>
+
+  <!-- Top Ad Banner -->
+  <app-ad-banner slot="topBanner"></app-ad-banner>
+
+  <!-- Tool Hero Header -->
+  <div class="tool-header">
+    <div class="tool-badge">Everyday Math Tool</div>
+    <h1 class="tool-title">Percentage & Discount Calculator</h1>
+    <p class="tool-subtitle">
+      Calculate percentage of any number, percentage increase or decrease, and final sale prices with discounts and taxes.
+    </p>
+  </div>
+
+  <div class="calculators-stack">
+    <!-- Calculator 1: What is X% of Y? -->
+    <div class="tool-card">
+      <h3>1. Percentage of a Value</h3>
+      <div class="calc-row">
+        <span>What is</span>
+        <input type="number" [(ngModel)]="calc1Percent" class="num-input inline" placeholder="15">
+        <span>% of</span>
+        <input type="number" [(ngModel)]="calc1Total" class="num-input inline" placeholder="200">
+        <span>?</span>
+      </div>
+      <div class="answer-box">
+        Result: <strong class="ans-val">{{ res1() }}</strong>
+      </div>
+    </div>
+
+    <!-- Calculator 2: Percentage Change (Increase / Decrease) -->
+    <div class="tool-card">
+      <h3>2. Percentage Increase & Decrease</h3>
+      <div class="calc-row">
+        <span>From</span>
+        <input type="number" [(ngModel)]="calc2From" class="num-input inline" placeholder="50">
+        <span>to</span>
+        <input type="number" [(ngModel)]="calc2To" class="num-input inline" placeholder="75">
+      </div>
+      <div class="answer-box">
+        Result: 
+        <strong class="ans-val" [class.green]="res2().isIncrease" [class.red]="!res2().isIncrease">
+          {{ res2().isIncrease ? '▲ ' : '▼ ' }}{{ res2().percent }}%
+          {{ res2().isIncrease ? 'Increase' : 'Decrease' }}
+        </strong>
+      </div>
+    </div>
+
+    <!-- Calculator 3: Discount & Sales Tax -->
+    <div class="tool-card">
+      <h3>3. Discount & Sale Price</h3>
+      <div class="discount-grid">
+        <div class="field">
+          <label>Original Price ($ / ₹)</label>
+          <input type="number" [(ngModel)]="discountOriginalPrice" class="num-input">
+        </div>
+        <div class="field">
+          <label>Discount (% Off)</label>
+          <input type="number" [(ngModel)]="discountPercent" class="num-input">
+        </div>
+        <div class="field">
+          <label>Sales Tax (%)</label>
+          <input type="number" [(ngModel)]="salesTaxPercent" class="num-input">
+        </div>
+      </div>
+
+      <div class="discount-summary">
+        <div class="sum-box">
+          <span class="lbl">You Save:</span>
+          <strong class="green">{{ res3().savings }}</strong>
+        </div>
+        <div class="sum-box">
+          <span class="lbl">Tax Added:</span>
+          <strong>{{ res3().taxAmount }}</strong>
+        </div>
+        <div class="sum-box total">
+          <span class="lbl">Final Price to Pay:</span>
+          <strong class="primary">{{ res3().finalPrice }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mid Content Ad Banner -->
+  <app-ad-banner slot="midContent"></app-ad-banner>
+
+  <!-- Educational SEO Section -->
+  <div class="seo-guide">
+    <h2>Percentage Formulas & Quick Rules</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>Finding X% of Y</h3>
+        <p>The standard formula is: <code>Result = (X / 100) × Y</code>. For mental math, 10% is found by moving the decimal one place left.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Calculating Percentage Change</h3>
+        <p>Formula: <code>((New Value - Old Value) / |Old Value|) × 100</code>. A positive number indicates growth; negative indicates a decline.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Shopping Discounts</h3>
+        <p>To find the sale price after a 20% discount, simply multiply the original price by 0.80, then add local sales taxes.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Ad Banner -->
+  <app-ad-banner slot="bottomBanner"></app-ad-banner>
+</div>
