@@ -12,11 +12,11 @@ import { AdBannerComponent } from '../../components/ads/ad-banner/ad-banner';
   styleUrl: './tip-calculator.component.css'
 })
 export class TipCalculatorComponent {
-  public billAmount = signal<number>(100);
-  public tipPercent = signal<number>(15);
-  public peopleCount = signal<number>(2);
+  public billAmount = signal<number>(1200);
+  public tipPercent = signal<number>(10);
+  public peopleCount = signal<number>(3);
 
-  public readonly presets = [10, 15, 18, 20, 25];
+  public readonly presets = [5, 10, 12, 15, 20];
 
   public results = computed(() => {
     const bill = Number(this.billAmount()) || 0;

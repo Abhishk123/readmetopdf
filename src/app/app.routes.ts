@@ -4,7 +4,6 @@ import { ConverterHomeComponent } from './components/converter-home/converter-ho
 import { PdfViewerComponent } from './components/pdf-viewer/pdf-viewer';
 import { ImageCompressorComponent } from './tools/image-compressor/image-compressor.component';
 import { WordCounterComponent } from './tools/word-counter/word-counter.component';
-import { GpaCalculatorComponent } from './tools/gpa-calculator/gpa-calculator.component';
 import { JsonFormatterComponent } from './tools/json-formatter/json-formatter.component';
 import { FinanceCalculatorComponent } from './tools/finance-calculator/finance-calculator.component';
 import { PdfMergerComponent } from './tools/pdf-merger/pdf-merger.component';
@@ -93,12 +92,7 @@ export const routes: Routes = [
   {
     path: 'tools/word-counter',
     component: WordCounterComponent,
-    title: 'Word & Character Counter - Free Essay & Reading Time Tool | JSNS Works'
-  },
-  {
-    path: 'tools/gpa-calculator',
-    component: GpaCalculatorComponent,
-    title: 'Student GPA & Grade Calculator - 4.0 & 10.0 CGPA Scale | JSNS Works'
+    title: 'Word & Character Counter - Free Text & Reading Time Tool | JSNS Works'
   },
   {
     path: 'tools/age-calculator',

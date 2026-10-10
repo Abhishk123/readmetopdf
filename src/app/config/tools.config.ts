@@ -162,13 +162,13 @@ export const TOOLS_CONFIG: ToolItem[] = [
     ]
   },
 
-  // --- 3. CONVERTERS & DEVELOPER TOOLS ---
+  // --- 3. CONVERTERS & DATA UTILITIES ---
   {
     id: 'unit-converter',
     title: 'Universal Unit Converter',
     shortDescription: 'Convert measurements across Length, Weight, Temperature, Digital Storage, Area, and Speed.',
     fullDescription: 'All-in-one unit and measurement conversion tool. Instant two-way conversions between Metric and Imperial systems with quick swap functionality.',
-    category: 'utilities',
+    category: 'converters',
     route: '/tools/unit-converter',
     icon: 'activity',
     badge: '6 Units',
@@ -193,11 +193,11 @@ export const TOOLS_CONFIG: ToolItem[] = [
     id: 'base64-tool',
     title: 'JWT Decoder & Base64 Converter',
     shortDescription: 'Decode JSON Web Tokens (JWT) with expiry validation, encode/decode Base64 strings, and URL parameters.',
-    fullDescription: 'Essential developer security and data tool. Inspect JWT Headers, Payloads, and Signatures with active/expired status alerts, plus two-way UTF-8 Base64 and URL encoding.',
-    category: 'developer',
+    fullDescription: 'Essential security and data tool. Inspect JWT Headers, Payloads, and Signatures with active/expired status alerts, plus two-way UTF-8 Base64 and URL encoding.',
+    category: 'converters',
     route: '/tools/base64-tool',
     icon: 'shield',
-    badge: 'Developer',
+    badge: 'Converter',
     isPopular: true,
     keywords: ['jwt decoder', 'decode jwt', 'base64 encoder', 'base64 decoder', 'url encode', 'json web token parser'],
     features: [
@@ -220,8 +220,8 @@ export const TOOLS_CONFIG: ToolItem[] = [
     id: 'json-formatter',
     title: 'JSON Formatter & CSV Converter',
     shortDescription: 'Validate, beautify, minify JSON code, and convert JSON arrays directly into CSV format.',
-    fullDescription: 'Essential developer and analyst utility to inspect messy JSON, detect syntax errors with line numbers, format with 2 or 4 spaces, compact payloads, and export data structures to CSV spreadsheets.',
-    category: 'developer',
+    fullDescription: 'Essential data utility to inspect messy JSON, detect syntax errors with line numbers, format with 2 or 4 spaces, compact payloads, and export data structures to CSV spreadsheets.',
+    category: 'data',
     route: '/tools/json-formatter',
     icon: 'code',
     badge: 'JSON & CSV',
@@ -240,7 +240,6 @@ export const TOOLS_CONFIG: ToolItem[] = [
       { question: 'Is my JSON data safe?', answer: 'Completely. All parsing occurs strictly inside your web browser.' }
     ]
   },
-  // --- 4. EVERYDAY & STUDENT TOOLS ---
   {
     id: 'readme-to-pdf',
     title: 'README to PDF Converter',
@@ -271,8 +270,8 @@ export const TOOLS_CONFIG: ToolItem[] = [
     id: 'word-counter',
     title: 'Word & Character Counter',
     shortDescription: 'Count words, characters, sentences, and estimated reading time with case conversion tools.',
-    fullDescription: 'A comprehensive text utility for students, essay writers, and content creators. Provides real-time metrics for word counts, character limits, reading time, speaking duration, and one-click case changers.',
-    category: 'student',
+    fullDescription: 'A comprehensive text utility for writers, document creators, and content managers. Provides real-time metrics for word counts, character limits, reading time, speaking duration, and one-click case changers.',
+    category: 'data',
     route: '/tools/word-counter',
     icon: 'type',
     badge: 'Text Metrics',
@@ -285,43 +284,20 @@ export const TOOLS_CONFIG: ToolItem[] = [
       'One-click Case Converters'
     ],
     howToSteps: [
-      { name: 'Paste Text', text: 'Enter your essay or article text.' },
+      { name: 'Paste Text', text: 'Enter your text or article.' },
       { name: 'View Metrics', text: 'Review live statistics and reading duration.' }
     ],
     faqs: [
       { question: 'What is the reading time calculation based on?', answer: 'Based on the average adult reading speed of 200 words per minute.' }
     ]
   },
-  {
-    id: 'gpa-calculator',
-    title: 'Student GPA & Grade Calculator',
-    shortDescription: 'Calculate college semester GPA, cumulative CGPA, and grade percentages with custom grading scales.',
-    fullDescription: 'An intuitive GPA calculator built for high school and university students. Supports standard 4.0 US scales, 10.0 CGPA scales, weighted credit hours, and planning target future grades.',
-    category: 'student',
-    route: '/tools/gpa-calculator',
-    icon: 'award',
-    badge: '4.0 & 10.0',
-    keywords: ['gpa calculator', 'cgpa calculator', 'grade calculator', 'college gpa', 'semester gpa', 'credit hours'],
-    features: [
-      'Supports 4.0 Standard Scale and 10.0 CGPA Scale',
-      'Weighted credit hours calculation',
-      'Add unlimited course rows with instant updates',
-      'Auto-saves courses in browser storage'
-    ],
-    howToSteps: [
-      { name: 'Choose Scale', text: 'Select between 4.0 GPA scale or 10.0 CGPA scale.' },
-      { name: 'Enter Courses', text: 'Input course names, credit hours, and letter grades.' }
-    ],
-    faqs: [
-      { question: 'Does this save my entered courses?', answer: 'Yes! Course lists are saved in your local browser storage.' }
-    ]
-  },
+  // --- 4. CALCULATORS ---
   {
     id: 'age-calculator',
     title: 'Age & Date Duration Calculator',
     shortDescription: 'Calculate exact age in years, months, days, hours, and minutes, plus days until next birthday.',
     fullDescription: 'Accurate date of birth calculator. Verifies exact age down to hours and minutes for government job applications, visa requirements, school admissions, and birthday countdowns.',
-    category: 'utilities',
+    category: 'calculators',
     route: '/tools/age-calculator',
     icon: 'calendar',
     badge: 'Date Math',
@@ -343,17 +319,17 @@ export const TOOLS_CONFIG: ToolItem[] = [
   {
     id: 'percentage-calculator',
     title: 'Percentage & Discount Calculator',
-    shortDescription: 'Calculate percentage of any number, percentage increase or decrease, and final sale prices.',
-    fullDescription: 'Multi-mode percentage calculator. Quickly compute X% of any value, calculate percentage change from original to new numbers, and determine final prices with discounts and taxes.',
-    category: 'utilities',
+    shortDescription: 'Calculate percentage of any number, percentage increase or decrease, and final sale prices with GST.',
+    fullDescription: 'Multi-mode percentage calculator. Quickly compute X% of any value, calculate percentage change from original to new numbers, and determine final prices with discounts and GST.',
+    category: 'calculators',
     route: '/tools/percentage-calculator',
     icon: 'percent',
     badge: 'Math',
-    keywords: ['percentage calculator', 'discount calculator', 'percent change', 'percent increase', 'sale price calculator'],
+    keywords: ['percentage calculator', 'discount calculator', 'percent change', 'percent increase', 'sale price calculator', 'gst calculator'],
     features: [
       'Percentage of a number (What is X% of Y?)',
       'Percentage change (Increase / Decrease between two values)',
-      'Shopping discount and sales tax calculator',
+      'Shopping discount and GST calculator',
       'Instant live calculation'
     ],
     howToSteps: [
@@ -367,26 +343,26 @@ export const TOOLS_CONFIG: ToolItem[] = [
   {
     id: 'tip-calculator',
     title: 'Tip & Bill Splitter',
-    shortDescription: 'Calculate tip amounts and split restaurant or party bills evenly between friends.',
-    fullDescription: 'Everyday dining companion. Enter your total bill, choose from common tip percentages (10%, 15%, 18%, 20%), and adjust the guest counter to see the exact share per person.',
-    category: 'utilities',
+    shortDescription: 'Calculate tip amounts in ₹ and split dining or party bills evenly between friends.',
+    fullDescription: 'Dining and bill-splitting companion. Enter your total bill in Rupees, choose from standard tip percentages (5%, 10%, 15%), and adjust the guest counter to see the exact share per person for UPI payments.',
+    category: 'calculators',
     route: '/tools/tip-calculator',
     icon: 'users',
     badge: 'Bill Splitter',
-    keywords: ['tip calculator', 'bill splitter', 'split bill', 'restaurant tip', 'tip per person'],
+    keywords: ['tip calculator', 'bill splitter', 'split bill', 'restaurant tip india', 'tip per person rupee', 'upi split bill'],
     features: [
-      'Preset tip percentage chips and custom slider',
+      'Preset tip percentage chips and custom numeric input',
       'Interactive guest counter to split bills evenly',
-      'Total bill, total tip, and individual share breakdown',
+      'Total bill, total tip, and individual share breakdown in ₹',
       'Mobile-friendly for quick table calculations'
     ],
     howToSteps: [
-      { name: 'Enter Bill', text: 'Type total bill amount before tip.' },
+      { name: 'Enter Bill', text: 'Type total bill amount in ₹ before tip.' },
       { name: 'Select Tip %', text: 'Choose a tip percentage preset or slider.' },
       { name: 'Select Guests', text: 'Set number of people to calculate share per person.' }
     ],
     faqs: [
-      { question: 'What is standard tipping etiquette?', answer: '15% to 20% is customary in North America for standard table service.' }
+      { question: 'How does tipping work in India?', answer: 'In India, 5% to 10% is customary at sit-down restaurants if a service charge is not already included in the bill. Tipping is discretionary.' }
     ]
   }
 ];

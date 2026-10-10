@@ -24,51 +24,45 @@ import { AdBannerComponent } from '../../components/ads/ad-banner/ad-banner';
         <section class="section">
           <h2>1. Introduction</h2>
           <p>
-            At <strong>jsnsworks</strong> ("we", "our", or "us"), accessible from <strong>https://www.jsnsworks.site</strong>, the privacy of our visitors is of paramount importance. This Privacy Policy document outlines the types of information collected and how it is utilized.
+            At <strong>JSNS Works</strong> ("we", "our", or "us"), accessible from <strong>https://www.jsnsworks.site</strong>, your privacy is our foundational principle. This Privacy Policy outlines how our tools operate and confirms our strict zero-data retention commitment.
           </p>
         </section>
 
         <section class="section">
           <h2>2. 100% In-Browser & Local Processing</h2>
           <p>
-            All utilities provided by JSNS Works—including financial calculators (EMI, FD, RD, PPF), document and media processors (PDF merger, image compressor, format converter, favicon generator, color picker), developer tools (JWT decoder, Base64 & URL converters, JSON formatter, README to PDF), and measurement utilities—operate strictly client-side within your browser sandbox.
+            All utilities provided by JSNS Works—including financial calculators (EMI, FD, RD, PPF), document processors (PDF merger, README to PDF), media tools (image compressor, format converter, favicon generator, color picker), converters (unit converter, Base64/JWT tool), and text utilities—operate strictly client-side within your browser sandbox.
           </p>
           <p>
-            <strong>Your files, documents, financial inputs, images, and source code are never uploaded, transmitted, or stored on external servers or databases.</strong> Computational processing executes directly in volatile browser memory and is discarded upon closing or reloading the session.
-          </p>
-        </section>
-
-        <section class="section">
-          <h2>3. Cookies and Advertising Partners</h2>
-          <p>
-            To keep our tools free and accessible, we partner with third-party advertising networks, including <strong>Google AdSense</strong>.
-          </p>
-          <ul>
-            <li>Third-party vendors, including Google, use cookies to serve ads based on a user's prior visits to this website or other websites.</li>
-            <li>Google's use of advertising cookies enables it and its partners to serve ads to users based on their visits to our site and/or other sites on the Internet.</li>
-            <li>Users may opt out of personalized advertising by visiting <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>.</li>
-            <li>Alternatively, you can opt out of third-party vendor cookies for personalized advertising by visiting <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer">AboutAds.info</a>.</li>
-          </ul>
-        </section>
-
-        <section class="section">
-          <h2>4. Log Files and Web Analytics</h2>
-          <p>
-            Like standard web servers, anonymous log files may automatically record non-personally identifiable information such as internet protocol (IP) addresses, browser types, Internet Service Providers (ISP), date/time stamps, and referring/exit pages to administer the website and maintain uptime.
+            <strong>Your files, documents, financial numbers, images, and source code are never uploaded, transmitted, or stored on external servers or databases.</strong> Computational processing executes directly in volatile browser memory and is discarded upon closing or reloading the session.
           </p>
         </section>
 
         <section class="section">
-          <h2>5. GDPR and CCPA Privacy Rights</h2>
+          <h2>3. Zero Personal Data Collection</h2>
           <p>
-            Under European (GDPR) and California (CCPA) data privacy laws, users have rights regarding their data. Because we do not require account registration or store personal profiles, we do not sell or retain personal consumer information.
+            We do not require account creation, logins, passwords, or credit card details to use any utility on JSNS Works. We do not build user profiles, sell personal information, or track individual users across the web.
           </p>
         </section>
 
         <section class="section">
-          <h2>6. Contact Us</h2>
+          <h2>4. Browser Local Storage</h2>
           <p>
-            If you have questions or require further information regarding our Privacy Policy, please reach out via our <a routerLink="/contact">Contact Page</a>.
+            Some utilities may offer optional convenience features (such as retaining dark/light preferences or recent unit choices) using your browser's local storage (<code>localStorage</code>). This information never leaves your device and can be cleared at any time through your browser settings.
+          </p>
+        </section>
+
+        <section class="section">
+          <h2>5. Standard Web Server Logs</h2>
+          <p>
+            Like all web hosting platforms, our static web server records standard non-identifiable technical logs (such as HTTP status codes, browser type, and timestamps) solely to maintain website uptime, detect DDoS attacks, and diagnose infrastructure health.
+          </p>
+        </section>
+
+        <section class="section">
+          <h2>6. Contact & Support</h2>
+          <p>
+            If you have questions or require further information regarding our privacy practices, please contact us directly via our <a routerLink="/contact">Contact Page</a>.
           </p>
         </section>
       </div>

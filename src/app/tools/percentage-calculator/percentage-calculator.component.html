@@ -52,36 +52,36 @@
       </div>
     </div>
 
-    <!-- Calculator 3: Discount & Sales Tax -->
+    <!-- Calculator 3: Discount & GST Calculator -->
     <div class="tool-card">
-      <h3>3. Discount & Sale Price</h3>
+      <h3>3. Discount & Final Price (with GST)</h3>
       <div class="discount-grid">
         <div class="field">
-          <label>Original Price ($ / ₹)</label>
-          <input type="number" [(ngModel)]="discountOriginalPrice" class="num-input">
+          <label>Original Price (₹)</label>
+          <input type="number" [(ngModel)]="discountOriginalPrice" class="num-input" placeholder="2500">
         </div>
         <div class="field">
           <label>Discount (% Off)</label>
-          <input type="number" [(ngModel)]="discountPercent" class="num-input">
+          <input type="number" [(ngModel)]="discountPercent" class="num-input" placeholder="20">
         </div>
         <div class="field">
-          <label>Sales Tax (%)</label>
-          <input type="number" [(ngModel)]="salesTaxPercent" class="num-input">
+          <label>GST / Tax (%)</label>
+          <input type="number" [(ngModel)]="salesTaxPercent" class="num-input" placeholder="18">
         </div>
       </div>
 
       <div class="discount-summary">
         <div class="sum-box">
           <span class="lbl">You Save:</span>
-          <strong class="green">{{ res3().savings }}</strong>
+          <strong class="green">₹ {{ res3().savings }}</strong>
         </div>
         <div class="sum-box">
-          <span class="lbl">Tax Added:</span>
-          <strong>{{ res3().taxAmount }}</strong>
+          <span class="lbl">GST Added:</span>
+          <strong>+ ₹ {{ res3().taxAmount }}</strong>
         </div>
         <div class="sum-box total">
           <span class="lbl">Final Price to Pay:</span>
-          <strong class="primary">{{ res3().finalPrice }}</strong>
+          <strong class="primary">₹ {{ res3().finalPrice }}</strong>
         </div>
       </div>
     </div>

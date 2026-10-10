@@ -4,13 +4,15 @@
 
   <!-- Hero Section -->
   <section class="hero-section">
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
     <div class="hero-chip">
       <span class="chip-pulse"></span>
-      <span>Local-first architecture</span>
+      <span>100% In-Browser Execution • Zero Server Latency</span>
     </div>
-    <h1 class="hero-title">No uploads. No logins. Just tools.</h1>
+    <h1 class="hero-title">No uploads. No logins. <span class="gradient-text">Instant tools.</span></h1>
     <p class="hero-subtitle">
-      Fast, private web utilities for financial calculations, file conversions, and developer tasks. Everything runs directly inside your browser memory.
+      Fast, private web utilities for financial calculations, media conversions, and everyday data tasks. Everything runs directly inside your browser memory.
     </p>
 
     <!-- Search Bar with Keyboard Shortcut -->
@@ -82,7 +84,7 @@
                       <polyline points="14 2 14 8 20 8"></polyline>
                       <line x1="12" y1="18" x2="12" y2="12"></line>
                     </svg>
-                  } @else if (tool.id === 'image-compressor' || tool.id === 'image-converter') {
+                  } @else if (tool.id === 'image-compressor' || tool.id === 'image-converter' || tool.id === 'favicon-generator') {
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
                       <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                       <circle cx="8.5" cy="8.5" r="1.5"></circle>
@@ -104,6 +106,32 @@
                       <path d="M20 10h-6V4"></path>
                       <path d="m14 10 7-7"></path>
                       <path d="m3 21 7-7"></path>
+                    </svg>
+                  } @else if (tool.id === 'percentage-calculator') {
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="19" y1="5" x2="5" y2="19"></line>
+                      <circle cx="6.5" cy="6.5" r="2.5"></circle>
+                      <circle cx="17.5" cy="17.5" r="2.5"></circle>
+                    </svg>
+                  } @else if (tool.id === 'tip-calculator') {
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                  } @else if (tool.id === 'age-calculator') {
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                  } @else if (tool.id === 'word-counter') {
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="4 7 4 4 20 4 20 7"></polyline>
+                      <line x1="9" y1="20" x2="15" y2="20"></line>
+                      <line x1="12" y1="4" x2="12" y2="20"></line>
                     </svg>
                   } @else {
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">

@@ -45,30 +45,60 @@
         <h3>Loan Details</h3>
 
         <div class="input-field">
-          <div class="field-label">
-            <span>Loan Amount</span>
-            <strong>₹ {{ formatCurrency(loanAmount()) }}</strong>
+          <div class="field-header-row">
+            <label class="field-title">Loan Amount</label>
+            <div class="field-input-box">
+              <span class="tag-prefix">₹</span>
+              <input type="number" min="1000" max="100000000" step="10000"
+                     [ngModel]="loanAmount()" (ngModelChange)="loanAmount.set(+$event || 0)"
+                     class="typed-input wide">
+            </div>
           </div>
           <input type="range" min="10000" max="10000000" step="10000"
-                 [ngModel]="loanAmount()" (ngModelChange)="loanAmount.set($event)" class="slider">
+                 [ngModel]="loanAmount()" (ngModelChange)="loanAmount.set(+$event || 0)" class="slider">
+          <div class="range-limits">
+            <span>₹ 10K</span>
+            <span>₹ 50L</span>
+            <span>₹ 1 Cr</span>
+          </div>
         </div>
 
         <div class="input-field">
-          <div class="field-label">
-            <span>Interest Rate (p.a)</span>
-            <strong>{{ loanInterestRate() }}%</strong>
+          <div class="field-header-row">
+            <label class="field-title">Interest Rate (p.a)</label>
+            <div class="field-input-box">
+              <input type="number" min="0.1" max="50" step="0.1"
+                     [ngModel]="loanInterestRate()" (ngModelChange)="loanInterestRate.set(+$event || 0)"
+                     class="typed-input">
+              <span class="tag-suffix">%</span>
+            </div>
           </div>
           <input type="range" min="1" max="25" step="0.1"
-                 [ngModel]="loanInterestRate()" (ngModelChange)="loanInterestRate.set($event)" class="slider">
+                 [ngModel]="loanInterestRate()" (ngModelChange)="loanInterestRate.set(+$event || 0)" class="slider">
+          <div class="range-limits">
+            <span>1%</span>
+            <span>12.5%</span>
+            <span>25%</span>
+          </div>
         </div>
 
         <div class="input-field">
-          <div class="field-label">
-            <span>Tenure (Years)</span>
-            <strong>{{ loanTenureYears() }} Years ({{ loanTenureYears() * 12 }} Months)</strong>
+          <div class="field-header-row">
+            <label class="field-title">Loan Tenure (Years)</label>
+            <div class="field-input-box">
+              <input type="number" min="1" max="40" step="1"
+                     [ngModel]="loanTenureYears()" (ngModelChange)="loanTenureYears.set(+$event || 0)"
+                     class="typed-input">
+              <span class="tag-suffix">Yr</span>
+            </div>
           </div>
           <input type="range" min="1" max="30" step="1"
-                 [ngModel]="loanTenureYears()" (ngModelChange)="loanTenureYears.set($event)" class="slider">
+                 [ngModel]="loanTenureYears()" (ngModelChange)="loanTenureYears.set(+$event || 0)" class="slider">
+          <div class="range-limits">
+            <span>1 Yr (12 Mo)</span>
+            <span>15 Yrs</span>
+            <span>30 Yrs</span>
+          </div>
         </div>
       </div>
 
@@ -116,30 +146,60 @@
         <h3>Fixed Deposit Setup</h3>
 
         <div class="input-field">
-          <div class="field-label">
-            <span>Deposit Amount</span>
-            <strong>₹ {{ formatCurrency(fdDeposit()) }}</strong>
+          <div class="field-header-row">
+            <label class="field-title">Deposit Amount</label>
+            <div class="field-input-box">
+              <span class="tag-prefix">₹</span>
+              <input type="number" min="1000" max="50000000" step="5000"
+                     [ngModel]="fdDeposit()" (ngModelChange)="fdDeposit.set(+$event || 0)"
+                     class="typed-input wide">
+            </div>
           </div>
           <input type="range" min="5000" max="5000000" step="5000"
-                 [ngModel]="fdDeposit()" (ngModelChange)="fdDeposit.set($event)" class="slider">
+                 [ngModel]="fdDeposit()" (ngModelChange)="fdDeposit.set(+$event || 0)" class="slider">
+          <div class="range-limits">
+            <span>₹ 5,000</span>
+            <span>₹ 25 Lakh</span>
+            <span>₹ 50 Lakh</span>
+          </div>
         </div>
 
         <div class="input-field">
-          <div class="field-label">
-            <span>Interest Rate (% p.a)</span>
-            <strong>{{ fdRate() }}%</strong>
+          <div class="field-header-row">
+            <label class="field-title">Interest Rate (% p.a)</label>
+            <div class="field-input-box">
+              <input type="number" min="1" max="25" step="0.1"
+                     [ngModel]="fdRate()" (ngModelChange)="fdRate.set(+$event || 0)"
+                     class="typed-input">
+              <span class="tag-suffix">%</span>
+            </div>
           </div>
           <input type="range" min="2" max="15" step="0.1"
-                 [ngModel]="fdRate()" (ngModelChange)="fdRate.set($event)" class="slider">
+                 [ngModel]="fdRate()" (ngModelChange)="fdRate.set(+$event || 0)" class="slider">
+          <div class="range-limits">
+            <span>2%</span>
+            <span>8.5%</span>
+            <span>15%</span>
+          </div>
         </div>
 
         <div class="input-field">
-          <div class="field-label">
-            <span>Tenure (Years)</span>
-            <strong>{{ fdYears() }} Years</strong>
+          <div class="field-header-row">
+            <label class="field-title">Tenure (Years)</label>
+            <div class="field-input-box">
+              <input type="number" min="1" max="25" step="1"
+                     [ngModel]="fdYears()" (ngModelChange)="fdYears.set(+$event || 0)"
+                     class="typed-input">
+              <span class="tag-suffix">Yr</span>
+            </div>
           </div>
           <input type="range" min="1" max="10" step="1"
-                 [ngModel]="fdYears()" (ngModelChange)="fdYears.set($event)" class="slider">
+                 [ngModel]="fdYears()" (ngModelChange)="fdYears.set(+$event || 0)" class="slider">
+          <div class="range-limits">
+            <span>1 Year</span>
+            <span>5 Years</span>
+            <span>10 Years</span>
+          </div>
         </div>
       </div>
 
@@ -170,30 +230,60 @@
         <h3>Recurring Deposit Setup</h3>
 
         <div class="input-field">
-          <div class="field-label">
-            <span>Monthly Deposit</span>
-            <strong>₹ {{ formatCurrency(rdMonthly()) }}</strong>
+          <div class="field-header-row">
+            <label class="field-title">Monthly Deposit</label>
+            <div class="field-input-box">
+              <span class="tag-prefix">₹</span>
+              <input type="number" min="100" max="1000000" step="500"
+                     [ngModel]="rdMonthly()" (ngModelChange)="rdMonthly.set(+$event || 0)"
+                     class="typed-input wide">
+            </div>
           </div>
           <input type="range" min="500" max="100000" step="500"
-                 [ngModel]="rdMonthly()" (ngModelChange)="rdMonthly.set($event)" class="slider">
+                 [ngModel]="rdMonthly()" (ngModelChange)="rdMonthly.set(+$event || 0)" class="slider">
+          <div class="range-limits">
+            <span>₹ 500</span>
+            <span>₹ 50,000</span>
+            <span>₹ 1,00,000</span>
+          </div>
         </div>
 
         <div class="input-field">
-          <div class="field-label">
-            <span>Interest Rate (% p.a)</span>
-            <strong>{{ rdRate() }}%</strong>
+          <div class="field-header-row">
+            <label class="field-title">Interest Rate (% p.a)</label>
+            <div class="field-input-box">
+              <input type="number" min="1" max="25" step="0.1"
+                     [ngModel]="rdRate()" (ngModelChange)="rdRate.set(+$event || 0)"
+                     class="typed-input">
+              <span class="tag-suffix">%</span>
+            </div>
           </div>
           <input type="range" min="2" max="15" step="0.1"
-                 [ngModel]="rdRate()" (ngModelChange)="rdRate.set($event)" class="slider">
+                 [ngModel]="rdRate()" (ngModelChange)="rdRate.set(+$event || 0)" class="slider">
+          <div class="range-limits">
+            <span>2%</span>
+            <span>8.5%</span>
+            <span>15%</span>
+          </div>
         </div>
 
         <div class="input-field">
-          <div class="field-label">
-            <span>Tenure (Months)</span>
-            <strong>{{ rdMonths() }} Months ({{ rdMonths() / 12 | number:'1.1-1' }} Yrs)</strong>
+          <div class="field-header-row">
+            <label class="field-title">Tenure (Months)</label>
+            <div class="field-input-box">
+              <input type="number" min="3" max="240" step="1"
+                     [ngModel]="rdMonths()" (ngModelChange)="rdMonths.set(+$event || 0)"
+                     class="typed-input">
+              <span class="tag-suffix">Mo</span>
+            </div>
           </div>
           <input type="range" min="6" max="120" step="6"
-                 [ngModel]="rdMonths()" (ngModelChange)="rdMonths.set($event)" class="slider">
+                 [ngModel]="rdMonths()" (ngModelChange)="rdMonths.set(+$event || 0)" class="slider">
+          <div class="range-limits">
+            <span>6 Months</span>
+            <span>60 Months (5 Yrs)</span>
+            <span>120 Months (10 Yrs)</span>
+          </div>
         </div>
       </div>
 
@@ -224,29 +314,52 @@
         <h3>PPF Scheme Parameters</h3>
 
         <div class="input-field">
-          <div class="field-label">
-            <span>Yearly Deposit (Max ₹1.5L)</span>
-            <strong>₹ {{ formatCurrency(ppfYearly()) }}</strong>
+          <div class="field-header-row">
+            <label class="field-title">Yearly Deposit (Max ₹1.5L)</label>
+            <div class="field-input-box">
+              <span class="tag-prefix">₹</span>
+              <input type="number" min="500" max="150000" step="500"
+                     [ngModel]="ppfYearly()" (ngModelChange)="ppfYearly.set(+$event || 0)"
+                     class="typed-input wide">
+            </div>
           </div>
           <input type="range" min="500" max="150000" step="500"
-                 [ngModel]="ppfYearly()" (ngModelChange)="ppfYearly.set($event)" class="slider">
-        </div>
-
-        <div class="input-field">
-          <div class="field-label">
-            <span>Current Interest Rate</span>
-            <strong>{{ ppfRate }}% (Govt. Benchmark)</strong>
+                 [ngModel]="ppfYearly()" (ngModelChange)="ppfYearly.set(+$event || 0)" class="slider">
+          <div class="range-limits">
+            <span>₹ 500</span>
+            <span>₹ 75,000</span>
+            <span>₹ 1,50,000</span>
           </div>
-          <p class="field-note">PPF interest is compounded annually and completely tax-exempt (EEE Status).</p>
         </div>
 
         <div class="input-field">
-          <div class="field-label">
-            <span>Tenure (Years)</span>
-            <strong>{{ ppfYears() }} Years</strong>
+          <div class="field-header-row">
+            <label class="field-title">Current Interest Rate</label>
+            <div class="field-input-box">
+              <span class="tag-prefix">{{ ppfRate }}%</span>
+              <span class="tag-suffix">Govt. Benchmark</span>
+            </div>
+          </div>
+          <p class="field-note">PPF interest is compounded annually and completely tax-exempt (EEE Status under 80C).</p>
+        </div>
+
+        <div class="input-field">
+          <div class="field-header-row">
+            <label class="field-title">Tenure (Years)</label>
+            <div class="field-input-box">
+              <input type="number" min="15" max="50" step="5"
+                     [ngModel]="ppfYears()" (ngModelChange)="ppfYears.set(+$event || 0)"
+                     class="typed-input">
+              <span class="tag-suffix">Yr</span>
+            </div>
           </div>
           <input type="range" min="15" max="30" step="5"
-                 [ngModel]="ppfYears()" (ngModelChange)="ppfYears.set($event)" class="slider">
+                 [ngModel]="ppfYears()" (ngModelChange)="ppfYears.set(+$event || 0)" class="slider">
+          <div class="range-limits">
+            <span>15 Years (Min)</span>
+            <span>20 Years</span>
+            <span>30 Years</span>
+          </div>
         </div>
       </div>
 
@@ -277,30 +390,60 @@
         <h3>Principal & Growth Rate</h3>
 
         <div class="input-field">
-          <div class="field-label">
-            <span>Principal Amount</span>
-            <strong>₹ {{ formatCurrency(interestPrincipal()) }}</strong>
+          <div class="field-header-row">
+            <label class="field-title">Principal Amount</label>
+            <div class="field-input-box">
+              <span class="tag-prefix">₹</span>
+              <input type="number" min="500" max="50000000" step="1000"
+                     [ngModel]="interestPrincipal()" (ngModelChange)="interestPrincipal.set(+$event || 0)"
+                     class="typed-input wide">
+            </div>
           </div>
           <input type="range" min="1000" max="1000000" step="1000"
-                 [ngModel]="interestPrincipal()" (ngModelChange)="interestPrincipal.set($event)" class="slider">
+                 [ngModel]="interestPrincipal()" (ngModelChange)="interestPrincipal.set(+$event || 0)" class="slider">
+          <div class="range-limits">
+            <span>₹ 1,000</span>
+            <span>₹ 5 Lakh</span>
+            <span>₹ 10 Lakh</span>
+          </div>
         </div>
 
         <div class="input-field">
-          <div class="field-label">
-            <span>Annual Interest Rate</span>
-            <strong>{{ interestRate() }}%</strong>
+          <div class="field-header-row">
+            <label class="field-title">Annual Interest Rate</label>
+            <div class="field-input-box">
+              <input type="number" min="0.1" max="40" step="0.5"
+                     [ngModel]="interestRate()" (ngModelChange)="interestRate.set(+$event || 0)"
+                     class="typed-input">
+              <span class="tag-suffix">%</span>
+            </div>
           </div>
           <input type="range" min="1" max="25" step="0.5"
-                 [ngModel]="interestRate()" (ngModelChange)="interestRate.set($event)" class="slider">
+                 [ngModel]="interestRate()" (ngModelChange)="interestRate.set(+$event || 0)" class="slider">
+          <div class="range-limits">
+            <span>1%</span>
+            <span>12%</span>
+            <span>25%</span>
+          </div>
         </div>
 
         <div class="input-field">
-          <div class="field-label">
-            <span>Time Period (Years)</span>
-            <strong>{{ interestTimeYears() }} Years</strong>
+          <div class="field-header-row">
+            <label class="field-title">Time Period (Years)</label>
+            <div class="field-input-box">
+              <input type="number" min="1" max="40" step="1"
+                     [ngModel]="interestTimeYears()" (ngModelChange)="interestTimeYears.set(+$event || 0)"
+                     class="typed-input">
+              <span class="tag-suffix">Yr</span>
+            </div>
           </div>
           <input type="range" min="1" max="20" step="1"
-                 [ngModel]="interestTimeYears()" (ngModelChange)="interestTimeYears.set($event)" class="slider">
+                 [ngModel]="interestTimeYears()" (ngModelChange)="interestTimeYears.set(+$event || 0)" class="slider">
+          <div class="range-limits">
+            <span>1 Year</span>
+            <span>10 Years</span>
+            <span>20 Years</span>
+          </div>
         </div>
       </div>
 

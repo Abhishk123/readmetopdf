@@ -30,7 +30,7 @@ import { AdBannerComponent } from '../../components/ads/ad-banner/ad-banner';
             When you search the web for a quick PDF merger, an image compressor, or a JWT inspector, most top results share the same drawbacks: intrusive file upload limits, mandatory newsletter signups, paywalls after 2 uses, and worst of all—your files are transmitted across the internet to third-party cloud buckets.
           </p>
           <p>
-            For students preparing assignments, developers debugging auth tokens, or anyone handling sensitive bank statements or passport photos, uploading files to remote servers is an unnecessary security risk.
+            Whether calculating personal loan interest, inspecting tokens, or resizing photos for official applications, uploading files to remote servers is an unnecessary privacy risk.
           </p>
         </section>
 

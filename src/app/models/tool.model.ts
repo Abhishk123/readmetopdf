@@ -1,4 +1,4 @@
-export type ToolCategory = 'all' | 'documents' | 'media' | 'student' | 'developer' | 'finance' | 'utilities';
+export type ToolCategory = 'all' | 'finance' | 'calculators' | 'converters' | 'media' | 'documents' | 'data';
 
 export interface ToolHowToStep {
   name: string;

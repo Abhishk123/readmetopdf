@@ -24,12 +24,23 @@
       <h3>Bill Details</h3>
 
       <div class="input-group">
-        <label>Total Bill Amount ($ / ₹)</label>
-        <input type="number" min="0" [(ngModel)]="billAmount" class="input-num">
+        <label>Total Bill Amount (₹)</label>
+        <div class="input-with-prefix">
+          <span class="p-symbol">₹</span>
+          <input type="number" min="0" [(ngModel)]="billAmount" class="input-num" placeholder="1200">
+        </div>
       </div>
 
       <div class="input-group">
-        <label>Tip Percentage: {{ tipPercent() }}%</label>
+        <div class="label-row">
+          <label>Tip Percentage (%)</label>
+          <div class="input-with-suffix">
+            <input type="number" min="0" max="100" step="1"
+                   [ngModel]="tipPercent()" (ngModelChange)="tipPercent.set($event)"
+                   class="input-num-sm">
+            <span class="s-symbol">%</span>
+          </div>
+        </div>
         <div class="tip-chips">
           @for (p of presets; track p) {
             <button type="button" class="btn-chip" [class.active]="tipPercent() === p" (click)="setTipPreset(p)">
@@ -42,7 +53,7 @@
       </div>
 
       <div class="input-group">
-        <label>Number of People</label>
+        <label>Number of People (Split Bill)</label>
         <div class="people-counter">
           <button type="button" class="btn-step" (click)="decrementPeople()">−</button>
           <span class="people-count">{{ peopleCount() }}</span>
@@ -54,23 +65,23 @@
     <!-- Right Card: Results -->
     <div class="card results-card">
       <div class="highlight-box">
-        <span class="h-lbl">Total Per Person</span>
-        <div class="h-val">₹ / $ {{ results().totalPerPerson }}</div>
-        <span class="h-sub">Tip per person: {{ results().tipPerPerson }}</span>
+        <span class="h-lbl">Share Per Person</span>
+        <div class="h-val">₹ {{ results().totalPerPerson | number:'1.2-2' }}</div>
+        <span class="h-sub">Tip per person: ₹ {{ results().tipPerPerson | number:'1.2-2' }}</span>
       </div>
 
       <div class="summary-list">
         <div class="summary-row">
           <span>Total Bill (Before Tip):</span>
-          <strong>{{ billAmount() }}</strong>
+          <strong>₹ {{ billAmount() | number }}</strong>
         </div>
         <div class="summary-row">
-          <span>Total Tip ({{ tipPercent() }}%):</span>
-          <strong class="green">+ {{ results().totalTip }}</strong>
+          <span>Tip Amount ({{ tipPercent() }}%):</span>
+          <strong class="green">+ ₹ {{ results().totalTip | number:'1.2-2' }}</strong>
         </div>
         <div class="summary-row total">
-          <span>Grand Total:</span>
-          <strong class="primary">{{ results().totalBill }}</strong>
+          <span>Grand Total to Pay:</span>
+          <strong class="primary">₹ {{ results().totalBill | number:'1.2-2' }}</strong>
         </div>
       </div>
     </div>
@@ -81,19 +92,19 @@
 
   <!-- Educational SEO Section -->
   <div class="seo-guide">
-    <h2>Tipping Etiquette & Common Practices</h2>
+    <h2>Tipping & UPI Bill Splitting in India</h2>
     <div class="features-grid">
       <div class="feature-card">
-        <h3>Standard Tipping Norms</h3>
-        <p>In the United States and Canada, 15% to 20% is standard for sit-down dining. In many other countries, service charges are already included or tipping is optional.</p>
+        <h3>Restaurant Tipping Norms in India</h3>
+        <p>In India, 5% to 10% tip is customary at sit-down cafes and restaurants if a service charge is not already added. Under consumer guidelines, tipping remains completely voluntary.</p>
       </div>
       <div class="feature-card">
-        <h3>Even Bill Splitting</h3>
-        <p>Splitting evenly eliminates awkward group calculations when dining with friends, family, or colleagues.</p>
+        <h3>Even UPI Bill Splitting</h3>
+        <p>Divide restaurant or party bills evenly between friends down to the exact rupee for seamless payments via Google Pay, PhonePe, or Paytm.</p>
       </div>
       <div class="feature-card">
-        <h3>Pre-Tax vs Post-Tax Tipping</h3>
-        <p>Tradition dictates calculating tips on the subtotal before taxes, though calculating on the final total is common practice.</p>
+        <h3>Delivery & Service Tips</h3>
+        <p>For online food delivery or valet services, flat round tips (₹20, ₹30, ₹50) or 5-10% of order totals are widely appreciated gestures.</p>
       </div>
     </div>
   </div>

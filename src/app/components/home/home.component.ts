@@ -21,13 +21,13 @@ export class HomeComponent {
   public selectedCategory = signal<ToolCategory>('all');
 
   public readonly categories: { label: string; value: ToolCategory }[] = [
-    { label: 'All Tools', value: 'all' },
-    { label: 'Finance & Loans', value: 'finance' },
-    { label: 'Media & Graphics', value: 'media' },
+    { label: 'All Utilities', value: 'all' },
+    { label: 'Finance', value: 'finance' },
+    { label: 'Calculators', value: 'calculators' },
+    { label: 'Converters', value: 'converters' },
+    { label: 'Media & Images', value: 'media' },
     { label: 'Documents & PDF', value: 'documents' },
-    { label: 'Converters & Math', value: 'utilities' },
-    { label: 'Developer', value: 'developer' },
-    { label: 'Writing & Student', value: 'student' }
+    { label: 'Text & Data', value: 'data' }
   ];
 
   public filteredTools = computed(() => {
