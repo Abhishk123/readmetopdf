@@ -22,6 +22,8 @@ export interface EnvironmentConfig {
         readonly bottomBanner: string;
         readonly viewerSidebar: string;
         readonly toolHeaderBanner: string;
+        readonly sidebarLeft?: string;
+        readonly sidebarRight?: string;
       };
     };
     readonly carbon?: {
@@ -38,7 +40,10 @@ export interface EnvironmentConfig {
     };
     readonly custom?: {
       readonly enabled: boolean;
-      readonly htmlSnippet: string;
+      readonly htmlSnippet?: string;
+      readonly horizontalSnippet?: string;
+      readonly rectangleSnippet?: string;
+      readonly skyscraperSnippet?: string;
     };
   };
 

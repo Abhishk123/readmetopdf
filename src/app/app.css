@@ -212,9 +212,46 @@
   margin: 12px 0;
 }
 
-/* Content Body */
+/* Layout Wrapper with Widescreen Gutter Rails (Zero impact on current UI) */
+.layout-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  position: relative;
+  width: 100%;
+  flex: 1;
+}
+
 .content-body {
   flex: 1;
+  max-width: 1140px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Sidebar Rails: Completely hidden on all mobile, tablets, and regular laptops */
+.sidebar-rail {
+  display: none;
+  width: 160px;
+  flex-shrink: 0;
+  margin: 24px 16px 40px;
+  position: relative;
+  z-index: 10;
+}
+
+.rail-sticky-box {
+  position: sticky;
+  top: 86px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Activate only on wide monitors with ample gutter margins (≥1520px) */
+@media (min-width: 1520px) {
+  .sidebar-rail {
+    display: block;
+  }
 }
 
 /* Site Footer */

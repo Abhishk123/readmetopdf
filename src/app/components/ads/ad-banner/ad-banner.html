@@ -28,12 +28,25 @@
     </a>
   }
 
-  <!-- 3. Carbon Ads / Custom Script Container -->
+  <!-- 3. Carbon Ads / Tech Script Container -->
   @else if (adsService.config().enabled && activeProvider === 'carbon' && carbonConfig?.enabled) {
     <div class="ad-carbon-container" id="carbonads-slot"></div>
   }
 
-  <!-- 4. Graceful Fallback / Placeholder -->
+  <!-- 4. Alternative Ad Networks (Adsterra, Infolinks, Custom Network Script) -->
+  @else if (adsService.config().enabled && activeProvider === 'custom' && customConfig?.enabled) {
+    <div class="ad-custom-container">
+      <iframe #customIframe
+              [attr.width]="bannerDimensions.width"
+              [attr.height]="bannerDimensions.height"
+              style="border:none; overflow:hidden; background:transparent;"
+              scrolling="no"
+              frameborder="0">
+      </iframe>
+    </div>
+  }
+
+  <!-- 5. Graceful Fallback / Placeholder -->
   @else {
     <div class="ad-slot-mock">
       <div class="mock-badge">
@@ -44,7 +57,7 @@
       </div>
       <div class="mock-content">
         <span class="mock-title">Advertise on JSNS Works</span>
-        <span class="mock-desc">Reach students, developers, and creators worldwide.</span>
+        <span class="mock-desc">Fast, local-first web utilities with zero latency and high daily engagement.</span>
       </div>
     </div>
   }

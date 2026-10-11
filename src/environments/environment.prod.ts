@@ -12,7 +12,7 @@ export const environment: EnvironmentConfig = {
 
   ads: {
     enabled: true,
-    defaultProvider: 'adsense',
+    defaultProvider: 'custom',
     adsense: {
       client: 'ca-pub-1326483461218935',
       testMode: false,
@@ -22,28 +22,32 @@ export const environment: EnvironmentConfig = {
         midContent: '3000000003',
         bottomBanner: '4000000004',
         viewerSidebar: '5000000005',
-        toolHeaderBanner: '6000000006'
-      }
+        toolHeaderBanner: '6000000006',
+        sidebarLeft: '7000000007',
+        sidebarRight: '8000000008',
+      },
     },
     carbon: {
       enabled: false,
       serveCode: '',
-      placementCode: ''
+      placementCode: '',
     },
     sponsor: {
       enabled: false,
       imageUrl: '',
       targetUrl: '',
       altText: 'Sponsored Partner',
-      tagline: 'Recommended Developer Tool'
+      tagline: 'Recommended Developer Tool',
     },
     custom: {
-      enabled: false,
-      htmlSnippet: ''
-    }
+      enabled: true,
+      htmlSnippet: `
+    <!-- Paste your Adsterra script code here -->
+  `,
+    },
   },
 
   analytics: {
-    googleAnalyticsId: ''
-  }
+    googleAnalyticsId: '',
+  },
 };

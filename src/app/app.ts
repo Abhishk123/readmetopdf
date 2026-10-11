@@ -3,6 +3,7 @@ import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router
 import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
 import { TOOLS_CONFIG } from './config/tools.config';
+import { AdBannerComponent } from './components/ads/ad-banner/ad-banner';
 
 @Component({
   selector: 'app-root',

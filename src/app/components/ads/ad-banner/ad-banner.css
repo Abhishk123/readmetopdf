@@ -141,6 +141,26 @@
   max-width: 336px;
 }
 
+.ad-format-vertical {
+  width: 160px;
+  max-width: 160px;
+  min-height: 600px;
+  margin: 0 auto;
+}
+
+.ad-format-vertical .ad-slot-active {
+  min-height: 600px;
+  width: 160px;
+}
+
+.ad-format-vertical .ad-slot-mock {
+  min-height: 600px;
+  width: 160px;
+  padding: 24px 12px;
+  justify-content: flex-start;
+  gap: 16px;
+}
+
 @media (max-width: 768px) {
   .ad-container {
     margin: 16px 0;

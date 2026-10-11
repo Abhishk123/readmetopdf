@@ -22,7 +22,10 @@ export interface AdsConfiguration {
   };
   custom?: {
     enabled: boolean;
-    htmlSnippet: string;
+    htmlSnippet?: string;
+    horizontalSnippet?: string;
+    rectangleSnippet?: string;
+    skyscraperSnippet?: string;
   };
   policy: {
     showAdLabel: boolean;

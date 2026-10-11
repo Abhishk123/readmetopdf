@@ -18,5 +18,5 @@ export interface ProgressState {
   errorMessage?: string;
 }
 
-export type AdSlotType = 'topBanner' | 'homeSidebar' | 'viewerSidebar';
+export type AdSlotType = 'topBanner' | 'homeSidebar' | 'viewerSidebar' | 'midContent' | 'bottomBanner' | 'sidebarLeft' | 'sidebarRight';
 export type AdFormat = 'horizontal' | 'rectangle' | 'vertical';
