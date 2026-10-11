@@ -84,11 +84,25 @@
     }
   </header>
 
-  <!-- Routed Page View (Clean, Uncluttered Central Container) -->
+  <!-- Routed Page View with Widescreen Gutter Rails -->
   <div class="layout-wrapper">
+    <!-- Left Skyscraper Sidebar (Widescreen Gutters Only) -->
+    <aside class="sidebar-rail rail-left" aria-label="Sidebar Advertisement">
+      <div class="rail-sticky-box">
+        <app-ad-banner slot="sidebarLeft" format="vertical"></app-ad-banner>
+      </div>
+    </aside>
+
     <main class="content-body">
       <router-outlet></router-outlet>
     </main>
+
+    <!-- Right Skyscraper Sidebar (Widescreen Gutters Only) -->
+    <aside class="sidebar-rail rail-right" aria-label="Sidebar Advertisement">
+      <div class="rail-sticky-box">
+        <app-ad-banner slot="sidebarRight" format="vertical"></app-ad-banner>
+      </div>
+    </aside>
   </div>
 
   <!-- Clean, Authentic Product Footer -->

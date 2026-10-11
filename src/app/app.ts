@@ -8,7 +8,7 @@ import { AdBannerComponent } from './components/ads/ad-banner/ad-banner';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink],
+  imports: [CommonModule, RouterOutlet, RouterLink, AdBannerComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
