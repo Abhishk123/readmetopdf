@@ -4,19 +4,6 @@
   padding: 24px 16px 48px;
 }
 
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: #64748b;
-  margin-bottom: 20px;
-}
-
-.breadcrumb a { color: #2563eb; text-decoration: none; }
-.sep { color: #cbd5e1; }
-.current { color: #0f172a; font-weight: 500; }
-
 .tool-header {
   text-align: center;
   margin-bottom: 28px;
@@ -28,9 +15,9 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  background: #f1f5f9;
-  color: #475569;
-  border: 1px solid #cbd5e1;
+  background: rgba(99, 102, 241, 0.2);
+  color: #a5b4fc;
+  border: 1px solid rgba(165, 180, 252, 0.3);
   padding: 4px 12px;
   border-radius: 999px;
   margin-bottom: 12px;
@@ -39,14 +26,14 @@
 .tool-title {
   font-size: 32px;
   font-weight: 800;
-  color: #0f172a;
+  color: #ffffff;
   margin: 0 0 10px;
   letter-spacing: -0.02em;
 }
 
 .tool-subtitle {
   font-size: 16px;
-  color: #64748b;
+  color: #94a3b8;
   max-width: 640px;
   margin: 0 auto;
 }
@@ -58,17 +45,19 @@
 }
 
 .tool-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(99, 102, 241, 0.22);
   border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
 }
 
 .tool-card h3 {
-  font-size: 16px;
+  font-size: 16.5px;
   font-weight: 700;
-  color: #0f172a;
+  color: #ffffff;
   margin: 0 0 16px;
 }
 
@@ -78,7 +67,7 @@
   gap: 12px;
   font-size: 16px;
   font-weight: 600;
-  color: #334155;
+  color: #cbd5e1;
   flex-wrap: wrap;
   margin-bottom: 16px;
 }
@@ -87,9 +76,13 @@
   box-sizing: border-box;
   padding: 8px 12px;
   font-size: 15px;
-  border: 1px solid #cbd5e1;
+  background: rgba(11, 17, 32, 0.85);
+  border: 1.5px solid rgba(129, 140, 248, 0.28);
   border-radius: 8px;
   outline: none;
+  color: #ffffff;
+  font-weight: 700;
+  transition: all 0.2s ease;
 }
 
 .num-input.inline {
@@ -97,26 +90,28 @@
 }
 
 .num-input:focus {
-  border-color: #2563eb;
+  border-color: #818cf8;
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.35);
 }
 
 .answer-box {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: rgba(11, 17, 32, 0.75);
+  border: 1px solid rgba(99, 102, 241, 0.2);
   border-radius: 8px;
   padding: 12px 16px;
   font-size: 15px;
-  color: #475569;
+  color: #cbd5e1;
 }
 
 .ans-val {
   font-size: 20px;
-  color: #2563eb;
+  font-weight: 800;
+  color: #818cf8;
   margin-left: 8px;
 }
 
-.ans-val.green { color: #059669; }
-.ans-val.red { color: #dc2626; }
+.ans-val.green { color: #34d399; }
+.ans-val.red { color: #f87171; }
 
 /* Discount Grid */
 .discount-grid {
@@ -130,7 +125,7 @@
   display: block;
   font-size: 12px;
   font-weight: 600;
-  color: #475569;
+  color: #cbd5e1;
   margin-bottom: 6px;
 }
 
@@ -141,8 +136,8 @@
 .discount-summary {
   display: flex;
   justify-content: space-between;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: rgba(11, 17, 32, 0.75);
+  border: 1px solid rgba(99, 102, 241, 0.2);
   border-radius: 10px;
   padding: 16px;
   flex-wrap: wrap;
@@ -157,25 +152,26 @@
 
 .sum-box .lbl {
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
   text-transform: uppercase;
   font-weight: 600;
 }
 
 .sum-box strong {
   font-size: 18px;
+  color: #ffffff;
 }
 
-.sum-box strong.green { color: #059669; }
-.sum-box strong.primary { font-size: 24px; color: #2563eb; font-weight: 800; }
+.sum-box strong.green { color: #34d399; }
+.sum-box strong.primary { font-size: 24px; color: #818cf8; font-weight: 800; }
 
 /* SEO Section */
 .seo-guide { margin: 40px 0; }
-.seo-guide h2 { font-size: 22px; font-weight: 800; color: #0f172a; text-align: center; margin-bottom: 24px; }
+.seo-guide h2 { font-size: 22px; font-weight: 800; color: #ffffff; text-align: center; margin-bottom: 24px; }
 .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.feature-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; }
-.feature-card h3 { font-size: 15px; font-weight: 700; color: #1e293b; margin: 0 0 8px; }
-.feature-card p { font-size: 13px; color: #64748b; line-height: 1.5; margin: 0; }
+.feature-card { background: rgba(11, 17, 32, 0.7); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 12px; padding: 20px; }
+.feature-card h3 { font-size: 15px; font-weight: 700; color: #ffffff; margin: 0 0 8px; }
+.feature-card p { font-size: 13px; color: #94a3b8; line-height: 1.5; margin: 0; }
 
 @media (max-width: 768px) {
   .discount-grid { grid-template-columns: 1fr; }

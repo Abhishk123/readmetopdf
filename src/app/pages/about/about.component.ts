@@ -101,18 +101,20 @@ import { AdBannerComponent } from '../../components/ads/ad-banner/ad-banner';
       display: flex;
       gap: 8px;
       font-size: 13px;
-      color: #64748b;
+      color: #94a3b8;
       margin-bottom: 20px;
     }
-    .breadcrumb a { color: #2563eb; text-decoration: none; }
-    .sep { color: #cbd5e1; }
-    .current { color: #0f172a; font-weight: 500; }
+    .breadcrumb a { color: #818cf8; text-decoration: none; }
+    .sep { color: rgba(148, 163, 184, 0.4); }
+    .current { color: #ffffff; font-weight: 600; }
     .content-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.82);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(99, 102, 241, 0.22);
+      border-radius: 16px;
       padding: 36px 32px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 28px rgba(0, 0, 0, 0.35);
     }
     .header-badge {
       display: inline-block;
@@ -120,19 +122,19 @@ import { AdBannerComponent } from '../../components/ads/ad-banner/ad-banner';
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: #0284c7;
-      background: #f0f9ff;
-      border: 1px solid #bae6fd;
-      padding: 3px 10px;
-      border-radius: 6px;
+      color: #818cf8;
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(165, 180, 252, 0.3);
+      padding: 4px 12px;
+      border-radius: 999px;
       margin-bottom: 12px;
     }
-    h1 { font-size: 28px; font-weight: 800; color: #0f172a; margin: 0 0 12px; letter-spacing: -0.02em; }
-    .lead { font-size: 16px; color: #475569; line-height: 1.6; margin-bottom: 28px; }
+    h1 { font-size: 28px; font-weight: 800; color: #ffffff; margin: 0 0 12px; letter-spacing: -0.02em; }
+    .lead { font-size: 16px; color: #cbd5e1; line-height: 1.6; margin-bottom: 28px; }
     .page-section { margin-bottom: 32px; }
-    h2 { font-size: 18px; font-weight: 700; color: #0f172a; margin: 0 0 10px; }
-    p { font-size: 14px; color: #475569; line-height: 1.7; margin: 0 0 12px; }
-    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 12px; color: #0f172a; }
+    h2 { font-size: 18px; font-weight: 700; color: #ffffff; margin: 0 0 10px; }
+    p { font-size: 14px; color: #94a3b8; line-height: 1.7; margin: 0 0 12px; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: rgba(30, 41, 59, 0.8); padding: 2px 6px; border-radius: 4px; font-size: 12px; color: #c7d2fe; }
     .principles-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -140,27 +142,27 @@ import { AdBannerComponent } from '../../components/ads/ad-banner/ad-banner';
       margin-top: 16px;
     }
     .principle-card {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
+      background: rgba(11, 17, 32, 0.75);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: 12px;
       padding: 20px 18px;
     }
     .principle-icon {
       width: 36px;
       height: 36px;
       border-radius: 8px;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(99, 102, 241, 0.25);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #0284c7;
+      color: #818cf8;
       margin-bottom: 12px;
     }
-    .principle-card h3 { font-size: 15px; font-weight: 700; color: #0f172a; margin: 0 0 6px; }
-    .principle-card p { font-size: 13px; margin: 0; line-height: 1.6; }
+    .principle-card h3 { font-size: 15px; font-weight: 700; color: #ffffff; margin: 0 0 6px; }
+    .principle-card p { font-size: 13px; margin: 0; line-height: 1.6; color: #94a3b8; }
     .contact-cta {
-      border-top: 1px solid #e2e8f0;
+      border-top: 1px solid rgba(99, 102, 241, 0.2);
       padding-top: 24px;
       margin-top: 28px;
       display: flex;
@@ -169,21 +171,25 @@ import { AdBannerComponent } from '../../components/ads/ad-banner/ad-banner';
       gap: 16px;
       flex-wrap: wrap;
     }
-    .contact-cta h3 { margin: 0 0 4px; font-size: 16px; font-weight: 700; color: #0f172a; }
-    .contact-cta p { margin: 0; font-size: 13px; color: #64748b; }
+    .contact-cta h3 { margin: 0 0 4px; font-size: 16px; font-weight: 700; color: #ffffff; }
+    .contact-cta p { margin: 0; font-size: 13px; color: #94a3b8; }
     .btn-primary {
       display: inline-flex;
       align-items: center;
-      background: #0f172a;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
       color: #ffffff;
       padding: 10px 20px;
       border-radius: 8px;
       text-decoration: none;
       font-weight: 600;
       font-size: 13px;
-      transition: background 0.15s ease;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-    .btn-primary:hover { background: #1e293b; }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(124, 58, 237, 0.5);
+    }
   `]
 })
 export class AboutComponent {}

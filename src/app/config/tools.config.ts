@@ -9,7 +9,7 @@ export const TOOLS_CONFIG: ToolItem[] = [
     fullDescription: 'Comprehensive financial planning suite. Calculate reducing balance loan EMIs with amortization schedules, bank FD returns, monthly RD compounding, and 15-year tax-free PPF retirement wealth.',
     category: 'finance',
     route: '/tools/finance-calculator',
-    icon: 'dollar-sign',
+    icon: 'indian-rupee',
     badge: 'Finance',
     isPopular: true,
     keywords: ['emi calculator', 'loan calculator', 'fd calculator', 'rd calculator', 'ppf calculator', 'compound interest', 'home loan emi'],

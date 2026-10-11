@@ -1,4 +1,34 @@
-/* Global Base Styles */
+/* ==========================================================================
+   GLOBAL DESIGN SYSTEM: DEEP BLUE & PURPLE THEME (NO WHITE BACKGROUNDS)
+   ========================================================================== */
+
+:root {
+  --bg-canvas: #090d16;
+  --bg-card: rgba(15, 23, 42, 0.82);
+  --bg-card-sub: rgba(11, 17, 32, 0.75);
+  --bg-card-hover: rgba(30, 41, 59, 0.85);
+  --bg-input: rgba(11, 17, 32, 0.88);
+
+  --border-subtle: rgba(99, 102, 241, 0.22);
+  --border-glow: rgba(167, 139, 250, 0.45);
+  --border-strong: rgba(129, 140, 248, 0.35);
+
+  --text-primary: #ffffff;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+
+  --accent-indigo: #6366f1;
+  --accent-purple: #8b5cf6;
+  --accent-violet: #a855f7;
+  --accent-blue: #3b82f6;
+  --accent-cyan: #06b6d4;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+
+  --gradient-primary: linear-gradient(135deg, #4f46e5, #7c3aed);
+  --gradient-glow: linear-gradient(135deg, #60a5fa, #a78bfa, #c084fc, #38bdf8);
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -7,16 +37,16 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  color: #0f172a;
-  background-color: #f8fafc;
+  color: var(--text-secondary);
+  background-color: var(--bg-canvas) !important;
   background-image: 
-    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.09) 0px, transparent 55%),
-    radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.09) 0px, transparent 55%),
-    radial-gradient(at 50% 40%, rgba(59, 130, 246, 0.05) 0px, transparent 60%),
-    radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.06) 0px, transparent 55%),
-    radial-gradient(at 0% 100%, rgba(139, 92, 246, 0.08) 0px, transparent 55%);
-  background-attachment: fixed;
-  background-size: 100% 100%;
+    radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.32) 0px, transparent 55%),
+    radial-gradient(at 100% 0%, rgba(147, 51, 234, 0.34) 0px, transparent 55%),
+    radial-gradient(at 50% 35%, rgba(37, 99, 235, 0.22) 0px, transparent 60%),
+    radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.18) 0px, transparent 55%),
+    radial-gradient(at 0% 100%, rgba(168, 85, 247, 0.25) 0px, transparent 55%) !important;
+  background-attachment: fixed !important;
+  background-size: 100% 100% !important;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
 }
@@ -28,8 +58,8 @@ html, body {
 }
 
 @keyframes pulseGlow {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 0.9; transform: scale(1.05); }
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.05); }
 }
 
 @keyframes shimmer {
@@ -43,13 +73,322 @@ html, body {
   100% { background-position: 0% 50%; }
 }
 
-/* Markdown Rendering Styles (GitHub Flavored Style) */
+/* ==========================================================================
+   UNIVERSAL THEME OVERRIDES (Eliminates All White Backgrounds Everywhere)
+   ========================================================================== */
+
+/* Cards & Surfaces */
+.tool-card,
+.card,
+.converter-card,
+.content-card,
+.about-section,
+.how-it-works-section,
+.faq-section,
+.inputs-card,
+.results-card {
+  background: rgba(15, 23, 42, 0.82) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  border: 1px solid rgba(99, 102, 241, 0.22) !important;
+  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.35) !important;
+  color: #f8fafc !important;
+}
+
+/* Sub-cards and Containers */
+.step-card,
+.about-card,
+.feature-card,
+.faq-item,
+.principle-card,
+.tech-card,
+.unit-box,
+.comp-box,
+.summary-box,
+.discount-summary,
+.answer-box {
+  background: rgba(11, 17, 32, 0.75) !important;
+  border: 1px solid rgba(99, 102, 241, 0.2) !important;
+  color: #cbd5e1 !important;
+}
+
+.step-card:hover,
+.about-card:hover,
+.feature-card:hover,
+.faq-item:hover,
+.principle-card:hover,
+.tech-card:hover {
+  background: rgba(30, 41, 59, 0.85) !important;
+  border-color: rgba(167, 139, 250, 0.45) !important;
+}
+
+/* Dropzones & Upload Areas */
+.dropzone,
+.drop-zone {
+  background: rgba(11, 17, 32, 0.7) !important;
+  border: 2px dashed rgba(129, 140, 248, 0.35) !important;
+  color: #f8fafc !important;
+}
+
+.dropzone:hover,
+.dropzone.dragging,
+.drop-zone:hover,
+.drop-zone.dragging {
+  background: rgba(30, 41, 59, 0.85) !important;
+  border-color: #818cf8 !important;
+}
+
+/* Typography Across All Components */
+h1, h2, h3, h4, h5, h6,
+.tool-title,
+.card-title,
+.section-title,
+.step-heading,
+.faq-question,
+.about-card h3,
+.feature-card h3,
+.tech-card h3,
+.drop-content h3,
+.dropzone-primary-text {
+  color: #ffffff !important;
+}
+
+p,
+.tool-subtitle,
+.card-desc,
+.card-subtitle,
+.section-description,
+.step-text,
+.faq-answer,
+.about-card p,
+.feature-card p,
+.tech-card p,
+.drop-content p,
+.dropzone-secondary-text {
+  color: #94a3b8 !important;
+}
+
+/* Inputs & Form Elements */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="search"],
+textarea,
+select,
+.num-input,
+.code-input,
+.unit-input,
+.unit-select,
+.typed-input {
+  background: rgba(11, 17, 32, 0.88) !important;
+  border: 1.5px solid rgba(129, 140, 248, 0.28) !important;
+  color: #ffffff !important;
+  outline: none !important;
+  border-radius: 8px !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+.num-input:focus,
+.code-input:focus,
+.unit-input:focus {
+  border-color: #818cf8 !important;
+  box-shadow: 0 0 18px rgba(99, 102, 241, 0.4) !important;
+}
+
+select option {
+  background: #0f172a !important;
+  color: #ffffff !important;
+}
+
+/* Buttons */
+.btn-primary,
+.btn-convert,
+.btn-merge,
+.btn-action,
+.btn-browse,
+.btn-reset-filters {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 4px 18px rgba(99, 102, 241, 0.45) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.btn-primary:hover,
+.btn-convert:hover:not(:disabled),
+.btn-merge:hover:not(:disabled),
+.btn-browse:hover,
+.btn-reset-filters:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 22px rgba(124, 58, 237, 0.55) !important;
+}
+
+.btn-choose,
+.btn-view,
+.btn-copy-sm,
+.btn-arrow,
+.btn-step {
+  background: rgba(30, 41, 59, 0.85) !important;
+  border: 1px solid rgba(129, 140, 248, 0.3) !important;
+  color: #cbd5e1 !important;
+}
+
+.btn-choose:hover,
+.btn-view:hover,
+.btn-copy-sm:hover,
+.btn-arrow:hover:not(:disabled),
+.btn-step:hover {
+  background: rgba(99, 102, 241, 0.3) !important;
+  color: #ffffff !important;
+  border-color: #818cf8 !important;
+}
+
+/* Tabs & Chips */
+.pill-btn.active,
+.tab-btn.active,
+.tab-chip.active,
+.btn-tab.active,
+.btn-chip.active,
+.btn-dir.active {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4) !important;
+}
+
+.pill-btn,
+.tab-btn,
+.tab-chip,
+.btn-tab,
+.btn-chip,
+.btn-dir {
+  background: rgba(15, 23, 42, 0.7) !important;
+  color: #cbd5e1 !important;
+  border: 1px solid rgba(129, 140, 248, 0.2) !important;
+}
+
+.pill-btn:hover,
+.tab-btn:hover,
+.tab-chip:hover,
+.btn-tab:hover,
+.btn-chip:hover,
+.btn-dir:hover {
+  background: rgba(30, 41, 59, 0.85) !important;
+  color: #ffffff !important;
+  border-color: rgba(167, 139, 250, 0.45) !important;
+}
+
+/* Contact Page Dark Overrides */
+.email-ready-box {
+  background: rgba(11, 17, 32, 0.75) !important;
+  border: 1px solid rgba(99, 102, 241, 0.25) !important;
+  color: #cbd5e1 !important;
+}
+.email-ready-box h3 {
+  color: #ffffff !important;
+}
+.btn-copy-chip {
+  background: rgba(30, 41, 59, 0.85) !important;
+  border: 1px solid rgba(129, 140, 248, 0.3) !important;
+  color: #cbd5e1 !important;
+}
+.btn-copy-chip:hover {
+  background: rgba(99, 102, 241, 0.3) !important;
+  color: #ffffff !important;
+}
+.direct-contact-box {
+  border-top: 1px solid rgba(99, 102, 241, 0.15) !important;
+}
+.direct-contact-box h3 {
+  color: #ffffff !important;
+}
+.direct-contact-box p {
+  color: #94a3b8 !important;
+}
+.direct-contact-box a {
+  color: #818cf8 !important;
+}
+
+/* Badges & Accents */
+.tool-badge,
+.section-badge,
+.header-badge,
+.count-badge,
+.tag-chip {
+  background: rgba(99, 102, 241, 0.2) !important;
+  color: #a5b4fc !important;
+  border: 1px solid rgba(165, 180, 252, 0.3) !important;
+}
+
+/* Breadcrumbs */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.breadcrumb a {
+  color: #818cf8 !important;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.breadcrumb a:hover {
+  color: #c084fc !important;
+  text-decoration: underline;
+}
+
+.breadcrumb .sep {
+  color: rgba(148, 163, 184, 0.4) !important;
+}
+
+.breadcrumb .current {
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+/* Range Sliders */
+input[type="range"].slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.3) !important;
+  outline: none;
+}
+
+input[type="range"].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #818cf8;
+  border: 2px solid #ffffff;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.6);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+input[type="range"].slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  background: #a78bfa;
+}
+
+/* Markdown Rendering (Dark Theme) */
 .markdown-body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 1.6;
   word-wrap: break-word;
-  color: #24292f;
+  color: var(--text-secondary);
 }
 
 .markdown-body h1,
@@ -60,25 +399,22 @@ html, body {
 .markdown-body h6 {
   margin-top: 24px;
   margin-bottom: 16px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.25;
-  color: #0f172a;
+  color: #ffffff !important;
 }
 
 .markdown-body h1 {
   font-size: 2em;
   padding-bottom: 0.3em;
-  border-bottom: 1px solid #d0d7de;
+  border-bottom: 1px solid rgba(99, 102, 241, 0.2);
 }
 
 .markdown-body h2 {
   font-size: 1.5em;
   padding-bottom: 0.3em;
-  border-bottom: 1px solid #d0d7de;
+  border-bottom: 1px solid rgba(99, 102, 241, 0.2);
 }
-
-.markdown-body h3 { font-size: 1.25em; }
-.markdown-body h4 { font-size: 1em; }
 
 .markdown-body p {
   margin-top: 0;
@@ -89,10 +425,11 @@ html, body {
   padding: 0.2em 0.4em;
   margin: 0;
   font-size: 85%;
-  background-color: #f6f8fa;
+  background-color: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(99, 102, 241, 0.25);
   border-radius: 6px;
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-  color: #0f172a;
+  color: #c7d2fe;
 }
 
 .markdown-body pre {
@@ -100,8 +437,9 @@ html, body {
   overflow: auto;
   font-size: 85%;
   line-height: 1.45;
-  background-color: #f6f8fa;
-  border-radius: 6px;
+  background-color: rgba(11, 17, 32, 0.95);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 8px;
   margin-bottom: 16px;
 }
 
@@ -109,12 +447,13 @@ html, body {
   padding: 0;
   background-color: transparent;
   border: 0;
+  color: #f8fafc;
 }
 
 .markdown-body blockquote {
   padding: 0 1em;
-  color: #57606a;
-  border-left: 0.25em solid #d0d7de;
+  color: var(--text-muted);
+  border-left: 0.25em solid #818cf8;
   margin: 0 0 16px;
 }
 
@@ -123,10 +462,6 @@ html, body {
   padding-left: 2em;
   margin-top: 0;
   margin-bottom: 16px;
-}
-
-.markdown-body li {
-  margin-top: 0.25em;
 }
 
 .markdown-body table {
@@ -140,28 +475,30 @@ html, body {
 
 .markdown-body table th,
 .markdown-body table td {
-  padding: 6px 13px;
-  border: 1px solid #d0d7de;
+  padding: 8px 14px;
+  border: 1px solid rgba(99, 102, 241, 0.2);
 }
 
 .markdown-body table th {
   font-weight: 600;
-  background-color: #f6f8fa;
+  background-color: rgba(30, 41, 59, 0.8);
+  color: #ffffff;
 }
 
 .markdown-body table tr:nth-child(2n) {
-  background-color: #f6f8fa;
+  background-color: rgba(15, 23, 42, 0.5);
 }
 
 .markdown-body hr {
-  height: 0.25em;
+  height: 1px;
   padding: 0;
   margin: 24px 0;
-  background-color: #d0d7de;
+  background-color: rgba(99, 102, 241, 0.2);
   border: 0;
 }
 
 .markdown-body img {
   max-width: 100%;
   box-sizing: content-box;
+  border-radius: 8px;
 }

@@ -72,25 +72,27 @@ import { AdBannerComponent } from '../../components/ads/ad-banner/ad-banner';
   `,
   styles: [`
     .page-container { max-width: 860px; margin: 0 auto; padding: 24px 16px 48px; }
-    .breadcrumb { display: flex; gap: 8px; font-size: 13px; color: #64748b; margin-bottom: 20px; }
-    .breadcrumb a { color: #2563eb; text-decoration: none; }
-    .sep { color: #cbd5e1; }
-    .current { color: #0f172a; font-weight: 500; }
+    .breadcrumb { display: flex; gap: 8px; font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
+    .breadcrumb a { color: #818cf8; text-decoration: none; }
+    .sep { color: rgba(148, 163, 184, 0.4); }
+    .current { color: #ffffff; font-weight: 600; }
     .content-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
+      background: rgba(15, 23, 42, 0.82);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(99, 102, 241, 0.22);
       border-radius: 16px;
       padding: 36px 32px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+      box-shadow: 0 4px 28px rgba(0, 0, 0, 0.35);
     }
-    h1 { font-size: 32px; font-weight: 800; color: #0f172a; margin: 0 0 6px; }
+    h1 { font-size: 32px; font-weight: 800; color: #ffffff; margin: 0 0 6px; }
     .last-updated { font-size: 13px; color: #94a3b8; margin-bottom: 28px; }
     .section { margin-bottom: 28px; }
-    h2 { font-size: 19px; font-weight: 700; color: #1e293b; margin: 0 0 10px; }
-    p { font-size: 14px; color: #475569; line-height: 1.7; margin: 0 0 10px; }
-    ul { margin: 10px 0 10px 20px; font-size: 14px; color: #475569; line-height: 1.7; }
+    h2 { font-size: 19px; font-weight: 700; color: #ffffff; margin: 0 0 10px; }
+    p { font-size: 14px; color: #cbd5e1; line-height: 1.7; margin: 0 0 10px; }
+    ul { margin: 10px 0 10px 20px; font-size: 14px; color: #cbd5e1; line-height: 1.7; }
     li { margin-bottom: 8px; }
-    a { color: #2563eb; text-decoration: none; font-weight: 500; }
+    a { color: #818cf8; text-decoration: none; font-weight: 500; }
     a:hover { text-decoration: underline; }
   `]
 })

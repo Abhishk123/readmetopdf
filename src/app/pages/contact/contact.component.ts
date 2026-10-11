@@ -127,39 +127,50 @@ import { environment } from '../../../environments/environment';
   styles: [`
     .page-container { max-width: 760px; margin: 0 auto; padding: 24px 16px 48px; }
     .breadcrumb { display: flex; gap: 8px; font-size: 13px; color: #64748b; margin-bottom: 20px; }
-    .breadcrumb a { color: #2563eb; text-decoration: none; }
-    .sep { color: #cbd5e1; }
-    .current { color: #0f172a; font-weight: 500; }
+    .breadcrumb a { color: #818cf8; text-decoration: none; }
+    .sep { color: rgba(148, 163, 184, 0.4); }
+    .current { color: #ffffff; font-weight: 600; }
     .content-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
+      background: rgba(15, 23, 42, 0.82);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(99, 102, 241, 0.22);
       border-radius: 16px;
       padding: 36px 32px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+      box-shadow: 0 4px 28px rgba(0, 0, 0, 0.35);
     }
-    h1 { font-size: 30px; font-weight: 800; color: #0f172a; margin: 0 0 8px; }
-    .subtitle { font-size: 15px; color: #64748b; margin-bottom: 28px; }
+    h1 { font-size: 30px; font-weight: 800; color: #ffffff; margin: 0 0 8px; }
+    .subtitle { font-size: 15px; color: #94a3b8; margin-bottom: 28px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .form-group { margin-bottom: 20px; }
-    label { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px; }
+    label { display: block; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
     .input-text, .input-select, .input-textarea {
       width: 100%;
       box-sizing: border-box;
       padding: 10px 14px;
       font-size: 14px;
-      border: 1px solid #cbd5e1;
+      background: rgba(11, 17, 32, 0.88);
+      border: 1.5px solid rgba(129, 140, 248, 0.28);
+      color: #ffffff;
       border-radius: 8px;
       outline: none;
       font-family: inherit;
-      transition: border-color 0.2s ease;
+      transition: all 0.2s ease;
     }
-    .input-text:focus, .input-select:focus, .input-textarea:focus { border-color: #2563eb; }
+    .input-text:focus, .input-select:focus, .input-textarea:focus {
+      border-color: #818cf8;
+      box-shadow: 0 0 16px rgba(99, 102, 241, 0.35);
+    }
+    .input-select option {
+      background: #0f172a;
+      color: #ffffff;
+    }
     .btn-submit {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      background: #0f172a;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
       color: #ffffff;
       border: none;
       font-size: 14px;
@@ -167,9 +178,13 @@ import { environment } from '../../../environments/environment';
       padding: 12px 28px;
       border-radius: 8px;
       cursor: pointer;
-      transition: background 0.15s ease;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-    .btn-submit:hover:not(:disabled) { background: #1e293b; }
+    .btn-submit:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(124, 58, 237, 0.5);
+    }
     .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 
     /* Ready to Send Box */
