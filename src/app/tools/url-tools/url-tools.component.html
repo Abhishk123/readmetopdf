@@ -1,0 +1,302 @@
+<div class="tool-page-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span class="current">URL Tools & Campaign Link Builder</span>
+  </nav>
+
+  <!-- Top Ad Banner -->
+  <app-ad-banner slot="topBanner"></app-ad-banner>
+
+  <!-- Tool Hero Header -->
+  <div class="tool-header">
+    <div class="tool-badge">Marketing & Developer Utilities</div>
+    <h1 class="tool-title">URL Shortener, UTM Builder & Link Cleaner</h1>
+    <p class="tool-subtitle">
+      Shorten long URLs, build Google Analytics campaign tracking tags (UTM parameters), and strip invasive tracking cookies from links. 100% private and client-side.
+    </p>
+  </div>
+
+  <!-- Notification Toast -->
+  @if (copiedMessage()) {
+    <div class="toast-banner">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+      <span>{{ copiedMessage() }}</span>
+    </div>
+  }
+
+  <!-- Tab Buttons -->
+  <div class="tool-tabs">
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'utm'" (click)="setTab('utm')">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+      </svg>
+      <span>UTM Campaign Builder</span>
+    </button>
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'shorten'" (click)="setTab('shorten')">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 3 21 3 21 9"></polyline>
+        <polyline points="9 21 3 21 3 15"></polyline>
+        <line x1="21" y1="3" x2="14" y2="10"></line>
+        <line x1="3" y1="21" x2="10" y2="14"></line>
+      </svg>
+      <span>URL Shortener</span>
+    </button>
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'clean'" (click)="setTab('clean')">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="3 6 5 6 21 6"></polyline>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+      </svg>
+      <span>Link Privacy Cleaner</span>
+    </button>
+  </div>
+
+  <!-- TAB 1: UTM CAMPAIGN BUILDER -->
+  @if (activeTab() === 'utm') {
+    <div class="creator-layout">
+      <!-- Inputs Column -->
+      <div class="card inputs-card">
+        <h3>Campaign Parameters</h3>
+
+        <div class="input-field">
+          <label class="field-title">Website Destination URL <span class="req">*</span></label>
+          <input
+            type="text"
+            class="typed-input"
+            [ngModel]="baseUrl()"
+            (ngModelChange)="baseUrl.set($event)"
+            placeholder="https://example.com/landing-page" />
+        </div>
+
+        <div class="grid-2">
+          <div class="input-field">
+            <label class="field-title">Campaign Source (utm_source) <span class="req">*</span></label>
+            <input
+              type="text"
+              class="typed-input"
+              [ngModel]="utmSource()"
+              (ngModelChange)="utmSource.set($event)"
+              placeholder="google, newsletter, twitter, linkedin" />
+          </div>
+          <div class="input-field">
+            <label class="field-title">Campaign Medium (utm_medium) <span class="req">*</span></label>
+            <input
+              type="text"
+              class="typed-input"
+              [ngModel]="utmMedium()"
+              (ngModelChange)="utmMedium.set($event)"
+              placeholder="cpc, email, banner, social" />
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="input-field">
+            <label class="field-title">Campaign Name (utm_campaign)</label>
+            <input
+              type="text"
+              class="typed-input"
+              [ngModel]="utmCampaign()"
+              (ngModelChange)="utmCampaign.set($event)"
+              placeholder="spring_sale, launch_2026" />
+          </div>
+          <div class="input-field">
+            <label class="field-title">Campaign Term (utm_term)</label>
+            <input
+              type="text"
+              class="typed-input"
+              [ngModel]="utmTerm()"
+              (ngModelChange)="utmTerm.set($event)"
+              placeholder="paid search keywords" />
+          </div>
+        </div>
+
+        <div class="input-field">
+          <label class="field-title">Campaign Content (utm_content)</label>
+          <input
+            type="text"
+            class="typed-input"
+            [ngModel]="utmContent()"
+            (ngModelChange)="utmContent.set($event)"
+            placeholder="header_cta, sidebar_link (A/B testing)" />
+        </div>
+      </div>
+
+      <!-- Live Generated URL Column -->
+      <div class="card preview-card">
+        <h3>Generated Tracking URL</h3>
+
+        <div class="url-output-box">
+          <code class="url-display">{{ generatedUtmUrl() }}</code>
+        </div>
+
+        <!-- Visual Parameter Distribution Graph / Breakdown -->
+        <div class="params-graph-box">
+          <div class="graph-header">
+            <span>Tracking Parameters Breakdown</span>
+          </div>
+          <div class="graph-badges">
+            @if (utmSource()) { <span class="badge badge-source">Source: {{ utmSource() }}</span> }
+            @if (utmMedium()) { <span class="badge badge-medium">Medium: {{ utmMedium() }}</span> }
+            @if (utmCampaign()) { <span class="badge badge-campaign">Campaign: {{ utmCampaign() }}</span> }
+            @if (utmTerm()) { <span class="badge badge-term">Term: {{ utmTerm() }}</span> }
+            @if (utmContent()) { <span class="badge badge-content">Content: {{ utmContent() }}</span> }
+          </div>
+        </div>
+
+        <div class="action-buttons-group">
+          <button type="button" class="btn btn-primary" (click)="copyToClipboard(generatedUtmUrl(), 'Tracking Link')">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span>Copy Full Tracking URL</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- TAB 2: URL SHORTENER -->
+  @if (activeTab() === 'shorten') {
+    <div class="single-card-layout">
+      <div class="card shortener-card">
+        <h3>Shorten Any Long Web Link</h3>
+
+        @if (shortenerError()) {
+          <div class="error-banner">
+            <span>{{ shortenerError() }}</span>
+          </div>
+        }
+
+        <div class="shortener-input-group">
+          <input
+            type="text"
+            class="typed-input large"
+            [ngModel]="rawUrl()"
+            (ngModelChange)="rawUrl.set($event)"
+            placeholder="Paste your long link here (e.g. https://www.jsnsworks.site/tools/...)" />
+          <button type="button" class="btn btn-primary" [disabled]="isShortening()" (click)="shortenUrlNow()">
+            @if (isShortening()) {
+              <span>Shortening...</span>
+            } @else {
+              <span>Shorten Link</span>
+            }
+          </button>
+        </div>
+
+        @if (shortenedUrl()) {
+          <div class="shortened-result-box">
+            <div class="res-meta">
+              <span class="res-label">Your Compact Short Link:</span>
+              <a [href]="shortenedUrl()" target="_blank" rel="noopener noreferrer" class="res-link">{{ shortenedUrl() }}</a>
+            </div>
+            <button type="button" class="btn btn-secondary" (click)="copyToClipboard(shortenedUrl(), 'Short Link')">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>Copy Short Link</span>
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- TAB 3: LINK PRIVACY CLEANER -->
+  @if (activeTab() === 'clean') {
+    <div class="single-card-layout">
+      <div class="card cleaner-card">
+        <h3>Strip Invasive Tracking Parameters</h3>
+        <p class="cleaner-desc">Remove tracking identifiers (Facebook <code>fbclid</code>, Google <code>gclid</code>, UTM parameters, and affiliate tags) to create clean, privacy-friendly share links.</p>
+
+        <div class="input-field">
+          <label class="field-title">Messy or Monitored URL</label>
+          <input
+            type="text"
+            class="typed-input"
+            [ngModel]="dirtyUrl()"
+            (ngModelChange)="dirtyUrl.set($event); cleanUrlNow()"
+            placeholder="Paste URL with tracking tags..." />
+        </div>
+
+        @if (cleanedUrl()) {
+          <div class="clean-result-container">
+            <div class="clean-header-row">
+              <span class="clean-badge">Cleaned URL</span>
+              @if (strippedTags().length > 0) {
+                <span class="removed-count">{{ strippedTags().length }} Tracking Tags Stripped</span>
+              }
+            </div>
+
+            <div class="url-output-box">
+              <code class="url-display">{{ cleanedUrl() }}</code>
+            </div>
+
+            @if (strippedTags().length > 0) {
+              <div class="removed-tags-list">
+                <span class="tags-label">Removed:</span>
+                @for (tag of strippedTags(); track tag) {
+                  <span class="tag-pill">{{ tag }}</span>
+                }
+              </div>
+            }
+
+            <div class="action-buttons-group">
+              <button type="button" class="btn btn-primary" (click)="copyToClipboard(cleanedUrl(), 'Cleaned URL')">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy Clean URL</span>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Mid Content Ad Banner -->
+  <app-ad-banner slot="midContent"></app-ad-banner>
+
+  <!-- Educational SEO Section -->
+  <div class="seo-guide">
+    <h2>UTM Marketing & URL Best Practices</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>What Are UTM Parameters?</h3>
+        <p>Urchin Tracking Module (UTM) codes are five variants of URL parameters used by digital marketers to track the effectiveness of online marketing campaigns across traffic sources.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Naming Consistency</h3>
+        <p>Always use lowercase names and underscores (e.g. <code>spring_promo</code>) for campaigns. Google Analytics treats uppercase and lowercase as different campaigns.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Link Hygiene & Cleanliness</h3>
+        <p>Removing click IDs like <code>fbclid</code> and <code>gclid</code> before sharing links on social forums or Slack prevents surveillance leaks and keeps links readable.</p>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h3>Does adding UTM parameters affect SEO rankings?</h3>
+        <p>No. Search engine crawlers ignore UTM parameters when canonical tags are properly established on destination pages.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Are links shortened through this tool private?</h3>
+        <p>Yes. Shortened links redirect visitors transparently without capturing or retaining private user data.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Ad Banner -->
+  <app-ad-banner slot="bottomBanner"></app-ad-banner>
+</div>

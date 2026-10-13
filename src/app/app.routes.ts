@@ -15,6 +15,9 @@ import { TipCalculatorComponent } from './tools/tip-calculator/tip-calculator.co
 import { ColorPickerComponent } from './tools/color-picker/color-picker.component';
 import { ImageConverterComponent } from './tools/image-converter/image-converter.component';
 import { FaviconGeneratorComponent } from './tools/favicon-generator/favicon-generator.component';
+import { BarcodeGeneratorComponent } from './tools/barcode-generator/barcode-generator.component';
+import { UrlToolsComponent } from './tools/url-tools/url-tools.component';
+import { PasswordGeneratorComponent } from './tools/password-generator/password-generator.component';
 import { AboutComponent } from './pages/about/about.component';
 import { ContactComponent } from './pages/contact/contact.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
@@ -110,7 +113,24 @@ export const routes: Routes = [
     title: 'Tip & Bill Splitter - Calculate Restaurant Tips | JSNS Works'
   },
 
-  // 5. Compliance & Legal Pages
+  // 5. Advanced Utilities (SEO Rich Landing Pages)
+  {
+    path: 'tools/barcode-generator',
+    component: BarcodeGeneratorComponent,
+    title: 'Barcode & QR Code Generator Online - Free SVG / PNG Download | JSNS Works'
+  },
+  {
+    path: 'tools/url-tools',
+    component: UrlToolsComponent,
+    title: 'URL Shortener, UTM Campaign Builder & Link Cleaner Online | JSNS Works'
+  },
+  {
+    path: 'tools/password-generator',
+    component: PasswordGeneratorComponent,
+    title: 'Strong Password, Secret Key & UUID Generator Online | JSNS Works'
+  },
+
+  // 6. Compliance & Legal Pages
   {
     path: 'about',
     component: AboutComponent,

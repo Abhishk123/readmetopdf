@@ -1,0 +1,280 @@
+<div class="tool-page-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span class="current">Barcode & QR Code Generator</span>
+  </nav>
+
+  <!-- Top Ad Banner -->
+  <app-ad-banner slot="topBanner"></app-ad-banner>
+
+  <!-- Tool Hero Header -->
+  <div class="tool-header">
+    <div class="tool-badge">Vector & High-Res Generator</div>
+    <h1 class="tool-title">Free Barcode & QR Code Creator</h1>
+    <p class="tool-subtitle">
+      Generate customized 2D QR codes and 1D retail barcodes (Code 128, EAN, UPC) with custom colors, instant live preview, and vector SVG/PNG downloads. 100% private in-browser generation.
+    </p>
+  </div>
+
+  <!-- Notification Toast -->
+  @if (copiedMessage()) {
+    <div class="toast-banner">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+      <span>{{ copiedMessage() }}</span>
+    </div>
+  }
+
+  <!-- Tab Buttons -->
+  <div class="barcode-tabs">
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'qr'" (click)="setTab('qr')">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7"></rect>
+        <rect x="14" y="3" width="7" height="7"></rect>
+        <rect x="14" y="14" width="7" height="7"></rect>
+        <rect x="3" y="14" width="7" height="7"></rect>
+      </svg>
+      <span>2D QR Code (URL & Text)</span>
+    </button>
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'barcode1d'" (click)="setTab('barcode1d')">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="4" y1="4" x2="4" y2="20"></line>
+        <line x1="8" y1="4" x2="8" y2="20"></line>
+        <line x1="12" y1="4" x2="12" y2="20"></line>
+        <line x1="17" y1="4" x2="17" y2="20"></line>
+        <line x1="20" y1="4" x2="20" y2="20"></line>
+      </svg>
+      <span>1D Linear Barcode (EAN, UPC, Code 128)</span>
+    </button>
+  </div>
+
+  <!-- TAB 1: QR CODE GENERATOR -->
+  @if (activeTab() === 'qr') {
+    <div class="creator-layout">
+      <!-- Controls Column -->
+      <div class="card inputs-card">
+        <h3>QR Code Configuration</h3>
+
+        <div class="input-field">
+          <label class="field-title">Website URL or Text Payload</label>
+          <textarea
+            class="typed-textarea"
+            rows="3"
+            placeholder="Enter URL, text, phone number, or Wi-Fi info..."
+            [ngModel]="qrText()"
+            (ngModelChange)="qrText.set($event)"></textarea>
+          <small class="field-hint">Can be any web link (https://...), contact info, or plain text.</small>
+        </div>
+
+        <div class="colors-row">
+          <div class="color-picker-box">
+            <label class="field-title">Foreground Color</label>
+            <div class="color-control">
+              <input type="color" [ngModel]="qrDarkColor()" (ngModelChange)="qrDarkColor.set($event)" class="color-swatch" />
+              <input type="text" [ngModel]="qrDarkColor()" (ngModelChange)="qrDarkColor.set($event)" class="typed-hex" />
+            </div>
+          </div>
+          <div class="color-picker-box">
+            <label class="field-title">Background Color</label>
+            <div class="color-control">
+              <input type="color" [ngModel]="qrLightColor()" (ngModelChange)="qrLightColor.set($event)" class="color-swatch" />
+              <input type="text" [ngModel]="qrLightColor()" (ngModelChange)="qrLightColor.set($event)" class="typed-hex" />
+            </div>
+          </div>
+        </div>
+
+        <div class="input-field">
+          <div class="field-header-row">
+            <label class="field-title">Resolution (Size)</label>
+            <span class="val-display">{{ qrSize() }}px</span>
+          </div>
+          <input type="range" min="150" max="600" step="10" [ngModel]="qrSize()" (ngModelChange)="qrSize.set(+$event)" class="slider" />
+        </div>
+
+        <div class="input-field">
+          <label class="field-title">Error Correction Level</label>
+          <div class="radio-pill-group">
+            <button type="button" class="pill-btn" [class.selected]="qrCorrectionLevel() === 'L'" (click)="qrCorrectionLevel.set('L')">Low (7%)</button>
+            <button type="button" class="pill-btn" [class.selected]="qrCorrectionLevel() === 'M'" (click)="qrCorrectionLevel.set('M')">Medium (15%)</button>
+            <button type="button" class="pill-btn" [class.selected]="qrCorrectionLevel() === 'Q'" (click)="qrCorrectionLevel.set('Q')">Quartile (25%)</button>
+            <button type="button" class="pill-btn" [class.selected]="qrCorrectionLevel() === 'H'" (click)="qrCorrectionLevel.set('H')">High (30%)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Preview & Download Column -->
+      <div class="card preview-card">
+        <h3>Live Vector Preview</h3>
+        <div class="qr-canvas-wrapper">
+          <canvas #qrCanvas class="preview-canvas"></canvas>
+        </div>
+
+        <div class="preview-meta">
+          <span>Dimensions: {{ qrSize() }} × {{ qrSize() }} px</span>
+          <span>Format: Standard Matrix 2D</span>
+        </div>
+
+        <div class="action-buttons-group">
+          <button type="button" class="btn btn-primary" (click)="downloadQrPng()">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Download PNG (High-Res)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- TAB 2: 1D LINEAR BARCODE GENERATOR -->
+  @if (activeTab() === 'barcode1d') {
+    <div class="creator-layout">
+      <!-- Controls Column -->
+      <div class="card inputs-card">
+        <h3>1D Barcode Configuration</h3>
+
+        @if (barcodeError()) {
+          <div class="error-banner">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span>{{ barcodeError() }}</span>
+          </div>
+        }
+
+        <div class="input-field">
+          <label class="field-title">Barcode Standard / Format</label>
+          <select class="typed-select" [ngModel]="barcodeFormat()" (ngModelChange)="barcodeFormat.set($event); renderBarcode1D()">
+            <option value="CODE128">Code 128 (Universal - Numbers & Letters)</option>
+            <option value="EAN13">EAN-13 (Standard Retail - 12 or 13 Digits)</option>
+            <option value="UPC">UPC-A (US Retail - 12 Digits)</option>
+            <option value="EAN8">EAN-8 (Compact Retail - 8 Digits)</option>
+            <option value="CODE39">Code 39 (Alphanumeric Logistics)</option>
+            <option value="ITF14">ITF-14 (Shipping & Packaging)</option>
+            <option value="pharmacode">Pharmacode (Pharmaceutical)</option>
+          </select>
+        </div>
+
+        <div class="input-field">
+          <label class="field-title">Code Value / SKU Number</label>
+          <input
+            type="text"
+            class="typed-input"
+            [ngModel]="barcodeValue()"
+            (ngModelChange)="barcodeValue.set($event)"
+            placeholder="e.g. 123456789012" />
+        </div>
+
+        <div class="colors-row">
+          <div class="color-picker-box">
+            <label class="field-title">Bar Color</label>
+            <div class="color-control">
+              <input type="color" [ngModel]="barcodeLineColor()" (ngModelChange)="barcodeLineColor.set($event)" class="color-swatch" />
+              <input type="text" [ngModel]="barcodeLineColor()" (ngModelChange)="barcodeLineColor.set($event)" class="typed-hex" />
+            </div>
+          </div>
+          <div class="color-picker-box">
+            <label class="field-title">Background Color</label>
+            <div class="color-control">
+              <input type="color" [ngModel]="barcodeBgColor()" (ngModelChange)="barcodeBgColor.set($event)" class="color-swatch" />
+              <input type="text" [ngModel]="barcodeBgColor()" (ngModelChange)="barcodeBgColor.set($event)" class="typed-hex" />
+            </div>
+          </div>
+        </div>
+
+        <div class="input-field">
+          <div class="field-header-row">
+            <label class="field-title">Bar Height</label>
+            <span class="val-display">{{ barcodeHeight() }}px</span>
+          </div>
+          <input type="range" min="40" max="150" step="5" [ngModel]="barcodeHeight()" (ngModelChange)="barcodeHeight.set(+$event)" class="slider" />
+        </div>
+
+        <div class="checkbox-row">
+          <label class="checkbox-label">
+            <input type="checkbox" [ngModel]="barcodeShowText()" (ngModelChange)="barcodeShowText.set($event)" />
+            <span>Display human-readable text label under bars</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Live Preview & Download Column -->
+      <div class="card preview-card">
+        <h3>Live Vector Preview</h3>
+        <div class="barcode-svg-wrapper">
+          <svg #barcodeSvg class="preview-svg"></svg>
+        </div>
+
+        <div class="preview-meta">
+          <span>Standard: {{ barcodeFormat() }}</span>
+          <span>Scalable Vector SVG Output</span>
+        </div>
+
+        <div class="action-buttons-group grid-2">
+          <button type="button" class="btn btn-primary" (click)="downloadBarcodeSvg()">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+              <polyline points="2 17 12 22 22 17"></polyline>
+              <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+            <span>Download SVG (Vector)</span>
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="downloadBarcodePng()">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Download PNG</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Mid Content Ad Banner -->
+  <app-ad-banner slot="midContent"></app-ad-banner>
+
+  <!-- Educational SEO Section -->
+  <div class="seo-guide">
+    <h2>Barcode & QR Code Standards & Best Practices</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>When to Use 2D QR Codes</h3>
+        <p>QR (Quick Response) codes are ideal for website links, restaurant menus, Wi-Fi passwords, and digital payments because any smartphone camera can instantly scan them from any angle.</p>
+      </div>
+      <div class="feature-card">
+        <h3>1D Barcode Formats Explained</h3>
+        <p><strong>Code 128</strong> handles letters and numbers for shipping and logistics. <strong>EAN-13</strong> and <strong>UPC-A</strong> are standard international retail barcodes printed on consumer product packaging.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Print & Contrast Guidelines</h3>
+        <p>Always maintain high contrast between the dark bars and light background. Vector SVGs ensure infinite crispness when printed on product labels, posters, or business cards.</p>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h3>Do generated QR codes or barcodes expire?</h3>
+        <p>No. These are static barcodes generated directly from your raw text or link. They never expire and do not depend on external servers or redirects.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Can I use these barcodes for commercial products?</h3>
+        <p>Yes. The generated SVGs and PNGs are 100% royalty-free and ready for packaging, inventory systems, warehouse scanners, and digital marketing.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Ad Banner -->
+  <app-ad-banner slot="bottomBanner"></app-ad-banner>
+</div>

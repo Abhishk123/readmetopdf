@@ -364,5 +364,93 @@ export const TOOLS_CONFIG: ToolItem[] = [
     faqs: [
       { question: 'How does tipping work in India?', answer: 'In India, 5% to 10% is customary at sit-down restaurants if a service charge is not already included in the bill. Tipping is discretionary.' }
     ]
+  },
+
+  // --- 5. MARKETING & DEVELOPER UTILITIES ---
+  {
+    id: 'barcode-generator',
+    title: 'Barcode & QR Code Creator',
+    shortDescription: 'Generate custom 2D QR codes and 1D retail barcodes (Code 128, EAN, UPC) with SVG & PNG download.',
+    fullDescription: 'Professional barcode and QR code generator. Transform web URLs, Wi-Fi credentials, contact details, or product SKU numbers into high-resolution QR codes and retail 1D barcodes. Download clean vector SVG and high-DPI PNG formats with custom colors.',
+    category: 'media',
+    route: '/tools/barcode-generator',
+    icon: 'repeat',
+    badge: 'Vector SVG',
+    isPopular: true,
+    keywords: ['barcode generator', 'qr code generator', 'create barcode online', 'code 128 generator', 'ean barcode', 'upc barcode', 'qr code with logo'],
+    features: [
+      'Generate 2D QR codes from URLs, plain text, and contact info',
+      'Supports Code 128, EAN-13, UPC-A, Code 39, and Pharmacode standards',
+      'Full color customization for foreground bars and backgrounds',
+      'Instant Vector SVG and high-resolution PNG downloads',
+      'Adjustable error correction level (up to 30% damage recovery)'
+    ],
+    howToSteps: [
+      { name: 'Choose Standard', text: 'Select 2D QR Code or 1D Linear Barcode.' },
+      { name: 'Enter Data', text: 'Type your website URL, text message, or product SKU.' },
+      { name: 'Customize Colors', text: 'Pick custom brand colors and bar heights.' },
+      { name: 'Download', text: 'Download as sharp vector SVG or PNG file.' }
+    ],
+    faqs: [
+      { question: 'Do generated QR codes expire?', answer: 'No. The generated QR codes and barcodes are permanent static codes that do not expire or redirect through third-party servers.' },
+      { question: 'Can I print these on physical products?', answer: 'Yes. The vector SVG output scales infinitely without pixelation, making it ready for commercial product labels and packaging.' }
+    ]
+  },
+  {
+    id: 'url-tools',
+    title: 'URL Shortener & UTM Link Builder',
+    shortDescription: 'Shorten links, build Google Analytics UTM campaign tags, and strip tracking cookies.',
+    fullDescription: 'Comprehensive URL management suite. Build accurate Google Analytics UTM campaign links with live parameter breakdown, shorten bulky links for SMS and social sharing, and strip invasive tracking cookies (fbclid, gclid) from links for clean privacy.',
+    category: 'converters',
+    route: '/tools/url-tools',
+    icon: 'share-2',
+    badge: 'Privacy & UTM',
+    isPopular: true,
+    keywords: ['url shortener', 'utm builder', 'campaign url builder', 'google analytics utm', 'clean url', 'remove tracking parameters', 'short link'],
+    features: [
+      'Google Analytics UTM Campaign Builder with real-time preview',
+      'Instant URL Shortener for clean social links',
+      'Tracking parameter cleaner to remove fbclid and gclid tags',
+      'One-click clipboard copying',
+      '100% Client-side operation with zero tracking logs'
+    ],
+    howToSteps: [
+      { name: 'Select Utility', text: 'Pick UTM Builder, URL Shortener, or Link Cleaner.' },
+      { name: 'Fill Details', text: 'Provide website URL and campaign parameters (source, medium, campaign).' },
+      { name: 'Copy Link', text: 'Copy the formatted link with one click.' }
+    ],
+    faqs: [
+      { question: 'Why should I use UTM parameters?', answer: 'UTM parameters allow Google Analytics to accurately attribute website traffic to specific marketing sources, email blasts, and ad campaigns.' },
+      { question: 'Does shortening affect SEO?', answer: 'Standard 301/302 redirects transfer traffic transparently. For your canonical search presence, use full clean URLs on your own domain.' }
+    ]
+  },
+  {
+    id: 'password-generator',
+    title: 'Password & Secret Key Generator',
+    shortDescription: 'Generate uncrackable passwords, 256-bit API secrets, UUID v4 tokens, and PINs.',
+    fullDescription: 'Hardware-backed cryptographic password and secret token generator. Create high-entropy passwords with custom length and character rules, 256-bit/512-bit API secret keys (Hex/Base64) for web development, UUID v4 tokens, and secure PIN codes.',
+    category: 'converters',
+    route: '/tools/password-generator',
+    icon: 'lock',
+    badge: 'Hardware Crypto',
+    isPopular: true,
+    keywords: ['password generator', 'secret key generator', 'api key generator', 'uuid generator', 'random string generator', 'secure password generator', 'pin generator'],
+    features: [
+      'Hardware-backed Web Cryptography API random values',
+      'Real-time entropy strength meter and crack-time estimator',
+      '256-bit and 512-bit Hex & Base64 API secret tokens',
+      'RFC4122 Version 4 UUID / GUID generation',
+      'Zero server transmission—100% private in-browser compute'
+    ],
+    howToSteps: [
+      { name: 'Select Type', text: 'Choose Strong Password, API Secret, UUID, or Numeric PIN.' },
+      { name: 'Customize Length', text: 'Set character length and symbol requirements.' },
+      { name: 'Copy & Use', text: 'Click Copy to clipboard to safely paste into password managers or .env files.' }
+    ],
+    faqs: [
+      { question: 'Are generated passwords stored or transmitted?', answer: 'Never. Passwords and secrets are generated exclusively inside your browser using the local Web Crypto API. No remote servers ever see them.' },
+      { question: 'What makes a password uncrackable?', answer: 'Passwords with 80+ bits of entropy (at least 16 mixed characters) take modern supercomputers billions of years to crack via brute force.' }
+    ]
   }
 ];
+
