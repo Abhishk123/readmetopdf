@@ -25,7 +25,6 @@ export class App {
     ).subscribe(() => {
       this.mobileMenuOpen.set(false);
       this.toolsDropdownOpen.set(false);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
 

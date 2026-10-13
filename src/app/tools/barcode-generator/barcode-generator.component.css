@@ -366,6 +366,25 @@
   transition: all 0.2s ease;
 }
 
+.generate-btn-row {
+  margin-top: 24px;
+  width: 100%;
+}
+
+.btn-generate {
+  width: 100%;
+  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  padding: 13px 20px;
+}
+
+.btn-generate:hover {
+  background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.5);
+}
+
 .btn-primary {
   background: linear-gradient(135deg, #4f46e5, #7c3aed);
   color: #ffffff;

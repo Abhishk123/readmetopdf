@@ -18,6 +18,7 @@ import { FaviconGeneratorComponent } from './tools/favicon-generator/favicon-gen
 import { BarcodeGeneratorComponent } from './tools/barcode-generator/barcode-generator.component';
 import { UrlToolsComponent } from './tools/url-tools/url-tools.component';
 import { PasswordGeneratorComponent } from './tools/password-generator/password-generator.component';
+import { RedirectComponent } from './pages/redirect/redirect.component';
 import { AboutComponent } from './pages/about/about.component';
 import { ContactComponent } from './pages/contact/contact.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
@@ -128,6 +129,11 @@ export const routes: Routes = [
     path: 'tools/password-generator',
     component: PasswordGeneratorComponent,
     title: 'Strong Password, Secret Key & UUID Generator Online | JSNS Works'
+  },
+  {
+    path: 's',
+    component: RedirectComponent,
+    title: 'Redirecting... | JSNS Works'
   },
 
   // 6. Compliance & Legal Pages

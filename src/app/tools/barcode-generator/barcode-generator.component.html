@@ -98,11 +98,21 @@
         <div class="input-field">
           <label class="field-title">Error Correction Level</label>
           <div class="radio-pill-group">
-            <button type="button" class="pill-btn" [class.selected]="qrCorrectionLevel() === 'L'" (click)="qrCorrectionLevel.set('L')">Low (7%)</button>
-            <button type="button" class="pill-btn" [class.selected]="qrCorrectionLevel() === 'M'" (click)="qrCorrectionLevel.set('M')">Medium (15%)</button>
+            <button type="button" class="pill-btn" [class.selected]="qrCorrectionLevel() === 'L'" (click)="qrCorrectionLevel.set('L'); renderQrCode()">Low (7%)</button>
+            <button type="button" class="pill-btn" [class.selected]="qrCorrectionLevel() === 'M'" (click)="qrCorrectionLevel.set('M'); renderQrCode()">Medium (15%)</button>
             <button type="button" class="pill-btn" [class.selected]="qrCorrectionLevel() === 'Q'" (click)="qrCorrectionLevel.set('Q')">Quartile (25%)</button>
             <button type="button" class="pill-btn" [class.selected]="qrCorrectionLevel() === 'H'" (click)="qrCorrectionLevel.set('H')">High (30%)</button>
           </div>
+        </div>
+
+        <!-- Prominent Generate Button -->
+        <div class="generate-btn-row">
+          <button type="button" class="btn btn-generate" (click)="onGenerateQr()">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            <span>Create / Update QR Code</span>
+          </button>
         </div>
       </div>
 
@@ -203,6 +213,16 @@
             <input type="checkbox" [ngModel]="barcodeShowText()" (ngModelChange)="barcodeShowText.set($event)" />
             <span>Display human-readable text label under bars</span>
           </label>
+        </div>
+
+        <!-- Prominent Generate Button -->
+        <div class="generate-btn-row">
+          <button type="button" class="btn btn-generate" (click)="onGenerateBarcode()">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            <span>Create / Update Barcode</span>
+          </button>
         </div>
       </div>
 

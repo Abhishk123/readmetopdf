@@ -1,4 +1,4 @@
-import { Component, signal, effect, ElementRef, ViewChild } from '@angular/core';
+import { Component, signal, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -15,7 +15,7 @@ type BarcodeTab = 'qr' | 'barcode1d';
   templateUrl: './barcode-generator.component.html',
   styleUrl: './barcode-generator.component.css'
 })
-export class BarcodeGeneratorComponent {
+export class BarcodeGeneratorComponent implements AfterViewInit {
   @ViewChild('qrCanvas') qrCanvasRef?: ElementRef<HTMLCanvasElement>;
   @ViewChild('barcodeSvg') barcodeSvgRef?: ElementRef<SVGElement>;
 
@@ -41,16 +41,10 @@ export class BarcodeGeneratorComponent {
   public copiedMessage = signal<string>('');
   public barcodeError = signal<string>('');
 
-  constructor() {
-    effect(() => {
-      // Re-render when any input signal changes
-      const tab = this.activeTab();
-      if (tab === 'qr') {
-        this.renderQrCode();
-      } else {
-        this.renderBarcode1D();
-      }
-    });
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.renderQrCode();
+    }, 100);
   }
 
   public setTab(tab: BarcodeTab): void {
@@ -62,6 +56,18 @@ export class BarcodeGeneratorComponent {
         this.renderBarcode1D();
       }
     }, 50);
+  }
+
+  public onGenerateQr(): void {
+    this.renderQrCode();
+    this.showCopied('QR code updated!');
+  }
+
+  public onGenerateBarcode(): void {
+    this.renderBarcode1D();
+    if (!this.barcodeError()) {
+      this.showCopied('Barcode updated!');
+    }
   }
 
   public renderQrCode(): void {

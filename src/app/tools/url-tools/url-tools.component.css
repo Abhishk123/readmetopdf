@@ -194,6 +194,12 @@
   margin-bottom: 24px;
 }
 
+.shortened-results-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .shortened-result-box {
   background: rgba(11, 15, 25, 0.7);
   border: 1px solid rgba(16, 185, 129, 0.35);
@@ -204,6 +210,96 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 14px;
+}
+
+.shortened-result-box.branded {
+  border-color: rgba(99, 102, 241, 0.45);
+  background: rgba(15, 23, 42, 0.85);
+  box-shadow: 0 4px 20px rgba(79, 70, 229, 0.15);
+}
+
+.shortened-result-box.tinyurl {
+  border-color: rgba(56, 189, 248, 0.35);
+  background: rgba(11, 15, 25, 0.75);
+}
+
+.res-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.badge-branded {
+  background: rgba(99, 102, 241, 0.25);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.badge-check {
+  font-size: 11px;
+  color: #34d399;
+  font-weight: 600;
+}
+
+.badge-tinyurl {
+  background: rgba(56, 189, 248, 0.2);
+  color: #7dd3fc;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.tinyurl-color {
+  color: #38bdf8 !important;
+}
+
+.btn-primary-compact {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #ffffff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary-compact:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+}
+
+.btn-secondary-compact {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: #f8fafc;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary-compact:hover {
+  background: rgba(99, 102, 241, 0.25);
 }
 
 .res-meta {

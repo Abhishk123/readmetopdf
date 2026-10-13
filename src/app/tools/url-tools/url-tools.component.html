@@ -189,18 +189,21 @@
           </button>
         </div>
 
-        @if (shortenedUrl()) {
-          <div class="shortened-result-box">
+        @if (brandedShortUrl()) {
+          <div class="shortened-result-box branded">
             <div class="res-meta">
-              <span class="res-label">Your Compact Short Link:</span>
-              <a [href]="shortenedUrl()" target="_blank" rel="noopener noreferrer" class="res-link">{{ shortenedUrl() }}</a>
+              <div class="res-badge-row">
+                <span class="badge-branded">Branded Link (Your Domain)</span>
+                <span class="badge-check">Works Globally On All Devices</span>
+              </div>
+              <a [href]="brandedShortUrl()" target="_blank" rel="noopener noreferrer" class="res-link">{{ brandedShortUrl() }}</a>
             </div>
-            <button type="button" class="btn btn-secondary" (click)="copyToClipboard(shortenedUrl(), 'Short Link')">
+            <button type="button" class="btn btn-primary-compact" (click)="copyToClipboard(brandedShortUrl(), 'Branded Short Link')">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
               </svg>
-              <span>Copy Short Link</span>
+              <span>Copy Branded Link</span>
             </button>
           </div>
         }

@@ -63,7 +63,9 @@
               "raf",
               "rgbcolor",
               "pako",
-              "pdf-lib"
+              "pdf-lib",
+              "qrcode",
+              "jsbarcode"
             ]
           },
           "configurations": {

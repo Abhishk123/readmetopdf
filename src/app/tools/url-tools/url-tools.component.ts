@@ -66,35 +66,71 @@ export class UrlToolsComponent {
     }
   }
 
-  // Shorten URL via public TinyURL endpoint
+  // Shortened link state
+  public brandedShortUrl = signal<string>('');
+
+  // Shorten URL: Generates 5-character short link via PostgreSQL API (with clean local fallback)
   public async shortenUrlNow(): Promise<void> {
-    const link = this.rawUrl().trim();
-    if (!link) {
+    const raw = this.rawUrl().trim();
+    if (!raw) {
       this.shortenerError.set('Please enter a valid web URL.');
       return;
     }
 
+    const validUrl = raw.startsWith('http://') || raw.startsWith('https://') ? raw : `https://${raw}`;
+
     this.isShortening.set(true);
     this.shortenerError.set('');
     this.shortenedUrl.set('');
+    this.brandedShortUrl.set('');
 
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://www.jsnsworks.site';
+
+    // 1. Try PostgreSQL Database Serverless API
     try {
-      const response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(link)}`);
-      if (response.ok) {
-        const text = await response.text();
-        this.shortenedUrl.set(text.trim());
-        this.showCopied('Short URL generated successfully!');
-      } else {
-        throw new Error('API service returned non-200');
+      const dbResp = await fetch('/api/shorten', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: validUrl })
+      });
+      if (dbResp.ok) {
+        const dbData = await dbResp.json();
+        if (dbData?.code) {
+          const tinyBrandedLink = `${origin}/s?to=${dbData.code}`;
+          this.brandedShortUrl.set(tinyBrandedLink);
+          this.shortenedUrl.set(tinyBrandedLink);
+          this.isShortening.set(false);
+          this.showCopied('Short branded link created!');
+          return;
+        }
       }
-    } catch (err) {
-      // Graceful fallback to client-safe hash format if network blocks CORS
-      const hash = Math.random().toString(36).substring(2, 8);
-      this.shortenedUrl.set(`https://tinyurl.com/${hash}`);
-      this.showCopied('Short link created!');
-    } finally {
-      this.isShortening.set(false);
+    } catch {
+      // Offline or local dev fallback
     }
+
+    // 2. Client-side fallback token
+    try {
+      let compactPayload = validUrl;
+      if (compactPayload.startsWith('https://')) {
+        compactPayload = '1' + compactPayload.slice(8);
+      } else if (compactPayload.startsWith('http://')) {
+        compactPayload = '0' + compactPayload.slice(7);
+      }
+      const utf8Bytes = new TextEncoder().encode(compactPayload);
+      let binaryStr = '';
+      utf8Bytes.forEach(b => binaryStr += String.fromCharCode(b));
+      const shortToken = btoa(binaryStr).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      const fallbackLink = `${origin}/s?to=${shortToken}`;
+      this.brandedShortUrl.set(fallbackLink);
+      this.shortenedUrl.set(fallbackLink);
+    } catch {
+      const fallbackLink = `${origin}/s?to=${encodeURIComponent(validUrl)}`;
+      this.brandedShortUrl.set(fallbackLink);
+      this.shortenedUrl.set(fallbackLink);
+    }
+
+    this.isShortening.set(false);
+    this.showCopied('Short branded link created!');
   }
 
   // Clean Tracking URL
