@@ -12,7 +12,7 @@ export const environment: EnvironmentConfig = {
 
   ads: {
     enabled: true,
-    defaultProvider: 'custom',
+    defaultProvider: 'adsense',
     adsense: {
       client: 'ca-pub-3940256099942544', // Google Official Test Client
       testMode: true,
@@ -40,7 +40,7 @@ export const environment: EnvironmentConfig = {
       tagline: 'Recommended Developer Tool'
     },
     custom: {
-      enabled: true,
+      enabled: false,
       horizontalSnippet: `
         <script type="text/javascript">
           atOptions = {

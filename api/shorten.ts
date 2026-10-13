@@ -64,7 +64,7 @@ export default async function handler(req: Request) {
         );
       }
 
-      // Create new unique code
+      // Create new unique code (5 characters)
       let code = generateShortCode(5);
       await sql`
         INSERT INTO short_urls (code, url) VALUES (${code}, ${rawUrl});
