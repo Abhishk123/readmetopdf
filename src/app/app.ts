@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
 import { TOOLS_CONFIG } from './config/tools.config';
 import { AdBannerComponent } from './components/ads/ad-banner/ad-banner';
+import { AnalyticsService } from './services/analytics.service';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,7 @@ import { AdBannerComponent } from './components/ads/ad-banner/ad-banner';
 })
 export class App {
   private router = inject(Router);
+  private analytics = inject(AnalyticsService);
   public readonly toolsList = signal(TOOLS_CONFIG);
   public mobileMenuOpen = signal<boolean>(false);
   public toolsDropdownOpen = signal<boolean>(false);

@@ -81,6 +81,6 @@ export const environment: EnvironmentConfig = {
   },
 
   analytics: {
-    googleAnalyticsId: '',
+    googleAnalyticsId: 'G-86VMEHML27',
   },
 };
