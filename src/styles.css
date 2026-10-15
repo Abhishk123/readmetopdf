@@ -502,3 +502,36 @@ input[type="range"].slider::-webkit-slider-thumb:hover {
   box-sizing: content-box;
   border-radius: 8px;
 }
+
+/* ==========================================================================
+   GOOGLE TRANSLATE SEAMLESS OVERRIDES (Hides Google Banners & Frames)
+   ========================================================================== */
+.goog-te-banner-frame,
+.goog-te-banner-frame.skiptranslate,
+iframe.goog-te-banner-frame,
+#goog-gt-tt,
+.goog-te-balloon-frame,
+.goog-tooltip,
+.goog-tooltip:hover {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+body {
+  top: 0px !important;
+  position: static !important;
+}
+
+.goog-text-highlight {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+#google_translate_element {
+  display: none !important;
+}
+
+.skiptranslate:not(.lang-selector-container):not(.lang-dropdown-panel):not(.lang-grid) {
+  display: none !important;
+}
+

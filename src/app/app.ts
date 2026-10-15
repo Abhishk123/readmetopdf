@@ -5,11 +5,12 @@ import { filter } from 'rxjs/operators';
 import { TOOLS_CONFIG } from './config/tools.config';
 import { AdBannerComponent } from './components/ads/ad-banner/ad-banner';
 import { AnalyticsService } from './services/analytics.service';
+import { LanguageSelectorComponent } from './components/language-selector/language-selector';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, AdBannerComponent],
+  imports: [CommonModule, RouterOutlet, RouterLink, AdBannerComponent, LanguageSelectorComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

@@ -156,7 +156,11 @@
   text-overflow: ellipsis;
 }
 
-/* Hamburger */
+/* Mobile Actions & Hamburger */
+.mobile-actions {
+  display: none;
+}
+
 .btn-hamburger {
   display: none;
   background: none;
@@ -368,6 +372,11 @@
 
 @media (max-width: 768px) {
   .nav-links { display: none; }
+  .mobile-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
   .btn-hamburger { display: block; }
   .mobile-drawer { display: block; }
   .footer-content { grid-template-columns: 1fr; gap: 32px; }
