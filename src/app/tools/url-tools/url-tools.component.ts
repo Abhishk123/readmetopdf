@@ -1,10 +1,10 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 import { AdBannerComponent } from '../../components/ads/ad-banner/ad-banner';
 
-type UrlTab = 'utm' | 'shorten' | 'clean';
+type UrlTab = 'shorten' | 'utm' | 'clean';
 
 @Component({
   selector: 'app-url-tools',
@@ -14,7 +14,18 @@ type UrlTab = 'utm' | 'shorten' | 'clean';
   styleUrl: './url-tools.component.css'
 })
 export class UrlToolsComponent {
-  public activeTab = signal<UrlTab>('utm');
+  private route = inject(ActivatedRoute);
+
+  public activeTab = signal<UrlTab>('shorten');
+
+  constructor() {
+    this.route.queryParams.subscribe(params => {
+      const tab = params['tab'];
+      if (tab === 'shorten' || tab === 'utm' || tab === 'clean') {
+        this.activeTab.set(tab);
+      }
+    });
+  }
 
   // UTM Campaign Builder Inputs
   public baseUrl = signal<string>('https://www.jsnsworks.site');

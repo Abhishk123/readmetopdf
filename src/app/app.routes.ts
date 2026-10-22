@@ -126,6 +126,11 @@ export const routes: Routes = [
     title: 'URL Shortener, UTM Campaign Builder & Link Cleaner Online | JSNS Works'
   },
   {
+    path: 'tools/url-shortener',
+    component: UrlToolsComponent,
+    title: 'URL Shortener Online - Shorten Long Web Links | JSNS Works'
+  },
+  {
     path: 'tools/password-generator',
     component: PasswordGeneratorComponent,
     title: 'Strong Password, Secret Key & UUID Generator Online | JSNS Works'

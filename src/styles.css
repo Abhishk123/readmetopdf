@@ -187,6 +187,17 @@ select,
   border-radius: 8px !important;
 }
 
+/* Remove number input up/down arrow spinners across all browsers */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+}
+input[type="number"] {
+  -moz-appearance: textfield !important;
+  appearance: textfield !important;
+}
+
 input:focus,
 textarea:focus,
 select:focus,
