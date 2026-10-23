@@ -268,37 +268,74 @@
   <!-- Mid Content Ad Banner -->
   <app-ad-banner slot="midContent"></app-ad-banner>
 
-  <!-- Educational SEO Section -->
-  <div class="seo-guide">
-    <h2>UTM Marketing & URL Best Practices</h2>
+  <!-- Comprehensive Marketing & Link Privacy Guide (800+ Words) -->
+  <article class="seo-guide" itemscope itemtype="https://schema.org/Article">
+    <div class="guide-header">
+      <h2 itemprop="headline">Google Analytics 4 (GA4) Campaign Tracking & Link Hygiene Handbook</h2>
+      <p class="guide-intro">
+        Digital campaign tracking requires precision. Without standardized Urchin Tracking Module (UTM) tags, multi-channel marketing campaigns collapse into unassigned direct traffic in analytics dashboards. Below is the complete operational guide to campaign taxonomy, link shortening, and privacy stripping.
+      </p>
+    </div>
+
     <div class="features-grid">
       <div class="feature-card">
-        <h3>What Are UTM Parameters?</h3>
-        <p>Urchin Tracking Module (UTM) codes are five variants of URL parameters used by digital marketers to track the effectiveness of online marketing campaigns across traffic sources.</p>
+        <h3>1. The 5 Core UTM Parameters Demystified</h3>
+        <p><strong>utm_source:</strong> Identifies the platform sending traffic (e.g. <code>google</code>, <code>linkedin</code>, <code>newsletter</code>). Always use standardized lowercase brand names.</p>
+        <p><strong>utm_medium:</strong> Identifies the marketing channel or distribution method (e.g. <code>cpc</code>, <code>email</code>, <code>social</code>, <code>banner</code>). GA4 uses strict medium classifications to bucket default channel groups.</p>
+        <p><strong>utm_campaign:</strong> The strategic initiative or product launch (e.g. <code>summer_sale_2026</code>, <code>webinar_registration</code>).</p>
+        <p><strong>utm_term:</strong> Specifically reserved for paid search keywords in Google Ads or Bing Ads.</p>
+        <p><strong>utm_content:</strong> Distinguishes different links or creatives pointing to the same destination (e.g. <code>hero_cta_button</code> vs <code>footer_text_link</code>) for A/B testing.</p>
       </div>
+
       <div class="feature-card">
-        <h3>Naming Consistency</h3>
-        <p>Always use lowercase names and underscores (e.g. <code>spring_promo</code>) for campaigns. Google Analytics treats uppercase and lowercase as different campaigns.</p>
+        <h3>2. Standard GA4 Default Channel Grouping Rules</h3>
+        <p>Google Analytics 4 automatically categorizes inbound traffic based on exact parameter values:</p>
+        <ul style="padding-left: 18px; margin: 8px 0; font-size: 13px; line-height: 1.6;">
+          <li><code>utm_medium = cpc</code> or <code>ppc</code> &rarr; <strong>Paid Search</strong></li>
+          <li><code>utm_medium = email</code> &rarr; <strong>Email Marketing</strong></li>
+          <li><code>utm_medium = social</code> &rarr; <strong>Organic Social</strong></li>
+          <li><code>utm_medium = affiliate</code> &rarr; <strong>Affiliates</strong></li>
+        </ul>
+        <p>Always maintain strict lowercase naming. GA4 treats <code>Email</code> and <code>email</code> as two conflicting channels.</p>
       </div>
+
       <div class="feature-card">
-        <h3>Link Hygiene & Cleanliness</h3>
-        <p>Removing click IDs like <code>fbclid</code> and <code>gclid</code> before sharing links on social forums or Slack prevents surveillance leaks and keeps links readable.</p>
+        <h3>3. Surveillance Tracking Cookies & Link Stripping</h3>
+        <p>
+          Social networks and advertising ad-exchanges inject intrusive tracking query parameters into shared links:
+        </p>
+        <ul style="padding-left: 18px; margin: 8px 0; font-size: 13px; line-height: 1.6;">
+          <li><strong>fbclid:</strong> Facebook Click Identifier used for cross-site user fingerprinting.</li>
+          <li><strong>gclid / gbraid / wbraid:</strong> Google Click Identifiers.</li>
+          <li><strong>msclkid:</strong> Microsoft Advertising tracking token.</li>
+        </ul>
+        <p>
+          Stripping these tags before sharing links on community channels, Slack, or documentation protects recipient privacy without breaking page navigation.
+        </p>
       </div>
     </div>
 
-    <!-- FAQ Section -->
+    <!-- Comprehensive FAQ Section -->
     <div class="faq-section">
-      <h2>Frequently Asked Questions</h2>
+      <h3>Frequently Asked UTM & URL Questions</h3>
       <div class="faq-item">
-        <h3>Does adding UTM parameters affect SEO rankings?</h3>
-        <p>No. Search engine crawlers ignore UTM parameters when canonical tags are properly established on destination pages.</p>
+        <h4>Does adding UTM parameters harm my website's organic SEO rankings?</h4>
+        <p>No. When your website properly implements standard <code>&lt;link rel="canonical" href="..."&gt;</code> meta tags, search engine crawlers ignore all UTM tracking query parameters and consolidate ranking equity onto the clean canonical URL.</p>
       </div>
       <div class="faq-item">
-        <h3>Are links shortened through this tool private?</h3>
-        <p>Yes. Shortened links redirect visitors transparently without capturing or retaining private user data.</p>
+        <h4>Should I use UTM parameters on internal website links?</h4>
+        <p>Never. Using UTM parameters on internal buttons or menu links resets the visitor's session in Google Analytics 4, artificially inflating session counts and destroying original attribution data. Reserve UTM tags strictly for external marketing links.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Are links shortened through JSNS Works permanent?</h4>
+        <p>Yes. Shortened links redirect transparently to destination URLs without middleman advertising landing pages or expiration timeouts, maintaining fast response times globally.</p>
+      </div>
+      <div class="faq-item">
+        <h4>How can I avoid broken URLs when parameters contain spaces?</h4>
+        <p>Never place raw whitespace characters inside URL parameters. This tool automatically sanitizes values and encodes spaces as clean underscores or standard <code>%20</code> URL encoding to guarantee links remain clickable across all email clients and messaging apps.</p>
       </div>
     </div>
-  </div>
+  </article>
 
   <!-- Bottom Ad Banner -->
   <app-ad-banner slot="bottomBanner"></app-ad-banner>

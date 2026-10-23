@@ -73,9 +73,19 @@ import { AdBannerComponent } from '../../components/ads/ad-banner/ad-banner';
         </section>
 
         <section class="page-section">
-          <h2>Technical Foundation</h2>
+          <h2>Technical Foundation & Creator</h2>
           <p>
-            JSNS Works is built as a single-page progressive web application powered by Angular 21, TypeScript, and modern browser standards (HTML5 Canvas 2D context, FileReader, Web Workers, and <code>pdf-lib</code>). By shifting compute to your local CPU/GPU, we deliver instant feedback while eliminating backend server overhead.
+            JSNS Works was founded and architected by <strong>Abhishek Urs C J</strong>, a Senior Software Engineer with over 4 years of experience specializing in high-performance JavaScript frameworks, embedded systems, and test automation architectures.
+          </p>
+          <p>
+            Built as a single-page progressive web application powered by Angular 21, TypeScript, and modern browser standards (HTML5 Canvas 2D context, FileReader, Web Workers, and <code>pdf-lib</code>), JSNS Works shifts compute directly to your local CPU/GPU, delivering instant utility execution while completely eliminating backend cloud tracking.
+          </p>
+        </section>
+
+        <section class="page-section">
+          <h2>Editorial & Accuracy Standards</h2>
+          <p>
+            All mathematical models, amortization schedules, and conversion constants across our financial and engineering tools are benchmarked against official public standards (including the Reserve Bank of India, US Federal Reserve guidelines, IEEE floating-point standards, and W3C web standards). Calculators are routinely audited and verified for precision.
           </p>
         </section>
 

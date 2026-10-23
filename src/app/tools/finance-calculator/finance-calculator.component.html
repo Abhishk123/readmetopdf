@@ -604,37 +604,146 @@
   <!-- Mid Content Ad Banner -->
   <app-ad-banner slot="midContent"></app-ad-banner>
 
-  <!-- Educational SEO Section -->
-  <div class="seo-guide">
-    <h2>Financial Planning Formulas & Guides</h2>
-    <div class="features-grid">
-      <div class="feature-card">
-        <h3>How EMI Is Calculated</h3>
-        <p>The standard Equated Monthly Installment (EMI) formula applies reducing balance interest, where early payments cover more interest and later payments pay down principal.</p>
-      </div>
-      <div class="feature-card">
-        <h3>The Power of Compounding</h3>
-        <p>In Fixed Deposits and PPF, interest is earned on both the initial principal and accumulated interest, generating exponential wealth over multi-year horizons.</p>
-      </div>
-      <div class="feature-card">
-        <h3>Tax-Saving with PPF</h3>
-        <p>Public Provident Fund (PPF) deposits qualify for tax deductions under Section 80C, with both interest and maturity payouts 100% tax-free under Indian law.</p>
-      </div>
+  <!-- Educational Authority & SEO Guide Section (800+ words of authentic financial planning depth) -->
+  <article class="seo-guide" itemscope itemtype="https://schema.org/Article">
+    <header class="guide-header">
+      <div class="guide-tag">Comprehensive Financial Handbook</div>
+      <h2 itemprop="headline">Understanding Loan Amortization, Compound Growth & Wealth Calculations</h2>
+      <p class="guide-intro">
+        Whether financing a home, taking a car loan, or investing in fixed income instruments, understanding the underlying mathematical formulas protects you from hidden bank charges, deceptive flat-rate promotions, and compounding inefficiencies. Below is an authoritative guide to the algorithms and strategies powering this financial suite.
+      </p>
+    </header>
+
+    <div class="guide-sections">
+      <!-- Section 1: The Reducing Balance EMI Formula -->
+      <section class="guide-block">
+        <h3>1. The Equated Monthly Installment (EMI) Formula Explained</h3>
+        <p>
+          Most consumer and mortgage loans across global commercial banks use the <strong>Reducing Balance Amortization Method</strong>. In this system, interest is calculated solely on the outstanding principal balance remaining at the end of each monthly billing cycle—never on the original loan total.
+        </p>
+
+        <div class="formula-box">
+          <div class="formula-title">Standard Reducing Balance EMI Formula</div>
+          <div class="formula-code">EMI = [P &times; r &times; (1 + r)<sup>N</sup>] &divide; [(1 + r)<sup>N</sup> &minus; 1]</div>
+          <ul class="formula-vars">
+            <li><strong>P (Principal):</strong> The total capital borrowed from the lender.</li>
+            <li><strong>r (Periodic Monthly Interest):</strong> Annual interest rate divided by 12 months, expressed as a decimal: <code>r = (Annual Rate &divide; 12) &divide; 100</code>.</li>
+            <li><strong>N (Total Monthly Tenures):</strong> Total number of monthly installments: <code>N = Years &times; 12</code>.</li>
+          </ul>
+        </div>
+
+        <h4>Step-by-Step Worked Example</h4>
+        <p>
+          Assume a borrower takes a loan of <strong>$100,000 (or ₹10,00,000)</strong> at an annual rate of <strong>9.0%</strong> for a duration of <strong>5 years (60 months)</strong>:
+        </p>
+        <ol class="steps-list">
+          <li><strong>Calculate Monthly Rate (r):</strong> <code>9.0% &divide; 12 = 0.75% per month = 0.0075</code></li>
+          <li><strong>Calculate Growth Factor:</strong> <code>(1 + 0.0075)<sup>60</sup> &approx; 1.56568</code></li>
+          <li><strong>Apply Numerator:</strong> <code>100,000 &times; 0.0075 &times; 1.56568 = 1,174.26</code></li>
+          <li><strong>Apply Denominator:</strong> <code>1.56568 &minus; 1 = 0.56568</code></li>
+          <li><strong>Final Monthly Payment:</strong> <code>1,174.26 &divide; 0.56568 = $2,075.84</code></li>
+        </ol>
+      </section>
+
+      <!-- Section 2: Reducing Balance vs Flat Rate Warning -->
+      <section class="guide-block">
+        <h3>2. Why "Flat Rate" Interest Is Deceptive Compared to Reducing Balance</h3>
+        <p>
+          Lenders frequently advertise "Flat Rate" interest (e.g. <em>"Get a personal loan at just 6% flat rate!"</em>). In a flat-rate loan, interest is calculated on the full initial loan amount for the entire tenure, even when you have already repaid 90% of the loan. This results in an effective real interest rate nearly double the stated percentage.
+        </p>
+
+        <div class="comparison-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Reducing Balance Loan (Standard)</th>
+                <th>Flat Rate Loan (Deceptive)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Interest Calculation Base</strong></td>
+                <td>Outstanding principal only (decreases each month)</td>
+                <td>Original principal (never decreases)</td>
+              </tr>
+              <tr>
+                <td><strong>Effective Annual Rate (APR)</strong></td>
+                <td>Matches stated interest rate (e.g., 10%)</td>
+                <td>Almost double stated rate (e.g., 10% flat &approx; 18.5% APR)</td>
+              </tr>
+              <tr>
+                <td><strong>Prepayment Benefit</strong></td>
+                <td>High: extra principal payments immediately drop future interest</td>
+                <td>Zero or minimal benefit</td>
+              </tr>
+              <tr>
+                <td><strong>Recommended Use</strong></td>
+                <td>Home loans, Education loans, Reputable auto loans</td>
+                <td>Avoid whenever possible</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 3: The Compounding Engine -->
+      <section class="guide-block">
+        <h3>3. Fixed Deposit (FD) Quarterly Compounding Dynamics</h3>
+        <p>
+          Unlike simple interest, where interest is paid out and stops growing, bank Fixed Deposits compound interest periodically. In most central banking systems, commercial Fixed Deposits compound quarterly (4 times per year):
+        </p>
+        <div class="formula-box">
+          <div class="formula-title">Compound Interest Formula</div>
+          <div class="formula-code">A = P &times; (1 + r / n)<sup>n &times; t</sup></div>
+          <ul class="formula-vars">
+            <li><strong>A:</strong> Total maturity corpus (Principal + Accumulated Interest).</li>
+            <li><strong>n:</strong> Compounding frequency per annum (Quarterly = 4, Semi-Annual = 2, Annual = 1).</li>
+            <li><strong>t:</strong> Total tenure in years.</li>
+          </ul>
+        </div>
+        <p>
+          Because interest earned in Q1 begins earning interest in Q2, Q3, and Q4, the <strong>Effective Annual Yield (APY)</strong> is always higher than the nominal coupon rate. For example, a 7.5% nominal FD compounded quarterly yields an effective annual return of <strong>7.71%</strong>.
+        </p>
+      </section>
+
+      <!-- Section 4: Triple Tax-Exempt Retirement Wealth (PPF) -->
+      <section class="guide-block">
+        <h3>4. Public Provident Fund (PPF) & Long-Term Compounding</h3>
+        <p>
+          The Public Provident Fund (PPF) scheme is widely recognized as one of the most powerful low-risk, fixed-income compounding vehicles due to its <strong>Exempt-Exempt-Exempt (EEE)</strong> sovereign tax status:
+        </p>
+        <ul class="bullet-list">
+          <li><strong>Investment Phase:</strong> Contributions qualify for full tax deduction under Section 80C (up to ₹1.5 Lakh annually).</li>
+          <li><strong>Accumulation Phase:</strong> Annual compound interest generated across the 15-year tenure is completely tax-free.</li>
+          <li><strong>Maturity Phase:</strong> The entire corpus withdrawn at maturity is 100% exempt from income and capital gains tax.</li>
+        </ul>
+      </section>
     </div>
 
-    <!-- FAQ Accordion -->
+    <!-- Comprehensive FAQ Section -->
     <div class="faq-section">
-      <h2>Frequently Asked Questions</h2>
-      <div class="faq-item">
-        <h3>Can I pay extra principal to reduce my loan EMI?</h3>
-        <p>Yes! Making prepayments directly reduces your principal loan balance, which dramatically cuts down total interest paid and shortens loan duration.</p>
-      </div>
-      <div class="faq-item">
-        <h3>How often is FD interest compounded?</h3>
-        <p>Most commercial banks compound Fixed Deposit interest quarterly (every 3 months), giving a slightly higher effective annual return than simple interest.</p>
+      <h3>Frequently Asked Financial Questions</h3>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Why does early loan EMI consist of mostly interest rather than principal?</h4>
+          <p>During the first few years of a long-term loan, your outstanding principal balance is at its highest. Since interest is calculated against this large balance, the interest charge consumes the majority of your monthly installment. As the principal diminishes over time, the interest fraction shrinks, and an increasing share goes toward principal payoff.</p>
+        </div>
+        <div class="faq-item">
+          <h4>How does making one extra EMI payment per year impact my mortgage?</h4>
+          <p>Making just one additional EMI payment per year directly against your principal balance can shave 3 to 5 years off a 25-year mortgage and save between 15% and 25% of your total interest cost. Because the extra payment bypasses the interest cycle, 100% of it reduces the compounding principal base.</p>
+        </div>
+        <div class="faq-item">
+          <h4>What is the difference between a Fixed Rate and Floating Rate loan?</h4>
+          <p>A Fixed Rate loan locks your interest rate for the entire tenure, providing predictable monthly budgeting regardless of market fluctuations. A Floating (Variable) Rate loan benchmarks your rate to the central bank's repo or prime rate, meaning your monthly EMI or tenure adjusts upward when benchmark rates rise and decreases when central banks cut rates.</p>
+        </div>
+        <div class="faq-item">
+          <h4>How often is Recurring Deposit (RD) interest compounded?</h4>
+          <p>Under standard commercial banking rules, Recurring Deposits compound interest on a quarterly basis. Each monthly installment earns interest for the exact number of remaining months until maturity, calculated via quarterly compounding tables.</p>
+        </div>
       </div>
     </div>
-  </div>
+  </article>
 
   <!-- Bottom Ad Banner -->
   <app-ad-banner slot="bottomBanner"></app-ad-banner>
