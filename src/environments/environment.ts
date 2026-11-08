@@ -66,16 +66,24 @@ export const environment: EnvironmentConfig = {
         <script type="text/javascript" src="https://bauval.org/22/4d8d0573b25bbd2f4bede8ef0c711b69"></script>
       `,
       skyscraperSnippet: `
-        <script type="text/javascript">
-          atOptions = {
-            'key' : 'f6ac1328ab2561c5740963f903492c2d',
-            'format' : 'iframe',
-            'height' : 600,
-            'width' : 160,
-            'params' : {}
-          };
-        </script>
-        <script type="text/javascript" src="https://bauval.org/22/f6ac1328ab2561c5740963f903492c2d"></script>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+          <a href="https://uplcm.com/4/12216784" target="_blank" rel="noopener noreferrer sponsored" style="display:inline-block; background:linear-gradient(135deg, #4f46e5, #7c3aed); color:#ffffff; font-family:sans-serif; font-size:11px; font-weight:700; padding:6px 12px; border-radius:6px; text-decoration:none; text-align:center; box-shadow:0 2px 8px rgba(79,70,229,0.4);">
+            Featured Partner &rarr;
+          </a>
+          <script type="text/javascript">
+            atOptions = {
+              'key' : 'f6ac1328ab2561c5740963f903492c2d',
+              'format' : 'iframe',
+              'height' : 300,
+              'width' : 160,
+              'params' : {}
+            };
+          </script>
+          <script type="text/javascript" src="https://bauval.org/22/f6ac1328ab2561c5740963f903492c2d"></script>
+          <a href="https://uplcm.com/4/12216785" target="_blank" rel="noopener noreferrer sponsored" style="font-family:sans-serif; font-size:10px; color:#a5b4fc; text-decoration:none; text-align:center;">
+            Recommended Offers
+          </a>
+        </div>
       `
     }
   },

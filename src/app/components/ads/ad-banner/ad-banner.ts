@@ -50,7 +50,7 @@ export class AdBannerComponent implements OnInit, AfterViewInit {
 
   get bannerDimensions(): { width: number; height: number } {
     if (this.format === 'vertical') {
-      return { width: 160, height: 600 };
+      return { width: 160, height: 360 };
     }
     if (this.format === 'rectangle') {
       return { width: 300, height: 250 };
