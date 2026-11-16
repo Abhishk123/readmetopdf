@@ -1,26 +1,14 @@
-export interface VercelRequest {
-  method?: string;
-  query: Record<string, string | string[] | undefined>;
-  body: any;
-  headers: Record<string, string | string[] | undefined>;
-}
-
-export interface VercelResponse {
-  status(code: number): VercelResponse;
-  json(data: any): VercelResponse;
-  send(data: any): VercelResponse;
-  setHeader(name: string, value: string): VercelResponse;
-  end(): void;
-}
+export const config = {
+  runtime: 'edge',
+};
 
 declare const process: {
   env: Record<string, string | undefined>;
 };
 
 /**
- * JSANS DevStudio - Global Settings & Feature Flags API
+ * JSANS DevStudio - Global Settings & Feature Flags API (Edge Runtime)
  * Controls site-wide settings (Ads, Bot, Tool visibility) for ALL users.
- * 
  * Supports Upstash Redis / Vercel KV / DB via .env without code modifications.
  */
 
@@ -40,7 +28,7 @@ export interface SiteSettings {
   lastUpdated: number;
 }
 
-// Global in-memory cache across serverless warm invocations
+// Global in-memory cache across edge warm invocations
 let cachedSettings: SiteSettings = {
   adsEnabled: process.env['ADS_ENABLED'] !== 'false',
   adProvider: (process.env['AD_PROVIDER'] as any) || 'custom',
@@ -65,7 +53,7 @@ async function getSettingsFromStorage(): Promise<SiteSettings> {
         headers: { Authorization: `Bearer ${kvToken}` }
       });
       if (res.ok) {
-        const data = await res.json();
+        const data = (await res.json()) as any;
         if (data && data.result) {
           const parsed = typeof data.result === 'string' ? JSON.parse(data.result) : data.result;
           cachedSettings = { ...cachedSettings, ...parsed };
@@ -101,49 +89,67 @@ async function saveSettingsToStorage(settings: SiteSettings): Promise<void> {
   }
 }
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
-  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
+const CORS_HEADERS = {
+  'Access-Control-Allow-Credentials': 'true',
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET,OPTIONS,POST',
+  'Access-Control-Allow-Headers': 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
+};
 
+export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    return new Response(null, { status: 200, headers: CORS_HEADERS });
   }
 
   // 1. GET /api/settings - Fetch global settings for all users
   if (req.method === 'GET') {
     const settings = await getSettingsFromStorage();
-    res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate=60');
-    return res.status(200).json({
-      success: true,
-      settings: {
-        adsEnabled: settings.adsEnabled,
-        adProvider: settings.adProvider,
-        adFormats: settings.adFormats,
-        showWhatsAppBot: settings.showWhatsAppBot,
-        showUpcomingProjects: settings.showUpcomingProjects,
-        hiddenTools: settings.hiddenTools,
-        siteName: process.env['SITE_NAME'] || 'JSANS DevStudio',
-        contactEmail: process.env['CONTACT_EMAIL'] || 'jsansdevstudio@gmail.com',
-        dbConnected: !!(process.env['UPSTASH_REDIS_REST_URL'] || process.env['DATABASE_URL'])
+    return Response.json(
+      {
+        success: true,
+        settings: {
+          adsEnabled: settings.adsEnabled,
+          adProvider: settings.adProvider,
+          adFormats: settings.adFormats,
+          showWhatsAppBot: settings.showWhatsAppBot,
+          showUpcomingProjects: settings.showUpcomingProjects,
+          hiddenTools: settings.hiddenTools,
+          siteName: process.env['SITE_NAME'] || 'JSANS DevStudio',
+          contactEmail: process.env['CONTACT_EMAIL'] || 'jsansdevstudio@gmail.com',
+          dbConnected: !!(process.env['UPSTASH_REDIS_REST_URL'] || process.env['DATABASE_URL'])
+        }
+      },
+      {
+        headers: {
+          ...CORS_HEADERS,
+          'Cache-Control': 's-maxage=30, stale-while-revalidate=60'
+        }
       }
-    });
+    );
   }
 
   // 2. POST /api/settings - Update global settings (Admin only)
   if (req.method === 'POST') {
-    const authHeader = req.headers['authorization'];
+    const authHeader = req.headers.get('authorization');
     const adminPass = process.env['ADMIN_PASSWORD'] || 'jsansadmin2026';
     const adminKey = process.env['ADMIN_SECRET_KEY'] || 'jsans_devstudio_super_secret_jwt_key_2026';
 
     const token = authHeader ? authHeader.replace(/^Bearer\s+/i, '').trim() : '';
 
     if (!token || (token !== adminPass && token !== adminKey)) {
-      return res.status(401).json({ success: false, error: 'Unauthorized: Invalid admin credentials.' });
+      return Response.json(
+        { success: false, error: 'Unauthorized: Invalid admin credentials.' },
+        { status: 401, headers: CORS_HEADERS }
+      );
     }
 
-    const body = req.body || {};
+    let body: any = {};
+    try {
+      body = await req.json();
+    } catch {
+      return Response.json({ success: false, error: 'Invalid JSON' }, { status: 400, headers: CORS_HEADERS });
+    }
+
     const current = await getSettingsFromStorage();
 
     const updated: SiteSettings = {
@@ -158,12 +164,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     await saveSettingsToStorage(updated);
 
-    return res.status(200).json({
-      success: true,
-      message: 'Global settings updated successfully for all users.',
-      settings: updated
-    });
+    return Response.json(
+      {
+        success: true,
+        message: 'Global site settings updated successfully.',
+        settings: updated
+      },
+      { headers: CORS_HEADERS }
+    );
   }
 
-  return res.status(405).json({ error: 'Method not allowed' });
+  return Response.json({ error: 'Method not allowed' }, { status: 405, headers: CORS_HEADERS });
 }

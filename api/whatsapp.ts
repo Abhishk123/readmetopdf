@@ -1,24 +1,14 @@
-export interface VercelRequest {
-  method?: string;
-  query: Record<string, string | string[] | undefined>;
-  body: any;
-  headers: Record<string, string | string[] | undefined>;
-}
-
-export interface VercelResponse {
-  status(code: number): VercelResponse;
-  json(data: any): VercelResponse;
-  send(data: any): VercelResponse;
-  setHeader(name: string, value: string): VercelResponse;
-  end(): void;
-}
 import {
   calculateLoanEmi,
   calculateExactAge,
   calculateGst,
   parseUpiCommand,
   buildUpiUri
-} from '../src/shared/calculators';
+} from './calculators';
+
+export const config = {
+  runtime: 'edge',
+};
 
 declare const process: {
   env: Record<string, string | undefined>;
@@ -28,7 +18,7 @@ declare const process: {
  * PROJECT BLUEPRINT: All-in-One WhatsApp Utility Bot ("QuickTools")
  * Webhook Endpoint: https://www.jsnsworks.site/api/whatsapp
  * Powered by Meta WhatsApp Cloud API (Free for first 1,000 conversations/mo)
- * Shared Single-Source Calculation Engine: src/shared/calculators/
+ * Shared Calculation Engine: api/calculators.ts
  */
 
 interface WhatsAppWebhookBody {
@@ -66,23 +56,27 @@ interface WhatsAppWebhookBody {
   }>;
 }
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: Request): Promise<Response> {
   const verifyToken = process.env['META_VERIFY_TOKEN'] || 'quicktools_verify_token_2026';
 
   // 1. Meta Webhook Verification Handshake (GET)
   if (req.method === 'GET') {
-    const mode = req.query['hub.mode'];
-    const token = req.query['hub.verify_token'];
-    const challenge = req.query['hub.challenge'];
+    const url = new URL(req.url);
+    const mode = url.searchParams.get('hub.mode');
+    const token = url.searchParams.get('hub.verify_token');
+    const challenge = url.searchParams.get('hub.challenge');
 
     if (mode === 'subscribe' && token === verifyToken) {
       console.log('[WhatsApp Webhook] Handshake verified successfully.');
-      return res.status(200).send(challenge);
+      return new Response(challenge || '', {
+        status: 200,
+        headers: { 'Content-Type': 'text/plain' }
+      });
     }
 
     // Direct browser check / health status
     if (!mode && !token) {
-      return res.status(200).json({
+      return Response.json({
         status: 'online',
         service: 'JSANS QuickTools WhatsApp Bot Webhook',
         version: '1.0.0',
@@ -91,17 +85,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     console.warn('[WhatsApp Webhook] Verification token mismatch.');
-    return res.status(403).json({ error: 'Verification failed' });
+    return Response.json({ error: 'Verification failed' }, { status: 403 });
   }
 
   // 2. Incoming Messages & Events (POST)
   if (req.method === 'POST') {
-    const body = req.body as WhatsAppWebhookBody;
+    let body: WhatsAppWebhookBody;
+    try {
+      body = await req.json();
+    } catch {
+      return Response.json({ status: 'invalid_json' }, { status: 400 });
+    }
 
     if (body.object && body.entry?.[0]?.changes?.[0]?.value?.messages?.[0]) {
       const messageData = body.entry[0].changes[0].value.messages[0];
       const from = messageData.from; // Sender WhatsApp phone number
-      const phoneNumberId = body.entry[0].changes[0].value.metadata.phone_number_id || process.env['WHATSAPP_PHONE_NUMBER_ID'];
+      const phoneNumberId = body.entry[0].changes[0].value.metadata?.phone_number_id || process.env['WHATSAPP_PHONE_NUMBER_ID'];
 
       try {
         let replyText = '';
@@ -136,17 +135,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         console.error('[WhatsApp Webhook] Error processing message:', err);
       }
 
-      return res.status(200).json({ status: 'ok' });
+      return Response.json({ status: 'ok' });
     }
 
-    return res.status(200).json({ status: 'ignored' });
+    return Response.json({ status: 'ignored' });
   }
 
-  return res.status(405).json({ error: 'Method not allowed' });
+  return Response.json({ error: 'Method not allowed' }, { status: 405 });
 }
 
 /**
- * Command processor - Uses shared calculations engine src/shared/calculators
+ * Command processor - Uses calculation engine
  */
 function processUserCommand(rawText: string): string {
   const text = rawText.trim();
@@ -176,7 +175,7 @@ function processUserCommand(rawText: string): string {
       `https://www.jsnsworks.site/tools`;
   }
 
-  // 2. Loan EMI Calculator (Powered by shared calculateLoanEmi)
+  // 2. Loan EMI Calculator
   if (upper.startsWith('EMI')) {
     const parts = text.split(/\s+/).slice(1);
     if (parts.length >= 3) {
@@ -220,7 +219,7 @@ function processUserCommand(rawText: string): string {
     return `⚠️ *Invalid UPI Format!*\nPlease use: \`UPI [VPA@bank] [Amount] [Optional Note]\`\nExample: \`UPI rahul@okhdfcbank 750 Tuition Fees\``;
   }
 
-  // 4. Age Calculator (Powered by shared calculateExactAge)
+  // 4. Age Calculator
   if (upper.startsWith('AGE')) {
     const rawDate = text.replace(/^AGE\s*/i, '').trim();
     const ageRes = calculateExactAge(rawDate);
@@ -235,7 +234,7 @@ function processUserCommand(rawText: string): string {
     return `⚠️ *Invalid Date!*\nPlease use: \`AGE DD-MM-YYYY\`\nExample: \`AGE 15-08-1998\``;
   }
 
-  // 5. GST Calculator (Powered by shared calculateGst)
+  // 5. GST Calculator
   if (upper.startsWith('GST')) {
     const parts = text.split(/\s+/).slice(1);
     if (parts.length >= 2) {
@@ -266,7 +265,7 @@ function processUserCommand(rawText: string): string {
       `Now send or attach your ID / document photo. The bot will stamp a tamper-proof diagonal watermark across it so it cannot be misused for fraudulent loans or SIMs!`;
   }
 
-  // 7. QR Code Generator: QR [Content or URL]
+  // 7. QR Code Generator
   if (upper.startsWith('QR')) {
     const qrData = text.replace(/^QR\s*/i, '').trim();
     if (qrData.length > 0) {
