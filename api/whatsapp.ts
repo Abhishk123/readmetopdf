@@ -7,6 +7,10 @@ import {
   buildUpiUri
 } from '../src/shared/calculators';
 
+declare const process: {
+  env: Record<string, string | undefined>;
+};
+
 /**
  * PROJECT BLUEPRINT: All-in-One WhatsApp Utility Bot ("QuickTools")
  * Webhook Endpoint: https://www.jsnsworks.site/api/whatsapp

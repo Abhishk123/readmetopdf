@@ -1,5 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
+declare const process: {
+  env: Record<string, string | undefined>;
+};
+
 /**
  * JSANS DevStudio - Global Settings & Feature Flags API
  * Controls site-wide settings (Ads, Bot, Tool visibility) for ALL users.
