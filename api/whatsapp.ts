@@ -117,24 +117,21 @@ export default async function handler(req: Request): Promise<Response> {
           const buttonId = messageData.interactive?.button_reply?.id || messageData.interactive?.list_reply?.id || '';
           replyText = await processUserCommand(buttonId);
         } else if (messageData.type === 'image') {
-          replyText = `📸 *Document / Photo Received!*
-━━━━━━━━━━━━━━━━━━━━
-Protect & prepare your ID photo right now:
-
-🛡️ *1. Safe-KYC Tamper-Proof Watermark*
-Prevent fraud on your Aadhaar, PAN & Voter ID cards!
-👉 Stamp watermark in 1 click (runs locally on your device):
-https://www.jsnsworks.site/tools/aadhaar-masker
-
-🗜️ *2. Government & Exam Size Reducer*
-Reduce signatures & photos to exact 20KB / 50KB:
-👉 https://www.jsnsworks.site/tools/image-converter
-
-📄 *3. Convert to PDF Document*
-👉 https://www.jsnsworks.site/tools/pdf-merger
-
-💡 *Quick Tip:* You can also reply directly with:
-\`WATERMARK ONLY FOR HOTEL CHECK-IN\` or \`WATERMARK ONLY FOR AIRTEL SIM\``;
+          // Send interactive action buttons directly on the user's WhatsApp screen!
+          if (phoneNumberId) {
+            await sendWhatsAppButtons(
+              phoneNumberId,
+              from,
+              '📸 Photo Received!',
+              'What would you like to do with this image? Choose an action below:',
+              [
+                { id: 'ACTION_WATERMARK', title: '🛡️ Safe-KYC Mask' },
+                { id: 'ACTION_COMPRESS_20KB', title: '🗜️ Compress to 20KB' },
+                { id: 'ACTION_CONVERT_PDF', title: '📄 Convert to PDF' }
+              ]
+            );
+            return Response.json({ status: 'ok' });
+          }
         } else if (messageData.type === 'document') {
           replyText = `📄 *Document Received!*
 ━━━━━━━━━━━━━━━━━━━━
@@ -285,17 +282,41 @@ _Scan from any Indian UPI app to pay directly._`;
     }
   }
 
-  // 6. Safe-KYC Watermark Instruction / Echo
-  if (upper.startsWith('WATERMARK')) {
-    const purpose = text.replace(/^WATERMARK\s*/i, '').trim() || 'FOR VERIFICATION ONLY';
+  // 6. Safe-KYC Watermark Button / Instruction
+  if (upper === 'ACTION_WATERMARK' || upper.startsWith('WATERMARK')) {
+    const purpose = text.replace(/^WATERMARK\s*/i, '').trim();
+    const purposeText = purpose && purpose !== 'ACTION_WATERMARK' ? `"${purpose.toUpperCase()}"` : '"FOR VERIFICATION ONLY"';
+
     return `🛡️ *Safe-KYC Watermarker*
 ━━━━━━━━━━━━━━━━━━━━
 Your watermark purpose is set to:
-👉 "*${purpose.toUpperCase()}*"
+👉 *${purposeText}*
 
-Protect your ID cards against unauthorized loans or SIM fraud right now:
-👉 Stamp on device (100% Private, zero upload):
-https://www.jsnsworks.site/tools/aadhaar-masker`;
+Protect your ID cards against unauthorized loan or SIM fraud right now:
+👉 Stamp on your device (100% Private, zero upload):
+https://www.jsnsworks.site/tools/aadhaar-masker
+
+_Your ID never leaves your device — 100% compliant with Indian UIDAI Aadhaar privacy guidelines!_`;
+  }
+
+  // 6b. Interactive Button: Compress to 20KB
+  if (upper === 'ACTION_COMPRESS_20KB' || upper.includes('COMPRESS 20')) {
+    return `🗜️ *20KB Photo & Signature Compression*
+━━━━━━━━━━━━━━━━━━━━
+Compress your passport photo or signature for SSC, UPSC, and State Govt portals:
+👉 https://www.jsnsworks.site/tools/image-converter
+
+_Simply select 'Compress to Target Size: 20 KB' and download your verified photo instantly!_`;
+  }
+
+  // 6c. Interactive Button: Convert to PDF
+  if (upper === 'ACTION_CONVERT_PDF' || upper.includes('CONVERT PDF')) {
+    return `📄 *Convert Photo to PDF Document*
+━━━━━━━━━━━━━━━━━━━━
+Convert single or multiple images to a clean, crisp PDF:
+👉 https://www.jsnsworks.site/tools/pdf-merger
+
+_Fast, high-resolution, and completely free in your browser!_`;
   }
 
   // 7. QR Code Generator
@@ -355,5 +376,68 @@ async function sendWhatsAppMessage(phoneNumberId: string, to: string, text: stri
     }
   } catch (e) {
     console.error('[WhatsApp Network/Fetch Exception]:', e);
+  }
+}
+
+interface WhatsAppButton {
+  id: string;
+  title: string;
+}
+
+/**
+ * Send interactive quick-reply buttons (up to 3 clickable buttons on user's screen)
+ */
+async function sendWhatsAppButtons(
+  phoneNumberId: string,
+  to: string,
+  headerText: string,
+  bodyText: string,
+  buttons: WhatsAppButton[]
+): Promise<void> {
+  const token = process.env['WHATSAPP_ACCESS_TOKEN'];
+  if (!token) return;
+
+  const url = `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`;
+
+  const payload = {
+    messaging_product: 'whatsapp',
+    recipient_type: 'individual',
+    to: to,
+    type: 'interactive',
+    interactive: {
+      type: 'button',
+      header: {
+        type: 'text',
+        text: headerText
+      },
+      body: {
+        text: bodyText
+      },
+      action: {
+        buttons: buttons.slice(0, 3).map(btn => ({
+          type: 'reply',
+          reply: {
+            id: btn.id,
+            title: btn.title.slice(0, 20)
+          }
+        }))
+      }
+    }
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const resText = await response.text();
+    console.log('[WhatsApp Interactive Buttons Result]:', { status: response.status, body: resText });
+  } catch (e) {
+    console.error('[WhatsApp Interactive Buttons Exception]:', e);
   }
 }
