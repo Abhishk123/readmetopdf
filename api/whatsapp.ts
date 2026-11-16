@@ -62,6 +62,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       console.log('[WhatsApp Webhook] Handshake verified successfully.');
       return res.status(200).send(challenge);
     }
+
+    // Direct browser check / health status
+    if (!mode && !token) {
+      return res.status(200).json({
+        status: 'online',
+        service: 'JSANS QuickTools WhatsApp Bot Webhook',
+        version: '1.0.0',
+        message: 'Endpoint is active and ready for Meta Webhook verification.'
+      });
+    }
+
     console.warn('[WhatsApp Webhook] Verification token mismatch.');
     return res.status(403).json({ error: 'Verification failed' });
   }
