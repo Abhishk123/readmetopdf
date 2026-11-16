@@ -1,0 +1,342 @@
+.directory-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 0 60px;
+}
+
+/* Hero Section */
+.directory-hero {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.hero-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #166534;
+  margin-bottom: 16px;
+}
+
+.chip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+
+.hero-title {
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #0f172a;
+  margin: 0 0 14px;
+  line-height: 1.2;
+}
+
+.hero-subtitle {
+  font-size: 17px;
+  color: #64748b;
+  max-width: 740px;
+  margin: 0 auto 28px;
+  line-height: 1.6;
+}
+
+/* Search Bar */
+.search-bar-wrapper {
+  max-width: 640px;
+  margin: 0 auto 24px;
+}
+
+.search-input-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 4px 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.search-input-box:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+.search-icon {
+  color: #94a3b8;
+  flex-shrink: 0;
+  margin-right: 10px;
+}
+
+.search-input {
+  width: 100%;
+  border: none !important;
+  outline: none !important;
+  font-size: 15px;
+  color: #0f172a !important;
+  background: transparent !important;
+  padding: 10px 0 !important;
+  box-shadow: none !important;
+}
+
+.search-input::placeholder {
+  color: #94a3b8;
+}
+
+.btn-clear {
+  background: #f1f5f9;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-clear:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+/* Category Filter Pills */
+.filter-pills {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filter-pill {
+  padding: 8px 18px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filter-pill:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+.filter-pill.active {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
+}
+
+/* Specific Pill Highlights on Hover */
+.pill-pdf:hover { color: #ef4444; border-color: #fca5a5; }
+.pill-image:hover { color: #0284c7; border-color: #7dd3fc; }
+.pill-finance:hover { color: #059669; border-color: #6ee7b7; }
+.pill-dev:hover { color: #6366f1; border-color: #a5b4fc; }
+.pill-math:hover { color: #d97706; border-color: #fcd34d; }
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 16px;
+  margin: 32px 0;
+}
+
+.empty-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.empty-state h3 {
+  font-size: 20px;
+  color: #0f172a;
+  margin: 0 0 8px;
+}
+
+.empty-state p {
+  color: #64748b;
+  margin: 0 0 20px;
+}
+
+.btn-reset {
+  padding: 10px 20px;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Category Sections */
+.category-section {
+  margin-bottom: 48px;
+  scroll-margin-top: 80px;
+}
+
+.category-header {
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.group-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.group-title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+  margin: 0 0 4px;
+}
+
+.group-tagline {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Tools Grid */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+.tool-card-anchor {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.tool-card-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  box-sizing: border-box;
+}
+
+.tool-card-item:hover {
+  transform: translateY(-3px);
+  border-color: #cbd5e1;
+  box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.08);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.icon-bubble {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease;
+}
+
+.tool-card-item:hover .icon-bubble {
+  transform: scale(1.08);
+}
+
+/* Dynamic Category Bubble Themes */
+.icon-documents { background: #fef2f2; color: #ef4444; }
+.icon-media { background: #f0f9ff; color: #0284c7; }
+.icon-finance { background: #ecfdf5; color: #059669; }
+.icon-converters { background: #eef2ff; color: #6366f1; }
+.icon-calculators { background: #fffbeb; color: #d97706; }
+
+.card-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  background: #f1f5f9;
+  color: #475569;
+  border-radius: 999px;
+}
+
+.card-heading {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: #0f172a;
+  margin: 0 0 8px;
+  line-height: 1.35;
+}
+
+.card-summary {
+  font-size: 13.5px;
+  color: #64748b;
+  line-height: 1.55;
+  margin: 0 0 20px;
+  flex: 1;
+}
+
+.card-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid #f1f5f9;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #2563eb;
+}
+
+.action-arrow {
+  transition: transform 0.15s ease;
+}
+
+.tool-card-item:hover .action-arrow {
+  transform: translateX(4px);
+}
+
+.section-ad-break {
+  margin: 32px 0 16px;
+}
+
+@media (max-width: 768px) {
+  .hero-title { font-size: 28px; }
+  .hero-subtitle { font-size: 15px; }
+  .tools-grid { grid-template-columns: 1fr; }
+  .filter-pills { overflow-x: auto; justify-content: flex-start; padding-bottom: 8px; }
+}

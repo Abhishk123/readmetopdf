@@ -1,0 +1,213 @@
+.tool-page-container {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 20px;
+}
+
+.breadcrumb a { color: #2563eb; text-decoration: none; }
+.sep { color: #cbd5e1; }
+.current { color: #0f172a; font-weight: 500; }
+
+.tool-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.tool-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+.tool-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 10px;
+  letter-spacing: -0.02em;
+}
+
+.tool-subtitle {
+  font-size: 16px;
+  color: #64748b;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.tool-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.upload-zone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 44px 20px;
+  text-align: center;
+  background: #f8fafc;
+}
+
+.upload-zone svg { color: #2563eb; margin-bottom: 12px; }
+.upload-zone h3 { font-size: 18px; margin: 0 0 6px; color: #1e293b; }
+.upload-zone p { font-size: 13px; color: #64748b; margin: 0 0 18px; }
+
+.btn-browse {
+  display: inline-block;
+  background: #2563eb;
+  color: #ffffff;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.conversion-workspace {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+.controls-col h3 { font-size: 16px; margin: 0 0 12px; color: #0f172a; }
+
+.format-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.btn-chip {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  color: #334155;
+  transition: all 0.15s ease;
+}
+
+.btn-chip.active {
+  background: #eff6ff;
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.quality-control {
+  margin-bottom: 20px;
+}
+
+.quality-control label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: #334155;
+}
+
+.slider {
+  width: 100%;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+.file-summary {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.summary-item { display: flex; justify-content: space-between; }
+.summary-item .lbl { color: #64748b; }
+.summary-item .green { color: #059669; }
+
+.actions-row {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  background: #059669;
+  color: #ffffff;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-download:hover:not(:disabled) { background: #047857; }
+.btn-download:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-reset {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.preview-box {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+
+.preview-img {
+  max-width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+}
+
+/* SEO Section */
+.seo-guide { margin: 40px 0; }
+.seo-guide h2 { font-size: 22px; font-weight: 800; color: #0f172a; text-align: center; margin-bottom: 24px; }
+.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.feature-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; }
+.feature-card h3 { font-size: 15px; font-weight: 700; color: #1e293b; margin: 0 0 8px; }
+.feature-card p { font-size: 13px; color: #64748b; line-height: 1.5; margin: 0; }
+
+@media (max-width: 768px) {
+  .conversion-workspace { grid-template-columns: 1fr; }
+  .features-grid { grid-template-columns: 1fr; }
+}

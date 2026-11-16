@@ -1,0 +1,174 @@
+.ad-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.ad-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #818cf8;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.ad-slot-active {
+  width: 100%;
+  min-height: 90px;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Fallback Mock Banner */
+.ad-slot-mock {
+  width: 100%;
+  border: 1px dashed rgba(99, 102, 241, 0.35);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 20px;
+  box-sizing: border-box;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.mock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(30, 41, 59, 0.85);
+  color: #c7d2fe;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.ad-icon {
+  fill: #818cf8;
+}
+
+.mock-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mock-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.mock-desc {
+  font-size: 12px;
+  color: #94a3b8;
+  max-width: 480px;
+}
+
+/* Sponsor Provider */
+.ad-sponsor-link {
+  text-decoration: none;
+  width: 100%;
+  display: block;
+}
+
+.ad-sponsor-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(12px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ad-sponsor-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 18px rgba(99, 102, 241, 0.3);
+  border-color: rgba(167, 139, 250, 0.45);
+}
+
+.ad-sponsor-badge {
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(99, 102, 241, 0.2);
+  color: #a5b4fc;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-bottom: 6px;
+}
+
+.ad-sponsor-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.ad-sponsor-tagline {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 6px;
+}
+
+/* Responsive Formats */
+.ad-format-horizontal {
+  max-width: 728px;
+}
+
+.ad-format-rectangle {
+  max-width: 336px;
+}
+
+.ad-format-vertical {
+  width: 160px;
+  max-width: 160px;
+  min-height: 600px;
+  margin: 0 auto;
+}
+
+.ad-format-vertical .ad-slot-active {
+  min-height: 600px;
+  width: 160px;
+}
+
+.ad-format-vertical .ad-slot-mock {
+  min-height: 600px;
+  width: 160px;
+  padding: 24px 12px;
+  justify-content: flex-start;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .ad-container {
+    margin: 16px 0;
+  }
+  .ad-slot-active {
+    min-height: 60px;
+  }
+  .mock-desc {
+    font-size: 11px;
+  }
+}

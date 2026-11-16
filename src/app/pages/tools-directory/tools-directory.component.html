@@ -1,0 +1,232 @@
+<div class="directory-container">
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span class="current">All Tools</span>
+  </nav>
+
+  <!-- Top Responsive Ad Banner -->
+  <app-ad-banner slot="topBanner"></app-ad-banner>
+
+  <!-- Hero Header Section -->
+  <header class="directory-hero">
+    <div class="hero-chip">
+      <span class="chip-dot"></span>
+      <span>16+ Client-Side Utilities &bull; Zero Server Uploads</span>
+    </div>
+    <h1 class="hero-title">All Online Utilities & Developer Tools</h1>
+    <p class="hero-subtitle">
+      Free, private, local-first web utilities segregated by function. Run calculations, merge documents, and convert media entirely in your browser memory.
+    </p>
+
+    <!-- Search Box -->
+    <div class="search-bar-wrapper">
+      <div class="search-input-box">
+        <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text"
+               placeholder="Search tools by name, formula, or keyword (e.g. 'pdf', 'emi', 'compress')..."
+               [ngModel]="searchQuery()"
+               (ngModelChange)="searchQuery.set($event)"
+               class="search-input" />
+        @if (searchQuery()) {
+          <button type="button" class="btn-clear" (click)="clearSearch()" aria-label="Clear Search">&times;</button>
+        }
+      </div>
+    </div>
+
+    <!-- Category Filter Pills -->
+    <div class="filter-pills">
+      <button type="button"
+              class="filter-pill"
+              [class.active]="selectedFilter() === 'all'"
+              (click)="setFilter('all')">
+        All Tools
+      </button>
+      <button type="button"
+              class="filter-pill pill-pdf"
+              [class.active]="selectedFilter() === 'pdf-docs'"
+              (click)="setFilter('pdf-docs')">
+        PDF & Documents
+      </button>
+      <button type="button"
+              class="filter-pill pill-image"
+              [class.active]="selectedFilter() === 'image-media'"
+              (click)="setFilter('image-media')">
+        Image & Media
+      </button>
+      <button type="button"
+              class="filter-pill pill-finance"
+              [class.active]="selectedFilter() === 'finance-banking'"
+              (click)="setFilter('finance-banking')">
+        Finance & Banking
+      </button>
+      <button type="button"
+              class="filter-pill pill-dev"
+              [class.active]="selectedFilter() === 'dev-security'"
+              (click)="setFilter('dev-security')">
+        Developer & Security
+      </button>
+      <button type="button"
+              class="filter-pill pill-math"
+              [class.active]="selectedFilter() === 'math-everyday'"
+              (click)="setFilter('math-everyday')">
+        Math & Daily Utilities
+      </button>
+    </div>
+  </header>
+
+  <!-- Empty Results Notice -->
+  @if (categoryGroups().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <h3>No matching tools found</h3>
+      <p>We couldn't find any utilities matching "{{ searchQuery() }}".</p>
+      <button type="button" class="btn-reset" (click)="clearSearch()">Show All 16+ Tools</button>
+    </div>
+  }
+
+  <!-- Segregated Functional Sections -->
+  <div class="groups-wrapper">
+    @for (group of categoryGroups(); track group.id; let idx = $index) {
+      <section class="category-section" [id]="group.id" [ngClass]="group.accentClass">
+        <!-- Section Header -->
+        <div class="category-header">
+          <div class="header-info">
+            <span class="group-badge" [style.background]="group.badgeBg" [style.color]="group.badgeText">
+              {{ group.tools.length }} Utilities
+            </span>
+            <h2 class="group-title">{{ group.name }}</h2>
+            <p class="group-tagline">{{ group.tagline }}</p>
+          </div>
+        </div>
+
+        <!-- Tools Cards Grid -->
+        <div class="tools-grid">
+          @for (tool of group.tools; track tool.id) {
+            <a [routerLink]="tool.route" class="tool-card-anchor">
+              <div class="tool-card-item">
+                <div class="card-top">
+                  <div class="icon-bubble" [ngClass]="'icon-' + tool.category">
+                    <!-- Dynamic SVG Icon by Tool ID -->
+                    @if (tool.id === 'pdf-merger' || tool.id === 'readme-to-pdf') {
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="12" y1="18" x2="12" y2="12"></line>
+                        <line x1="9" y1="15" x2="15" y2="15"></line>
+                      </svg>
+                    } @else if (tool.id === 'image-compressor' || tool.id === 'image-converter' || tool.id === 'favicon-generator') {
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                        <polyline points="21 15 16 10 5 21"></polyline>
+                      </svg>
+                    } @else if (tool.id === 'color-picker') {
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m2 22 1-1h3l9-9"></path>
+                        <path d="M14 4a2 2 0 0 1 2.8 0l3.2 3.2a2 2 0 0 1 0 2.8l-8 8H8v-4l6-6Z"></path>
+                      </svg>
+                    } @else if (tool.id === 'finance-calculator') {
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 3h12"></path>
+                        <path d="M6 8h12"></path>
+                        <path d="M6 13l8.5 8"></path>
+                        <path d="M6 13h3a4 4 0 0 0 0-8H6"></path>
+                      </svg>
+                    } @else if (tool.id === 'percentage-calculator') {
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="5" x2="5" y2="19"></line>
+                        <circle cx="6.5" cy="6.5" r="2.5"></circle>
+                        <circle cx="17.5" cy="17.5" r="2.5"></circle>
+                      </svg>
+                    } @else if (tool.id === 'tip-calculator') {
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                      </svg>
+                    } @else if (tool.id === 'password-generator') {
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                    } @else if (tool.id === 'barcode-generator') {
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                      </svg>
+                    } @else if (tool.id === 'base64-tool' || tool.id === 'json-formatter') {
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                      </svg>
+                    } @else if (tool.id === 'age-calculator') {
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                      </svg>
+                    } @else if (tool.id === 'unit-converter') {
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                      </svg>
+                    } @else if (tool.id === 'word-counter') {
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="4 7 4 4 20 4 20 7"></polyline>
+                        <line x1="9" y1="20" x2="15" y2="20"></line>
+                        <line x1="12" y1="4" x2="12" y2="20"></line>
+                      </svg>
+                    } @else if (tool.id === 'url-tools') {
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                      </svg>
+                    } @else {
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                    }
+                  </div>
+
+                  @if (tool.badge) {
+                    <span class="card-tag">{{ tool.badge }}</span>
+                  }
+                </div>
+
+                <h3 class="card-heading">{{ tool.title }}</h3>
+                <p class="card-summary">{{ tool.shortDescription }}</p>
+
+                <div class="card-action">
+                  <span class="action-btn-text">Open Tool</span>
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" class="action-arrow">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </div>
+              </div>
+            </a>
+          }
+        </div>
+
+        <!-- Mid Content Banner after the 2nd group -->
+        @if (idx === 1) {
+          <div class="section-ad-break">
+            <app-ad-banner slot="midContent"></app-ad-banner>
+          </div>
+        }
+      </section>
+    }
+  </div>
+
+  <!-- Bottom Banner Ad -->
+  <app-ad-banner slot="bottomBanner"></app-ad-banner>
+</div>

@@ -1,0 +1,167 @@
+<div class="app-container" (click)="closeToolsDropdown()">
+  <!-- Top Navigation Header -->
+  <header class="site-header">
+    <div class="nav-content">
+      <a routerLink="/" class="brand-logo" (click)="closeMobileMenu()">
+        <div class="logo-mark">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+            <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">JSNS Works</span>
+          <span class="brand-badge">Local-First Utilities</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="nav-links">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Home</a>
+        
+        <!-- All Tools Page Direct Link + Dropdown -->
+        <div class="dropdown-wrapper">
+          <a routerLink="/tools" routerLinkActive="active" class="nav-link nav-tools-btn" (click)="$event.stopPropagation()">
+            <span>All Tools</span>
+            <button type="button" class="btn-dropdown-arrow" (click)="toggleToolsDropdown($event)" aria-label="Toggle Tools Menu">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+          </a>
+
+          @if (toolsDropdownOpen()) {
+            <div class="dropdown-menu">
+              <div class="dropdown-header">
+                <span>Select a Utility</span>
+                <a routerLink="/tools" class="view-all-link" (click)="closeToolsDropdown()">View all &rarr;</a>
+              </div>
+              <div class="dropdown-scroll">
+                @for (tool of toolsList(); track tool.id) {
+                  <a [routerLink]="tool.route" class="dropdown-item" (click)="closeToolsDropdown()">
+                    <span class="item-title">{{ tool.title }}</span>
+                    <span class="item-desc">{{ tool.shortDescription }}</span>
+                  </a>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <a routerLink="/about" routerLinkActive="active" class="nav-link">About</a>
+        <a routerLink="/contact" routerLinkActive="active" class="nav-link">Support</a>
+        <a routerLink="/privacy-policy" routerLinkActive="active" class="nav-link">Privacy</a>
+
+        <!-- Desktop Language Selector -->
+        <app-language-selector variant="desktop"></app-language-selector>
+      </nav>
+
+      <!-- Mobile Header Actions -->
+      <div class="mobile-actions">
+        <app-language-selector variant="desktop"></app-language-selector>
+        <button type="button" class="btn-hamburger" (click)="toggleMobileMenu()" aria-label="Toggle navigation">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+            @if (!mobileMenuOpen()) {
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            } @else {
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            }
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer Navigation -->
+    @if (mobileMenuOpen()) {
+      <div class="mobile-drawer">
+        <div class="drawer-section-title">Navigation</div>
+        <div class="drawer-links">
+          <a routerLink="/" class="drawer-item" (click)="closeMobileMenu()">Home & Portfolio</a>
+          <a routerLink="/tools" class="drawer-item highlight-item" (click)="closeMobileMenu()">All Tools (16+ Utilities)</a>
+          <a routerLink="/about" class="drawer-item" (click)="closeMobileMenu()">About JSNS Works</a>
+          <a routerLink="/contact" class="drawer-item" (click)="closeMobileMenu()">Support & Contact</a>
+          <a routerLink="/privacy-policy" class="drawer-item" (click)="closeMobileMenu()">Privacy Policy</a>
+          <a routerLink="/terms" class="drawer-item" (click)="closeMobileMenu()">Terms of Service</a>
+        </div>
+        <hr class="drawer-sep">
+        <div class="drawer-section-title">Quick Jump to Tools</div>
+        <div class="drawer-tools">
+          @for (tool of toolsList(); track tool.id) {
+            <a [routerLink]="tool.route" class="drawer-item" (click)="closeMobileMenu()">
+              {{ tool.title }}
+            </a>
+          }
+        </div>
+      </div>
+    }
+  </header>
+
+  <!-- Clean, Spacious Layout with NO Awful Sidebar Ads -->
+  <main class="content-body">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Clean, Authentic Product Footer -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <!-- Col 1: Brand & Philosophy -->
+      <div class="footer-col brand-col">
+        <div class="footer-brand-title">
+          <span class="logo-circle">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
+              <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+              <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+              <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+              <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+            </svg>
+          </span>
+          <span>JSNS Works</span>
+        </div>
+        <p class="footer-copy">
+          A suite of private, client-side web tools built for speed, accuracy, and everyday productivity. All calculations and file conversions execute entirely inside your browser memory. Zero cloud uploads. No account required.
+        </p>
+        <div class="status-indicator">
+          <span class="live-pulse"></span>
+          <span>100% In-Browser Execution &bull; Zero Server Ingestion</span>
+        </div>
+      </div>
+
+      <!-- Col 2: Tools Directory -->
+      <div class="footer-col">
+        <h4>All Tools</h4>
+        <ul class="footer-nav">
+          <li><a routerLink="/tools">Complete Directory (16+ Tools)</a></li>
+          <li><a routerLink="/tools/pdf-merger">PDF Merger & Combiner</a></li>
+          <li><a routerLink="/tools/image-compressor">Image Size Reducer</a></li>
+          <li><a routerLink="/tools/finance-calculator">Loan EMI & FD Calculator</a></li>
+          <li><a routerLink="/tools/barcode-generator">QR Code & Barcode Maker</a></li>
+          <li><a routerLink="/tools/base64-tool">JWT Decoder & Base64</a></li>
+          <li><a routerLink="/tools/unit-converter">Universal Unit Converter</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Company & Trust -->
+      <div class="footer-col">
+        <h4>About & Policies</h4>
+        <ul class="footer-nav">
+          <li><a routerLink="/about">About Abhishek & JSNS Works</a></li>
+          <li><a routerLink="/contact">Contact & Support</a></li>
+          <li><a routerLink="/privacy-policy">Privacy & Cookies Policy</a></li>
+          <li><a routerLink="/terms">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-bottom-content">
+        <span>&copy; 2026 JSNS Works. Designed & Engineered by Abhishek S.</span>
+        <span>Local-First &bull; Privacy-First &bull; Free Forever</span>
+      </div>
+    </div>
+  </footer>
+</div>

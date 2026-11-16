@@ -1,0 +1,417 @@
+/* ==========================================================================
+   GLOBAL DESIGN SYSTEM: MODERN, CLEAN, COLORFUL & TRUSTWORTHY
+   Inspired by world-class utilities (iLovePDF, Linear, Stripe, Vercel)
+   ========================================================================== */
+
+:root {
+  /* Surfaces & Backgrounds */
+  --bg-canvas: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-subtle: #f1f5f9;
+  --bg-muted: #e2e8f0;
+
+  /* Typography Colors */
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-inverse: #ffffff;
+
+  /* Borders & Shadows */
+  --border-light: #e2e8f0;
+  --border-focus: #3b82f6;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+
+  /* Vibrant Category Accents (Crisp & Colorful) */
+  --accent-pdf: #ef4444;       /* Crimson for PDF & Documents */
+  --accent-pdf-bg: #fef2f2;
+  --accent-pdf-border: #fecaca;
+
+  --accent-image: #0284c7;     /* Ocean Blue for Image & Media */
+  --accent-image-bg: #f0f9ff;
+  --accent-image-border: #bae6fd;
+
+  --accent-finance: #059669;   /* Emerald Green for Finance & Loan */
+  --accent-finance-bg: #ecfdf5;
+  --accent-finance-border: #a7f3d0;
+
+  --accent-dev: #6366f1;       /* Royal Indigo for Dev & Security */
+  --accent-dev-bg: #eef2ff;
+  --accent-dev-border: #c7d2fe;
+
+  --accent-math: #d97706;      /* Warm Amber for Calculators & Math */
+  --accent-math-bg: #fffbeb;
+  --accent-math-border: #fde68a;
+
+  --accent-tool: #0d9488;      /* Teal for Productivity */
+  --accent-tool-bg: #f0fdfa;
+  --accent-tool-border: #99f6e4;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--text-secondary);
+  background-color: var(--bg-canvas) !important;
+  background-image: none !important;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ==========================================================================
+   CONSISTENT TOOL PAGE LAYOUT SYSTEM (Clean, Spacious, No Awful Sidebars)
+   ========================================================================== */
+
+.tool-page-container {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 16px 0 48px;
+}
+
+/* Breadcrumbs */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.breadcrumb a {
+  color: #2563eb !important;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb .sep {
+  color: #94a3b8 !important;
+}
+
+.breadcrumb .current {
+  color: var(--text-primary) !important;
+  font-weight: 600;
+}
+
+/* Tool Hero Header */
+.tool-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.tool-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  border: 1px solid #bfdbfe !important;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.tool-title {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--text-primary) !important;
+  margin: 0 0 12px;
+  line-height: 1.25;
+}
+
+.tool-subtitle {
+  font-size: 16px;
+  color: var(--text-muted) !important;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Main Cards Across All Tools */
+.tool-card,
+.card,
+.converter-card,
+.content-card,
+.inputs-card,
+.results-card,
+.about-section {
+  background: #ffffff !important;
+  border: 1px solid var(--border-light) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--shadow-sm) !important;
+  color: var(--text-secondary) !important;
+  padding: 32px;
+  margin-bottom: 32px;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Clean Dropzones & Upload Areas (iLovePDF Style) */
+.dropzone,
+.drop-zone {
+  background: #f8fafc !important;
+  border: 2px dashed #cbd5e1 !important;
+  border-radius: 14px !important;
+  color: var(--text-secondary) !important;
+  padding: 44px 24px;
+  text-align: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.dropzone:hover,
+.dropzone.dragging,
+.drop-zone:hover,
+.drop-zone.dragging {
+  background: #eff6ff !important;
+  border-color: #3b82f6 !important;
+  transform: scale(1.005);
+}
+
+.drop-content h3,
+.dropzone-primary-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary) !important;
+  margin: 12px 0 6px;
+}
+
+.drop-content p,
+.dropzone-secondary-text {
+  font-size: 14px;
+  color: var(--text-muted) !important;
+  margin: 0;
+}
+
+/* Primary Action Buttons */
+.btn-primary,
+.btn-convert,
+.btn-merge,
+.btn-compress,
+.btn-action,
+.btn-download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  color: #ffffff !important;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.25) !important;
+  transition: all 0.15s ease;
+}
+
+.btn-primary:hover,
+.btn-convert:hover,
+.btn-merge:hover,
+.btn-compress:hover,
+.btn-action:hover,
+.btn-download:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35) !important;
+  transform: translateY(-1px);
+}
+
+.btn-secondary,
+.btn-outline,
+.btn-clear {
+  background: #ffffff !important;
+  color: #334155 !important;
+  border: 1px solid var(--border-light) !important;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-secondary:hover,
+.btn-outline:hover,
+.btn-clear:hover {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Form Inputs, Textareas & Selects */
+input[type="text"],
+input[type="number"],
+input[type="password"],
+input[type="url"],
+input[type="date"],
+textarea,
+select {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  color: #0f172a !important;
+  padding: 10px 14px;
+  font-size: 14px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+}
+
+/* Range Sliders */
+input[type="range"].slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: #e2e8f0 !important;
+  outline: none;
+}
+
+input[type="range"].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #2563eb;
+  border: 3px solid #ffffff;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+input[type="range"].slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  background: #1d4ed8;
+}
+
+/* Step & How-To Cards */
+.how-it-works-section,
+.faq-section {
+  background: #ffffff !important;
+  border: 1px solid var(--border-light) !important;
+  border-radius: 16px !important;
+  padding: 32px;
+  margin-top: 32px;
+}
+
+.step-card,
+.faq-item,
+.about-card,
+.feature-card,
+.tech-card {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  color: var(--text-secondary) !important;
+  padding: 20px;
+  transition: all 0.15s ease;
+}
+
+.step-card:hover,
+.faq-item:hover,
+.feature-card:hover {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6,
+.section-title,
+.card-title,
+.step-heading,
+.faq-question {
+  color: var(--text-primary) !important;
+  font-weight: 700;
+}
+
+p,
+.section-description,
+.card-desc,
+.step-text,
+.faq-answer {
+  color: var(--text-muted) !important;
+}
+
+/* Category Filter Pills & Tabs */
+.pill-btn,
+.tab-btn,
+.tab-chip,
+.btn-tab {
+  background: #ffffff !important;
+  color: #475569 !important;
+  border: 1px solid #e2e8f0 !important;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pill-btn:hover,
+.tab-btn:hover,
+.tab-chip:hover,
+.btn-tab:hover {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+.pill-btn.active,
+.tab-btn.active,
+.tab-chip.active,
+.btn-tab.active {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25) !important;
+}
+
+/* Ad Banners - Clean & Centered */
+app-ad-banner {
+  display: block;
+  margin: 20px auto;
+  text-align: center;
+}
+
+.ad-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 16px auto;
+}
+
+.ad-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}

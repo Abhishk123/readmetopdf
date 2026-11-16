@@ -1,0 +1,74 @@
+import { Injectable, signal, computed } from '@angular/core';
+import { ADS_CONFIG, AdsConfiguration, AdProviderType } from '../config/ads.config';
+
+declare global {
+  interface Window {
+    adsbygoogle?: any[];
+  }
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AdsService {
+  private readonly configState = signal<AdsConfiguration>(ADS_CONFIG);
+  public readonly config = this.configState.asReadonly();
+  
+  public readonly effectiveClient = computed(() => {
+    const cfg = this.config();
+    if (cfg.testMode) {
+      return 'ca-pub-3940256099942544'; // Google Official Test Publisher
+    }
+    return cfg.client;
+  });
+
+  private scriptLoaded = false;
+
+  constructor() {
+    if (this.config().enabled && typeof window !== 'undefined') {
+      this.initGoogleAdSense();
+    }
+  }
+
+  public initGoogleAdSense(): void {
+    if (this.scriptLoaded || !this.config().enabled || !this.effectiveClient()) {
+      return;
+    }
+
+    try {
+      // Check if already present in DOM from index.html
+      const existingScript = document.querySelector('script[src*="adsbygoogle.js"]');
+      if (existingScript) {
+        this.scriptLoaded = true;
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${this.effectiveClient()}`;
+      script.async = true;
+      script.crossOrigin = 'anonymous';
+      script.onload = () => {
+        this.scriptLoaded = true;
+      };
+      document.head.appendChild(script);
+    } catch (e) {
+      console.warn('AdSense script injection skipped:', e);
+    }
+  }
+
+  public pushAd(): void {
+    if (!this.config().enabled || typeof window === 'undefined') {
+      return;
+    }
+
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (err) {
+      // Safe catch for adblockers or browser extensions
+    }
+  }
+
+  public getProvider(override?: AdProviderType): AdProviderType {
+    return override || this.config().defaultProvider;
+  }
+}

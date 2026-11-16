@@ -1,0 +1,228 @@
+<div class="tool-page-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span class="current">JWT & Base64 Encoder / Decoder</span>
+  </nav>
+
+  <!-- Top Ad Banner -->
+  <app-ad-banner slot="topBanner"></app-ad-banner>
+
+  <!-- Tool Hero Header -->
+  <div class="tool-header">
+    <div class="tool-badge">Developer & Security Tool</div>
+    <h1 class="tool-title">JWT Decoder & Base64 Converter</h1>
+    <p class="tool-subtitle">
+      Inspect and decode JSON Web Tokens (JWT), encode & decode Base64 strings, and convert URL parameters in-browser.
+    </p>
+  </div>
+
+  <!-- Mode Selector Tabs -->
+  <div class="mode-tabs">
+    <button type="button" class="btn-tab" [class.active]="activeMode() === 'jwt'" (click)="setMode('jwt')">
+      <span>JWT Inspector</span>
+    </button>
+    <button type="button" class="btn-tab" [class.active]="activeMode() === 'base64'" (click)="setMode('base64')">
+      <span>Base64 Encode & Decode</span>
+    </button>
+    <button type="button" class="btn-tab" [class.active]="activeMode() === 'url'" (click)="setMode('url')">
+      <span>URL Encode & Decode</span>
+    </button>
+  </div>
+
+  <!-- TAB 1: JWT DECODER -->
+  @if (activeMode() === 'jwt') {
+    <div class="tool-card">
+      <div class="panel-section">
+        <label class="section-label">Paste Encoded JWT Token:</label>
+        <textarea [(ngModel)]="jwtInput"
+                  (ngModelChange)="decodeJwt()"
+                  rows="3"
+                  class="code-input jwt-source"
+                  placeholder="Paste your eyJhbGci... token here"></textarea>
+      </div>
+
+      @if (jwtError()) {
+        <div class="alert-error">{{ jwtError() }}</div>
+      }
+
+      @if (jwtExpiryInfo()) {
+        <div class="jwt-status-banner" [class.expired]="jwtExpiryInfo()!.isExpired" [class.valid]="!jwtExpiryInfo()!.isExpired">
+          <div class="status-indicator">
+            <span class="status-dot"></span>
+            <strong>Status: {{ jwtExpiryInfo()!.isExpired ? 'EXPIRED' : 'ACTIVE / VALID' }}</strong>
+          </div>
+          @if (jwtExpiryInfo()!.expDate) {
+            <span class="expiry-date">Expires: {{ jwtExpiryInfo()!.expDate }}</span>
+          }
+        </div>
+      }
+
+      <div class="jwt-split-grid">
+        <!-- Header -->
+        <div class="jwt-block header-block">
+          <div class="block-header">
+            <span class="tag tag-red">HEADER: Algorithm & Token Type</span>
+            <button type="button" class="btn-copy-sm" (click)="copyToClipboard(jwtHeader(), 'header')">
+              {{ copiedSection() === 'header' ? '✓ Copied' : 'Copy' }}
+            </button>
+          </div>
+          <pre class="json-display red">{{ jwtHeader() || '// Header will appear here' }}</pre>
+        </div>
+
+        <!-- Payload -->
+        <div class="jwt-block payload-block">
+          <div class="block-header">
+            <span class="tag tag-purple">PAYLOAD: Data Claims</span>
+            <button type="button" class="btn-copy-sm" (click)="copyToClipboard(jwtPayload(), 'payload')">
+              {{ copiedSection() === 'payload' ? '✓ Copied' : 'Copy' }}
+            </button>
+          </div>
+          <pre class="json-display purple">{{ jwtPayload() || '// Payload claims will appear here' }}</pre>
+        </div>
+      </div>
+
+      <!-- Signature -->
+      <div class="jwt-block sig-block">
+        <div class="block-header">
+          <span class="tag tag-blue">SIGNATURE</span>
+          <button type="button" class="btn-copy-sm" (click)="copyToClipboard(jwtSignature(), 'sig')">
+            {{ copiedSection() === 'sig' ? '✓ Copied' : 'Copy' }}
+          </button>
+        </div>
+        <pre class="sig-display blue">{{ jwtSignature() || '// Signature hash' }}</pre>
+      </div>
+    </div>
+  }
+
+  <!-- TAB 2: BASE64 ENCODER / DECODER -->
+  @if (activeMode() === 'base64') {
+    <div class="tool-card">
+      <div class="direction-toggle">
+        <button type="button"
+                class="btn-dir"
+                [class.active]="base64IsEncoding()"
+                (click)="switchBase64Direction(true)">
+          Text &rarr; Base64 (Encode)
+        </button>
+        <button type="button"
+                class="btn-dir"
+                [class.active]="!base64IsEncoding()"
+                (click)="switchBase64Direction(false)">
+          Base64 &rarr; Text (Decode)
+        </button>
+      </div>
+
+      <div class="conversion-grid">
+        <div class="conv-col">
+          <label class="section-label">{{ base64IsEncoding() ? 'Input Plain Text:' : 'Input Base64 String:' }}</label>
+          <textarea [(ngModel)]="base64Input"
+                    (ngModelChange)="processBase64()"
+                    rows="8"
+                    class="code-input"
+                    placeholder="Enter string to convert..."></textarea>
+        </div>
+
+        <div class="conv-col">
+          <div class="flex-between">
+            <label class="section-label">{{ base64IsEncoding() ? 'Base64 Result:' : 'Decoded Plain Text:' }}</label>
+            <button type="button" class="btn-copy-sm" (click)="copyToClipboard(base64Output(), 'base64')">
+              {{ copiedSection() === 'base64' ? '✓ Copied' : 'Copy Output' }}
+            </button>
+          </div>
+          <textarea readonly
+                    [value]="base64Output()"
+                    rows="8"
+                    class="code-input readonly-output"
+                    placeholder="Result will appear here..."></textarea>
+        </div>
+      </div>
+
+      @if (base64Error()) {
+        <div class="alert-error">{{ base64Error() }}</div>
+      }
+    </div>
+  }
+
+  <!-- TAB 3: URL ENCODER / DECODER -->
+  @if (activeMode() === 'url') {
+    <div class="tool-card">
+      <div class="direction-toggle">
+        <button type="button"
+                class="btn-dir"
+                [class.active]="urlIsEncoding()"
+                (click)="switchUrlDirection(true)">
+          URL Encode (Clean unsafe characters)
+        </button>
+        <button type="button"
+                class="btn-dir"
+                [class.active]="!urlIsEncoding()"
+                (click)="switchUrlDirection(false)">
+          URL Decode (Readable format)
+        </button>
+      </div>
+
+      <div class="conversion-grid">
+        <div class="conv-col">
+          <label class="section-label">{{ urlIsEncoding() ? 'Raw URL / Parameters:' : 'Encoded URL:' }}</label>
+          <textarea [(ngModel)]="urlInput"
+                    (ngModelChange)="processUrl()"
+                    rows="8"
+                    class="code-input"></textarea>
+        </div>
+
+        <div class="conv-col">
+          <div class="flex-between">
+            <label class="section-label">Output Result:</label>
+            <button type="button" class="btn-copy-sm" (click)="copyToClipboard(urlOutput(), 'url')">
+              {{ copiedSection() === 'url' ? '✓ Copied' : 'Copy Output' }}
+            </button>
+          </div>
+          <textarea readonly
+                    [value]="urlOutput()"
+                    rows="8"
+                    class="code-input readonly-output"></textarea>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Mid Content Ad Banner -->
+  <app-ad-banner slot="midContent"></app-ad-banner>
+
+  <!-- Educational SEO Guide -->
+  <div class="seo-guide">
+    <h2>Understanding JWT and Base64 Encoding</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>How JWT Tokens Work</h3>
+        <p>A JSON Web Token consists of three base64url-encoded parts separated by dots: Header (metadata), Payload (user claims), and Signature (tamper-verification hash).</p>
+      </div>
+      <div class="feature-card">
+        <h3>Base64 vs Encryption</h3>
+        <p>Base64 is a binary-to-text encoding scheme, not encryption. It allows binary data and special characters to be safely sent across HTTP headers without corruption.</p>
+      </div>
+      <div class="feature-card">
+        <h3>100% Client-Side Privacy</h3>
+        <p>Your authentication tokens, passwords, and sensitive claims are never sent to external servers. All decoding executes in your local browser sandbox.</p>
+      </div>
+    </div>
+
+    <!-- FAQ Accordion -->
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h3>Can someone steal my token by pasting it here?</h3>
+        <p>No. JSNS Works executes all string manipulation completely in your browser session. No data is stored, cached, or transmitted to any server.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Why is my JWT marked EXPIRED?</h3>
+        <p>JWT payloads contain an standard <code>exp</code> Unix timestamp. If the current time is past this timestamp, authentication providers will reject the token.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Ad Banner -->
+  <app-ad-banner slot="bottomBanner"></app-ad-banner>
+</div>

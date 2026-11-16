@@ -1,0 +1,116 @@
+<div class="tool-page-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span class="current">Image Color Picker & Palette Extractor</span>
+  </nav>
+
+  <!-- Top Ad Banner -->
+  <app-ad-banner slot="topBanner"></app-ad-banner>
+
+  <!-- Tool Hero Header -->
+  <div class="tool-header">
+    <div class="tool-badge">Design & Graphics Utility</div>
+    <h1 class="tool-title">Image Color Picker & Palette Extractor</h1>
+    <p class="tool-subtitle">
+      Click anywhere on an uploaded image or sample to inspect pixel colors, copy HEX / RGB / HSL values, and generate cohesive color palettes.
+    </p>
+  </div>
+
+  <div class="picker-layout">
+    <!-- Left: Canvas Image Area -->
+    <div class="card canvas-card">
+      <div class="canvas-toolbar">
+        <label class="btn-upload">
+          <span>Upload Image</span>
+          <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden>
+        </label>
+        <span class="tip-text">Click anywhere on the image to sample pixel color</span>
+      </div>
+
+      <div class="canvas-viewport">
+        <canvas #canvasRef
+                width="640"
+                height="360"
+                (click)="onCanvasClick($event)"
+                class="active-canvas"
+                title="Click to pick color"></canvas>
+      </div>
+
+      <!-- Extracted Palette Row -->
+      <div class="palette-row">
+        <span class="palette-title">Extracted Palette:</span>
+        <div class="palette-swatches">
+          @for (hex of extractedPalette(); track hex) {
+            <div class="swatch"
+                 [style.background]="hex"
+                 (click)="selectPaletteColor(hex)"
+                 [title]="'Select ' + hex"></div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Color Codes Panel -->
+    <div class="card color-details-card">
+      <div class="preview-color-box" [style.background]="activeHex()">
+        <span class="preview-hex">{{ activeHex() }}</span>
+      </div>
+
+      <div class="color-codes-list">
+        <!-- HEX -->
+        <div class="code-box">
+          <span class="code-lbl">HEX</span>
+          <code class="code-val">{{ activeHex() }}</code>
+          <button type="button" class="btn-copy" (click)="copyColor(activeHex(), 'hex')">
+            {{ copiedFormat() === 'hex' ? '✓ Copied' : 'Copy' }}
+          </button>
+        </div>
+
+        <!-- RGB -->
+        <div class="code-box">
+          <span class="code-lbl">RGB</span>
+          <code class="code-val">{{ activeRgb() }}</code>
+          <button type="button" class="btn-copy" (click)="copyColor(activeRgb(), 'rgb')">
+            {{ copiedFormat() === 'rgb' ? '✓ Copied' : 'Copy' }}
+          </button>
+        </div>
+
+        <!-- HSL -->
+        <div class="code-box">
+          <span class="code-lbl">HSL</span>
+          <code class="code-val">{{ activeHsl() }}</code>
+          <button type="button" class="btn-copy" (click)="copyColor(activeHsl(), 'hsl')">
+            {{ copiedFormat() === 'hsl' ? '✓ Copied' : 'Copy' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mid Content Ad Banner -->
+  <app-ad-banner slot="midContent"></app-ad-banner>
+
+  <!-- Educational SEO Section -->
+  <div class="seo-guide">
+    <h2>Color Spaces & Digital Design Basics</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>HEX vs RGB vs HSL</h3>
+        <p>HEX (hexadecimal) and RGB represent digital screen channels (Red, Green, Blue from 0 to 255). HSL (Hue, Saturation, Lightness) provides an intuitive human-centric model for adjusting tints and shades.</p>
+      </div>
+      <div class="feature-card">
+        <h3>100% Client-Side Canvas</h3>
+        <p>Pixel reading is performed locally through HTML5 Canvas <code>getImageData()</code> with zero network transfer of your proprietary logos or graphics.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Palette Harmonization</h3>
+        <p>Consistent branding requires complementary or analogous color schemes. Use the extracted swatches to build cohesive CSS design systems.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Ad Banner -->
+  <app-ad-banner slot="bottomBanner"></app-ad-banner>
+</div>

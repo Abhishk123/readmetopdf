@@ -1,0 +1,83 @@
+<div class="lang-selector-container" [class.mobile-variant]="variant() === 'mobile'">
+  <!-- Trigger Button -->
+  <button 
+    type="button" 
+    class="lang-trigger-btn"
+    [class.active]="isOpen()"
+    (click)="toggleDropdown($event)"
+    aria-label="Select website language"
+    [attr.aria-expanded]="isOpen()">
+    <span class="flag-icon">{{ currentLanguage().flag }}</span>
+    <span class="lang-label">{{ currentLanguage().nativeName }}</span>
+    <svg class="chevron-icon" [class.rotated]="isOpen()" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  </button>
+
+  <!-- Dropdown Menu -->
+  @if (isOpen()) {
+    <div class="lang-dropdown-panel" (click)="$event.stopPropagation()">
+      <!-- Panel Header with Search -->
+      <div class="panel-header">
+        <div class="search-input-box">
+          <svg class="search-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input 
+            type="text" 
+            class="lang-search-field"
+            placeholder="Search language..."
+            [ngModel]="searchQuery()"
+            (ngModelChange)="searchQuery.set($event)"
+            autofocus>
+        </div>
+
+        @if (currentLangCode() !== 'en') {
+          <button 
+            type="button" 
+            class="btn-reset-en" 
+            (click)="resetToEnglish($event)"
+            title="Reset back to English">
+            Reset to EN
+          </button>
+        }
+      </div>
+
+      <!-- Language List -->
+      <div class="lang-list-scroll">
+        @if (filteredLanguages().length === 0) {
+          <div class="no-results">
+            No language matching "{{ searchQuery() }}"
+          </div>
+        } @else {
+          <div class="lang-grid">
+            @for (lang of filteredLanguages(); track lang.code) {
+              <button 
+                type="button" 
+                class="lang-item-btn" 
+                [class.selected]="lang.code === currentLangCode()"
+                (click)="selectLanguage(lang.code, $event)">
+                <span class="lang-flag">{{ lang.flag }}</span>
+                <div class="lang-names">
+                  <span class="native-name">{{ lang.nativeName }}</span>
+                  <span class="english-name">{{ lang.name }}</span>
+                </div>
+                @if (lang.code === currentLangCode()) {
+                  <svg class="check-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                }
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Footer Note -->
+      <div class="panel-footer">
+        <span>🌐 100+ languages powered by Google Translate</span>
+      </div>
+    </div>
+  }
+</div>

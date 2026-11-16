@@ -1,0 +1,160 @@
+<div class="tool-page-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span class="current">PDF Merger & Combiner</span>
+  </nav>
+
+  <!-- Top Ad Banner -->
+  <app-ad-banner slot="topBanner"></app-ad-banner>
+
+  <!-- Tool Hero Header -->
+  <div class="tool-header">
+    <div class="tool-badge">100% In-Browser & Private</div>
+    <h1 class="tool-title">PDF Merger & Combiner</h1>
+    <p class="tool-subtitle">
+      Combine multiple PDF files into one single document. Reorder pages and merge files without uploading confidential data to external servers.
+    </p>
+  </div>
+
+  <!-- Main Tool Card -->
+  <div class="tool-card">
+    @if (errorMessage()) {
+      <div class="alert-error">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span>{{ errorMessage() }}</span>
+        <button type="button" class="btn-dismiss" (click)="errorMessage.set('')">✕</button>
+      </div>
+    }
+
+    <!-- Drop Zone -->
+    <div class="drop-zone"
+         [class.dragging]="isDragging()"
+         (dragover)="onDragOver($event)"
+         (dragleave)="onDragLeave()"
+         (drop)="onDrop($event)">
+      <div class="drop-content">
+        <div class="drop-icon">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="12" y1="18" x2="12" y2="12"></line>
+            <line x1="9" y1="15" x2="15" y2="15"></line>
+          </svg>
+        </div>
+        <h3>Select or Drag & Drop Multiple PDF Files</h3>
+        <p>Rearrange order and combine instantly in your browser</p>
+        <label class="btn-browse">
+          <span>Choose PDF Files</span>
+          <input type="file" accept="application/pdf" multiple (change)="onFileSelected($event)" hidden>
+        </label>
+      </div>
+    </div>
+
+    <!-- Uploaded Files List -->
+    @if (filesList().length > 0) {
+      <div class="files-container">
+        <div class="files-header">
+          <h3>Selected PDFs ({{ filesList().length }})</h3>
+          <button type="button" class="btn-link danger" (click)="clearAll()">Clear All</button>
+        </div>
+
+        <div class="pdf-items-list">
+          @for (item of filesList(); track item.id; let idx = $index) {
+            <div class="pdf-row">
+              <span class="row-num">{{ idx + 1 }}</span>
+              <div class="pdf-info">
+                <span class="pdf-name">{{ item.name }}</span>
+                <span class="pdf-size">{{ item.sizeFormatted }}</span>
+              </div>
+
+              <!-- Reorder & Delete Actions -->
+              <div class="pdf-actions">
+                <button type="button" class="btn-arrow" (click)="moveUp(idx)" [disabled]="idx === 0" title="Move Up">↑</button>
+                <button type="button" class="btn-arrow" (click)="moveDown(idx)" [disabled]="idx === filesList().length - 1" title="Move Down">↓</button>
+                <button type="button" class="btn-del" (click)="removeFile(item.id)" title="Remove">✕</button>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Action / Download Row -->
+        <div class="merge-action-bar">
+          @if (!downloadUrl()) {
+            <button type="button" class="btn-merge" (click)="mergePdfs()" [disabled]="isProcessing() || filesList().length < 2">
+              @if (isProcessing()) {
+                <span>Merging {{ filesList().length }} PDFs...</span>
+              } @else {
+                <span>Merge {{ filesList().length }} PDF Files</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              }
+            </button>
+          } @else {
+            <div class="download-banner">
+              <span class="success-text">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Files merged successfully</span>
+              </span>
+              <button type="button" class="btn-download" (click)="downloadMerged()">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Download Merged PDF</span>
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Mid Content Ad Banner -->
+  <app-ad-banner slot="midContent"></app-ad-banner>
+
+  <!-- Educational SEO Section -->
+  <div class="seo-guide">
+    <h2>Why Merge PDFs with JSNS Works?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>100% In-Browser Privacy</h3>
+        <p>Unlike cloud converters that upload your tax forms, bank statements, and contracts to external servers, JSNS Works merges files locally in your web browser.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Unlimited & No Watermarks</h3>
+        <p>No arbitrary file limits, zero watermarks, and no mandatory software installations or subscriptions required.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Custom Document Sequence</h3>
+        <p>Use the up and down arrows to arrange chapters, invoices, and resumes in the exact sequence you want them to appear.</p>
+      </div>
+    </div>
+
+    <!-- FAQ Accordion -->
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h3>Is there any file size limit?</h3>
+        <p>Because the merger runs on your computer's RAM, you can easily combine documents totaling over 100 MB without bandwidth timeouts.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Are password-protected PDFs supported?</h3>
+        <p>Please unlock password-protected documents before merging, as encrypted files cannot be read without authentication.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Ad Banner -->
+  <app-ad-banner slot="bottomBanner"></app-ad-banner>
+</div>

@@ -1,0 +1,342 @@
+<div class="tool-page-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <span class="current">URL Tools & Campaign Link Builder</span>
+  </nav>
+
+  <!-- Top Ad Banner -->
+  <app-ad-banner slot="topBanner"></app-ad-banner>
+
+  <!-- Tool Hero Header -->
+  <div class="tool-header">
+    <div class="tool-badge">Marketing & Developer Utilities</div>
+    <h1 class="tool-title">URL Shortener, UTM Builder & Link Cleaner</h1>
+    <p class="tool-subtitle">
+      Shorten long URLs, build Google Analytics campaign tracking tags (UTM parameters), and strip invasive tracking cookies from links. 100% private and client-side.
+    </p>
+  </div>
+
+  <!-- Notification Toast -->
+  @if (copiedMessage()) {
+    <div class="toast-banner">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+      <span>{{ copiedMessage() }}</span>
+    </div>
+  }
+
+  <!-- Tab Buttons -->
+  <div class="tool-tabs">
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'shorten'" (click)="setTab('shorten')">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 3 21 3 21 9"></polyline>
+        <polyline points="9 21 3 21 3 15"></polyline>
+        <line x1="21" y1="3" x2="14" y2="10"></line>
+        <line x1="3" y1="21" x2="10" y2="14"></line>
+      </svg>
+      <span>URL Shortener</span>
+    </button>
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'utm'" (click)="setTab('utm')">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+      </svg>
+      <span>UTM Campaign Builder</span>
+    </button>
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'clean'" (click)="setTab('clean')">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="3 6 5 6 21 6"></polyline>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+      </svg>
+      <span>Link Privacy Cleaner</span>
+    </button>
+  </div>
+
+  <!-- TAB 1: URL SHORTENER -->
+  @if (activeTab() === 'shorten') {
+    <div class="single-card-layout">
+      <div class="card shortener-card">
+        <h3>Shorten Any Long Web Link</h3>
+
+        @if (shortenerError()) {
+          <div class="error-banner">
+            <span>{{ shortenerError() }}</span>
+          </div>
+        }
+
+        <div class="shortener-input-group">
+          <input
+            type="text"
+            class="typed-input large"
+            [ngModel]="rawUrl()"
+            (ngModelChange)="rawUrl.set($event)"
+            placeholder="Paste your long link here (e.g. https://www.jsnsworks.site/tools/...)" />
+          <button type="button" class="btn btn-primary" [disabled]="isShortening()" (click)="shortenUrlNow()">
+            @if (isShortening()) {
+              <span>Shortening...</span>
+            } @else {
+              <span>Shorten Link</span>
+            }
+          </button>
+        </div>
+
+        @if (brandedShortUrl()) {
+          <div class="shortened-result-box branded">
+            <div class="res-meta">
+              <div class="res-badge-row">
+                <span class="badge-branded">Branded Link (Your Domain)</span>
+                <span class="badge-check">Works Globally On All Devices</span>
+              </div>
+              <a [href]="brandedShortUrl()" target="_blank" rel="noopener noreferrer" class="res-link">{{ brandedShortUrl() }}</a>
+            </div>
+            <button type="button" class="btn btn-primary-compact" (click)="copyToClipboard(brandedShortUrl(), 'Branded Short Link')">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>Copy Branded Link</span>
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- TAB 2: UTM CAMPAIGN BUILDER -->
+  @if (activeTab() === 'utm') {
+    <div class="creator-layout">
+      <!-- Inputs Column -->
+      <div class="card inputs-card">
+        <h3>Campaign Parameters</h3>
+
+        <div class="input-field">
+          <label class="field-title">Website Destination URL <span class="req">*</span></label>
+          <input
+            type="text"
+            class="typed-input"
+            [ngModel]="baseUrl()"
+            (ngModelChange)="baseUrl.set($event)"
+            placeholder="https://example.com/landing-page" />
+        </div>
+
+        <div class="grid-2">
+          <div class="input-field">
+            <label class="field-title">Campaign Source (utm_source) <span class="req">*</span></label>
+            <input
+              type="text"
+              class="typed-input"
+              [ngModel]="utmSource()"
+              (ngModelChange)="utmSource.set($event)"
+              placeholder="google, newsletter, twitter, linkedin" />
+          </div>
+          <div class="input-field">
+            <label class="field-title">Campaign Medium (utm_medium) <span class="req">*</span></label>
+            <input
+              type="text"
+              class="typed-input"
+              [ngModel]="utmMedium()"
+              (ngModelChange)="utmMedium.set($event)"
+              placeholder="cpc, email, banner, social" />
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="input-field">
+            <label class="field-title">Campaign Name (utm_campaign)</label>
+            <input
+              type="text"
+              class="typed-input"
+              [ngModel]="utmCampaign()"
+              (ngModelChange)="utmCampaign.set($event)"
+              placeholder="spring_sale, launch_2026" />
+          </div>
+          <div class="input-field">
+            <label class="field-title">Campaign Term (utm_term)</label>
+            <input
+              type="text"
+              class="typed-input"
+              [ngModel]="utmTerm()"
+              (ngModelChange)="utmTerm.set($event)"
+              placeholder="paid search keywords" />
+          </div>
+        </div>
+
+        <div class="input-field">
+          <label class="field-title">Campaign Content (utm_content)</label>
+          <input
+            type="text"
+            class="typed-input"
+            [ngModel]="utmContent()"
+            (ngModelChange)="utmContent.set($event)"
+            placeholder="header_cta, sidebar_link (A/B testing)" />
+        </div>
+      </div>
+
+      <!-- Live Generated URL Column -->
+      <div class="card preview-card">
+        <h3>Generated Tracking URL</h3>
+
+        <div class="url-output-box">
+          <code class="url-display">{{ generatedUtmUrl() }}</code>
+        </div>
+
+        <!-- Visual Parameter Distribution Graph / Breakdown -->
+        <div class="params-graph-box">
+          <div class="graph-header">
+            <span>Tracking Parameters Breakdown</span>
+          </div>
+          <div class="graph-badges">
+            @if (utmSource()) { <span class="badge badge-source">Source: {{ utmSource() }}</span> }
+            @if (utmMedium()) { <span class="badge badge-medium">Medium: {{ utmMedium() }}</span> }
+            @if (utmCampaign()) { <span class="badge badge-campaign">Campaign: {{ utmCampaign() }}</span> }
+            @if (utmTerm()) { <span class="badge badge-term">Term: {{ utmTerm() }}</span> }
+            @if (utmContent()) { <span class="badge badge-content">Content: {{ utmContent() }}</span> }
+          </div>
+        </div>
+
+        <div class="action-buttons-group">
+          <button type="button" class="btn btn-primary" (click)="copyToClipboard(generatedUtmUrl(), 'Tracking Link')">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span>Copy Full Tracking URL</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- TAB 3: LINK PRIVACY CLEANER -->
+  @if (activeTab() === 'clean') {
+    <div class="single-card-layout">
+      <div class="card cleaner-card">
+        <h3>Strip Invasive Tracking Parameters</h3>
+        <p class="cleaner-desc">Remove tracking identifiers (Facebook <code>fbclid</code>, Google <code>gclid</code>, UTM parameters, and affiliate tags) to create clean, privacy-friendly share links.</p>
+
+        <div class="input-field">
+          <label class="field-title">Messy or Monitored URL</label>
+          <input
+            type="text"
+            class="typed-input"
+            [ngModel]="dirtyUrl()"
+            (ngModelChange)="dirtyUrl.set($event); cleanUrlNow()"
+            placeholder="Paste URL with tracking tags..." />
+        </div>
+
+        @if (cleanedUrl()) {
+          <div class="clean-result-container">
+            <div class="clean-header-row">
+              <span class="clean-badge">Cleaned URL</span>
+              @if (strippedTags().length > 0) {
+                <span class="removed-count">{{ strippedTags().length }} Tracking Tags Stripped</span>
+              }
+            </div>
+
+            <div class="url-output-box">
+              <code class="url-display">{{ cleanedUrl() }}</code>
+            </div>
+
+            @if (strippedTags().length > 0) {
+              <div class="removed-tags-list">
+                <span class="tags-label">Removed:</span>
+                @for (tag of strippedTags(); track tag) {
+                  <span class="tag-pill">{{ tag }}</span>
+                }
+              </div>
+            }
+
+            <div class="action-buttons-group">
+              <button type="button" class="btn btn-primary" (click)="copyToClipboard(cleanedUrl(), 'Cleaned URL')">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy Clean URL</span>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Mid Content Ad Banner -->
+  <app-ad-banner slot="midContent"></app-ad-banner>
+
+  <!-- Comprehensive Marketing & Link Privacy Guide (800+ Words) -->
+  <article class="seo-guide" itemscope itemtype="https://schema.org/Article">
+    <div class="guide-header">
+      <h2 itemprop="headline">Google Analytics 4 (GA4) Campaign Tracking & Link Hygiene Handbook</h2>
+      <p class="guide-intro">
+        Digital campaign tracking requires precision. Without standardized Urchin Tracking Module (UTM) tags, multi-channel marketing campaigns collapse into unassigned direct traffic in analytics dashboards. Below is the complete operational guide to campaign taxonomy, link shortening, and privacy stripping.
+      </p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>1. The 5 Core UTM Parameters Demystified</h3>
+        <p><strong>utm_source:</strong> Identifies the platform sending traffic (e.g. <code>google</code>, <code>linkedin</code>, <code>newsletter</code>). Always use standardized lowercase brand names.</p>
+        <p><strong>utm_medium:</strong> Identifies the marketing channel or distribution method (e.g. <code>cpc</code>, <code>email</code>, <code>social</code>, <code>banner</code>). GA4 uses strict medium classifications to bucket default channel groups.</p>
+        <p><strong>utm_campaign:</strong> The strategic initiative or product launch (e.g. <code>summer_sale_2026</code>, <code>webinar_registration</code>).</p>
+        <p><strong>utm_term:</strong> Specifically reserved for paid search keywords in Google Ads or Bing Ads.</p>
+        <p><strong>utm_content:</strong> Distinguishes different links or creatives pointing to the same destination (e.g. <code>hero_cta_button</code> vs <code>footer_text_link</code>) for A/B testing.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>2. Standard GA4 Default Channel Grouping Rules</h3>
+        <p>Google Analytics 4 automatically categorizes inbound traffic based on exact parameter values:</p>
+        <ul style="padding-left: 18px; margin: 8px 0; font-size: 13px; line-height: 1.6;">
+          <li><code>utm_medium = cpc</code> or <code>ppc</code> &rarr; <strong>Paid Search</strong></li>
+          <li><code>utm_medium = email</code> &rarr; <strong>Email Marketing</strong></li>
+          <li><code>utm_medium = social</code> &rarr; <strong>Organic Social</strong></li>
+          <li><code>utm_medium = affiliate</code> &rarr; <strong>Affiliates</strong></li>
+        </ul>
+        <p>Always maintain strict lowercase naming. GA4 treats <code>Email</code> and <code>email</code> as two conflicting channels.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>3. Surveillance Tracking Cookies & Link Stripping</h3>
+        <p>
+          Social networks and advertising ad-exchanges inject intrusive tracking query parameters into shared links:
+        </p>
+        <ul style="padding-left: 18px; margin: 8px 0; font-size: 13px; line-height: 1.6;">
+          <li><strong>fbclid:</strong> Facebook Click Identifier used for cross-site user fingerprinting.</li>
+          <li><strong>gclid / gbraid / wbraid:</strong> Google Click Identifiers.</li>
+          <li><strong>msclkid:</strong> Microsoft Advertising tracking token.</li>
+        </ul>
+        <p>
+          Stripping these tags before sharing links on community channels, Slack, or documentation protects recipient privacy without breaking page navigation.
+        </p>
+      </div>
+    </div>
+
+    <!-- Comprehensive FAQ Section -->
+    <div class="faq-section">
+      <h3>Frequently Asked UTM & URL Questions</h3>
+      <div class="faq-item">
+        <h4>Does adding UTM parameters harm my website's organic SEO rankings?</h4>
+        <p>No. When your website properly implements standard <code>&lt;link rel="canonical" href="..."&gt;</code> meta tags, search engine crawlers ignore all UTM tracking query parameters and consolidate ranking equity onto the clean canonical URL.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Should I use UTM parameters on internal website links?</h4>
+        <p>Never. Using UTM parameters on internal buttons or menu links resets the visitor's session in Google Analytics 4, artificially inflating session counts and destroying original attribution data. Reserve UTM tags strictly for external marketing links.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Are links shortened through JSNS Works permanent?</h4>
+        <p>Yes. Shortened links redirect transparently to destination URLs without middleman advertising landing pages or expiration timeouts, maintaining fast response times globally.</p>
+      </div>
+      <div class="faq-item">
+        <h4>How can I avoid broken URLs when parameters contain spaces?</h4>
+        <p>Never place raw whitespace characters inside URL parameters. This tool automatically sanitizes values and encodes spaces as clean underscores or standard <code>%20</code> URL encoding to guarantee links remain clickable across all email clients and messaging apps.</p>
+      </div>
+    </div>
+  </article>
+
+  <!-- Bottom Ad Banner -->
+  <app-ad-banner slot="bottomBanner"></app-ad-banner>
+</div>

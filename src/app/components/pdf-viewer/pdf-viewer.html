@@ -1,0 +1,141 @@
+<div class="viewer-page">
+  <!-- Top Action Toolbar -->
+  <header class="viewer-toolbar">
+    <div class="toolbar-left">
+      <button type="button" class="btn-back" (click)="closePdf()" title="Back to converter">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+
+      <div class="document-info">
+        <h1 class="document-name">{{ state.convertedResult()?.pdfFileName || 'Document Preview' }}</h1>
+        @if (state.convertedResult()) {
+          <div class="document-badges">
+            <span class="badge">{{ state.convertedResult()?.pageCount }} Page(s)</span>
+            <span class="badge badge-success">Converted</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Toolbar Buttons: Download, Reset, Close -->
+    <div class="toolbar-actions">
+      <button 
+        type="button" 
+        class="btn btn-download-toolbar" 
+        [disabled]="!state.convertedResult()"
+        (click)="downloadPdf()">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span>Download PDF</span>
+      </button>
+
+      <button 
+        type="button" 
+        class="btn btn-reset-toolbar" 
+        (click)="resetAll()">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="1 4 1 10 7 10"></polyline>
+          <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+        </svg>
+        <span>Reset</span>
+      </button>
+
+      <button 
+        type="button" 
+        class="btn btn-close-toolbar" 
+        (click)="closePdf()">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+        <span>Close PDF</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Top Horizontal Leaderboard Ad -->
+  <div class="top-ad-wrapper">
+    <app-ad-banner slot="topBanner" format="horizontal"></app-ad-banner>
+  </div>
+
+  <!-- Viewer Workspace Grid -->
+  @if (state.convertedResult()) {
+    <div class="viewer-layout">
+      <!-- Main PDF / Document Viewer Card -->
+      <section class="viewer-main-card">
+        <div class="viewer-tabs">
+          <button 
+            type="button" 
+            class="tab-btn" 
+            [class.active]="activeView === 'pdf'"
+            (click)="toggleView('pdf')">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            PDF Viewer
+          </button>
+          <button 
+            type="button" 
+            class="tab-btn" 
+            [class.active]="activeView === 'document'"
+            (click)="toggleView('document')">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            HTML Preview
+          </button>
+        </div>
+
+        <div class="viewer-viewport">
+          @if (activeView === 'pdf' && safePdfUrl) {
+            <iframe 
+              [src]="safePdfUrl" 
+              class="pdf-iframe" 
+              title="PDF Viewer">
+            </iframe>
+          } @else {
+            <div class="document-preview-container markdown-body" [innerHTML]="state.convertedResult()?.renderedHtml">
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Right Sticky Sidebar Ad -->
+      <aside class="viewer-sidebar-ad">
+        <app-ad-banner slot="viewerSidebar" format="rectangle"></app-ad-banner>
+      </aside>
+    </div>
+
+    <!-- Bottom Horizontal Ad Banner on Viewer Page -->
+    <div class="viewer-bottom-ad-wrapper">
+      <app-ad-banner slot="viewerBottomBanner" format="horizontal"></app-ad-banner>
+    </div>
+  } @else {
+    <!-- Fallback if user navigates to viewer directly -->
+    <div class="empty-state-card">
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <h2>No PDF Generated Yet</h2>
+      <p>Please select a README file from the homepage to convert and view it here.</p>
+      <button type="button" class="btn btn-primary" (click)="closePdf()">
+        Go to File Converter
+      </button>
+    </div>
+  }
+</div>

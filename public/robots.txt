@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Canonical XML Sitemap for JSNS Works
+Sitemap: https://www.jsnsworks.site/sitemap.xml
