@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AdBannerComponent } from '../../components/ads/ad-banner/ad-banner';
+import { calculateExactAge } from '../../../shared/calculators';
 
 @Component({
   selector: 'app-age-calculator',
@@ -28,48 +29,22 @@ export class AgeCalculatorComponent {
       return null;
     }
 
-    let years = target.getFullYear() - birth.getFullYear();
-    let months = target.getMonth() - birth.getMonth();
-    let days = target.getDate() - birth.getDate();
+    const res = calculateExactAge(birth, target);
+    if (!res) return null;
 
-    if (days < 0) {
-      months -= 1;
-      // Days in previous month
-      const prevMonth = new Date(target.getFullYear(), target.getMonth(), 0);
-      days += prevMonth.getDate();
-    }
-
-    if (months < 0) {
-      years -= 1;
-      months += 12;
-    }
-
-    // Total counts
-    const diffMs = target.getTime() - birth.getTime();
-    const totalDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const totalWeeks = Math.floor(totalDays / 7);
-    const totalMonths = (years * 12) + months;
-    const totalHours = totalDays * 24;
+    const totalHours = res.totalDays * 24;
     const totalMinutes = totalHours * 60;
 
-    // Next Birthday countdown
-    let nextBdayYear = target.getFullYear();
-    let nextBday = new Date(nextBdayYear, birth.getMonth(), birth.getDate());
-    if (nextBday < target) {
-      nextBday = new Date(nextBdayYear + 1, birth.getMonth(), birth.getDate());
-    }
-    const daysToNextBday = Math.ceil((nextBday.getTime() - target.getTime()) / (1000 * 60 * 60 * 24));
-
     return {
-      years,
-      months,
-      days,
-      totalMonths,
-      totalWeeks,
-      totalDays,
+      years: res.years,
+      months: res.months,
+      days: res.days,
+      totalMonths: res.totalMonths,
+      totalWeeks: res.totalWeeks,
+      totalDays: res.totalDays,
       totalHours,
       totalMinutes,
-      daysToNextBday
+      daysToNextBday: res.daysUntilNextBirthday
     };
   });
 }

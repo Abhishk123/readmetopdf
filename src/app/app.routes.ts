@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
 import { ToolsDirectoryComponent } from './pages/tools-directory/tools-directory.component';
+import { AdminComponent } from './pages/admin/admin.component';
 import { ConverterHomeComponent } from './components/converter-home/converter-home';
 import { PdfViewerComponent } from './components/pdf-viewer/pdf-viewer';
 import { ImageCompressorComponent } from './tools/image-compressor/image-compressor.component';
@@ -24,149 +25,165 @@ import { AboutComponent } from './pages/about/about.component';
 import { ContactComponent } from './pages/contact/contact.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { TermsComponent } from './pages/terms/terms.component';
+import { QuicktoolsComponent } from './pages/quicktools/quicktools.component';
 
 export const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
-    title: 'JSNS Works - Free Online Tools for Developers, Students & Creators'
+    title: 'JSANS DevStudio - Modern Web Utilities, Mobile Apps & Automation Bots'
+  },
+  {
+    path: 'quicktools',
+    component: QuicktoolsComponent,
+    title: 'QuickTools on WhatsApp - Cloud Automation Bot | JSANS DevStudio'
+  },
+  {
+    path: 'whatsapp',
+    redirectTo: 'quicktools',
+    pathMatch: 'full'
   },
   {
     path: 'tools',
     component: ToolsDirectoryComponent,
-    title: 'All Online Tools & Utilities Directory | JSNS Works'
+    title: 'All Online Tools & Utilities Directory | JSANS DevStudio'
+  },
+  {
+    path: 'admin',
+    component: AdminComponent,
+    title: 'Admin Control Center | JSANS DevStudio'
   },
 
   // 1. Financial & Investment Calculators
   {
     path: 'tools/finance-calculator',
     component: FinanceCalculatorComponent,
-    title: 'Loan EMI, FD, RD & PPF Calculator Online | JSNS Works'
+    title: 'Loan EMI, FD, RD & PPF Calculator Online | JSANS DevStudio'
   },
 
   // 2. Media & Graphic Utilities
   {
     path: 'tools/pdf-merger',
     component: PdfMergerComponent,
-    title: 'PDF Merger & Combiner - Merge PDF Files Online | JSNS Works'
+    title: 'PDF Merger & Combiner - Merge PDF Files Online | JSANS DevStudio'
   },
   {
     path: 'tools/image-compressor',
     component: ImageCompressorComponent,
-    title: 'Image & File Size Reducer - Compress JPG, PNG, WebP Online | JSNS Works'
+    title: 'Image & File Size Reducer - Compress JPG, PNG, WebP Online | JSANS DevStudio'
   },
   {
     path: 'tools/image-converter',
     component: ImageConverterComponent,
-    title: 'Image Format Converter - PNG ⇄ JPG ⇄ WebP | JSNS Works'
+    title: 'Image Format Converter - PNG ⇄ JPG ⇄ WebP | JSANS DevStudio'
   },
   {
     path: 'tools/favicon-generator',
     component: FaviconGeneratorComponent,
-    title: 'Favicon & Multi-Res Icon Generator - SVG to PNG/ICO | JSNS Works'
+    title: 'Favicon & Multi-Res Icon Generator - SVG to PNG/ICO | JSANS DevStudio'
   },
   {
     path: 'tools/color-picker',
     component: ColorPickerComponent,
-    title: 'Image Color Picker & Palette Extractor (HEX, RGB, HSL) | JSNS Works'
+    title: 'Image Color Picker & Palette Extractor (HEX, RGB, HSL) | JSANS DevStudio'
   },
 
   // 3. Converters & Developer Utilities
   {
     path: 'tools/unit-converter',
     component: UnitConverterComponent,
-    title: 'Universal Unit Converter - Length, Weight, Temp, Storage, Speed | JSNS Works'
+    title: 'Universal Unit Converter - Length, Weight, Temp, Storage, Speed | JSANS DevStudio'
   },
   {
     path: 'tools/base64-tool',
     component: Base64ToolComponent,
-    title: 'JWT Decoder & Base64 Encoder / Decoder Online | JSNS Works'
+    title: 'JWT Decoder & Base64 Encoder / Decoder Online | JSANS DevStudio'
   },
   {
     path: 'tools/json-formatter',
     component: JsonFormatterComponent,
-    title: 'JSON Formatter, Validator & CSV Converter Online | JSNS Works'
+    title: 'JSON Formatter, Validator & CSV Converter Online | JSANS DevStudio'
   },
   {
     path: 'tools/readme-to-pdf',
     component: ConverterHomeComponent,
-    title: 'README to PDF Converter - Convert Markdown to PDF Online | JSNS Works'
+    title: 'README to PDF Converter - Convert Markdown to PDF Online | JSANS DevStudio'
   },
   {
     path: 'viewer',
     component: PdfViewerComponent,
-    title: 'PDF Viewer - README to PDF Converter | JSNS Works'
+    title: 'PDF Viewer - README to PDF Converter | JSANS DevStudio'
   },
 
   // 4. Student & Everyday Calculators
   {
     path: 'tools/word-counter',
     component: WordCounterComponent,
-    title: 'Word & Character Counter - Free Text & Reading Time Tool | JSNS Works'
+    title: 'Word & Character Counter - Free Text & Reading Time Tool | JSANS DevStudio'
   },
   {
     path: 'tools/age-calculator',
     component: AgeCalculatorComponent,
-    title: 'Age & Date Duration Calculator - Calculate Exact Age | JSNS Works'
+    title: 'Age & Date Duration Calculator - Calculate Exact Age | JSANS DevStudio'
   },
   {
     path: 'tools/percentage-calculator',
     component: PercentageCalculatorComponent,
-    title: 'Percentage & Discount Calculator Online | JSNS Works'
+    title: 'Percentage & Discount Calculator Online | JSANS DevStudio'
   },
   {
     path: 'tools/tip-calculator',
     component: TipCalculatorComponent,
-    title: 'Tip & Bill Splitter - Calculate Restaurant Tips | JSNS Works'
+    title: 'Tip & Bill Splitter - Calculate Restaurant Tips | JSANS DevStudio'
   },
 
   // 5. Advanced Utilities (SEO Rich Landing Pages)
   {
     path: 'tools/barcode-generator',
     component: BarcodeGeneratorComponent,
-    title: 'Barcode & QR Code Generator Online - Free SVG / PNG Download | JSNS Works'
+    title: 'Barcode & QR Code Generator Online - Free SVG / PNG Download | JSANS DevStudio'
   },
   {
     path: 'tools/url-tools',
     component: UrlToolsComponent,
-    title: 'URL Shortener, UTM Campaign Builder & Link Cleaner Online | JSNS Works'
+    title: 'URL Shortener, UTM Campaign Builder & Link Cleaner Online | JSANS DevStudio'
   },
   {
     path: 'tools/url-shortener',
     component: UrlToolsComponent,
-    title: 'URL Shortener Online - Shorten Long Web Links | JSNS Works'
+    title: 'URL Shortener Online - Shorten Long Web Links | JSANS DevStudio'
   },
   {
     path: 'tools/password-generator',
     component: PasswordGeneratorComponent,
-    title: 'Strong Password, Secret Key & UUID Generator Online | JSNS Works'
+    title: 'Strong Password, Secret Key & UUID Generator Online | JSANS DevStudio'
   },
   {
     path: 's',
     component: RedirectComponent,
-    title: 'Redirecting... | JSNS Works'
+    title: 'Redirecting... | JSANS DevStudio'
   },
 
   // 6. Compliance & Legal Pages
   {
     path: 'about',
     component: AboutComponent,
-    title: 'About Us - JSNS Works'
+    title: 'About Us - JSANS DevStudio'
   },
   {
     path: 'contact',
     component: ContactComponent,
-    title: 'Contact & Support - JSNS Works'
+    title: 'Contact & Support - JSANS DevStudio'
   },
   {
     path: 'privacy-policy',
     component: PrivacyPolicyComponent,
-    title: 'Privacy Policy - JSNS Works'
+    title: 'Privacy Policy - JSANS DevStudio'
   },
   {
     path: 'terms',
     component: TermsComponent,
-    title: 'Terms of Service - JSNS Works'
+    title: 'Terms of Service - JSANS DevStudio'
   },
 
   {

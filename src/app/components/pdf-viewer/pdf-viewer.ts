@@ -4,12 +4,11 @@ import { Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PdfStateService } from '../../services/pdf-state.service';
 import { PdfConverterService } from '../../services/pdf-converter.service';
-import { AdBannerComponent } from '../ads/ad-banner/ad-banner';
 
 @Component({
   selector: 'app-pdf-viewer',
   standalone: true,
-  imports: [CommonModule, AdBannerComponent],
+  imports: [CommonModule],
   templateUrl: './pdf-viewer.html',
   styleUrl: './pdf-viewer.css'
 })

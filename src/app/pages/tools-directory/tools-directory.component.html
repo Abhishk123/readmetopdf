@@ -6,9 +6,6 @@
     <span class="current">All Tools</span>
   </nav>
 
-  <!-- Top Responsive Ad Banner -->
-  <app-ad-banner slot="topBanner"></app-ad-banner>
-
   <!-- Hero Header Section -->
   <header class="directory-hero">
     <div class="hero-chip">
@@ -216,17 +213,7 @@
             </a>
           }
         </div>
-
-        <!-- Mid Content Banner after the 2nd group -->
-        @if (idx === 1) {
-          <div class="section-ad-break">
-            <app-ad-banner slot="midContent"></app-ad-banner>
-          </div>
-        }
       </section>
     }
   </div>
-
-  <!-- Bottom Banner Ad -->
-  <app-ad-banner slot="bottomBanner"></app-ad-banner>
 </div>

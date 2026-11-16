@@ -1,4 +1,4 @@
-<div class="app-container" (click)="closeToolsDropdown()">
+<div class="app-container" (click)="closeProductsDropdown()">
   <!-- Top Navigation Header -->
   <header class="site-header">
     <div class="nav-content">
@@ -12,8 +12,8 @@
           </svg>
         </div>
         <div class="brand-text">
-          <span class="brand-name">JSNS Works</span>
-          <span class="brand-badge">Local-First Utilities</span>
+          <span class="brand-name">JSANS DevStudio</span>
+          <span class="brand-badge">Digital Products & Apps</span>
         </div>
       </a>
 
@@ -21,30 +21,83 @@
       <nav class="nav-links">
         <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Home</a>
         
-        <!-- All Tools Page Direct Link + Dropdown -->
+        <!-- Products Mega-Dropdown (Rich Visual Divs, Not Plain List) -->
         <div class="dropdown-wrapper">
-          <a routerLink="/tools" routerLinkActive="active" class="nav-link nav-tools-btn" (click)="$event.stopPropagation()">
-            <span>All Tools</span>
-            <button type="button" class="btn-dropdown-arrow" (click)="toggleToolsDropdown($event)" aria-label="Toggle Tools Menu">
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-          </a>
+          <button type="button" 
+                  class="nav-link nav-products-btn" 
+                  [class.active]="productsDropdownOpen()"
+                  (click)="toggleProductsDropdown($event)" 
+                  aria-label="Toggle Products Menu">
+            <span>Products</span>
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" class="chevron-icon" [class.rotated]="productsDropdownOpen()">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
 
-          @if (toolsDropdownOpen()) {
-            <div class="dropdown-menu">
-              <div class="dropdown-header">
-                <span>Select a Utility</span>
-                <a routerLink="/tools" class="view-all-link" (click)="closeToolsDropdown()">View all &rarr;</a>
+          @if (productsDropdownOpen()) {
+            <div class="products-mega-dropdown" (click)="$event.stopPropagation()">
+              <div class="mega-header">
+                <span class="mega-title">JSANS DevStudio Products</span>
+                <span class="mega-badge">3 Ecosystem Solutions</span>
               </div>
-              <div class="dropdown-scroll">
-                @for (tool of toolsList(); track tool.id) {
-                  <a [routerLink]="tool.route" class="dropdown-item" (click)="closeToolsDropdown()">
-                    <span class="item-title">{{ tool.title }}</span>
-                    <span class="item-desc">{{ tool.shortDescription }}</span>
-                  </a>
-                }
+
+              <div class="products-grid-menu">
+                <!-- Product 1: Online Utilities Suite -->
+                <a routerLink="/tools" class="product-menu-item highlight" (click)="closeProductsDropdown()">
+                  <div class="menu-icon-box icon-blue">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                      <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                      <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                      <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                    </svg>
+                  </div>
+                  <div class="menu-item-content">
+                    <div class="menu-item-title-row">
+                      <span class="item-name">Online Utilities Suite</span>
+                      <span class="badge-mini live">16+ Tools</span>
+                    </div>
+                    <span class="item-desc">PDF merger, image size reducer, loan EMI calculators & developer cryptographic tools.</span>
+                  </div>
+                </a>
+
+                <!-- Product 2: QuickTools on WhatsApp -->
+                <a routerLink="/quicktools" class="product-menu-item" (click)="closeProductsDropdown()">
+                  <div class="menu-icon-box icon-green">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                    </svg>
+                  </div>
+                  <div class="menu-item-content">
+                    <div class="menu-item-title-row">
+                      <span class="item-name">QuickTools on WhatsApp</span>
+                      <span class="badge-mini live">Live Bot</span>
+                    </div>
+                    <span class="item-desc">Multi-utility bot for exam photo compression, loan EMI, and age calculation in chat.</span>
+                  </div>
+                </a>
+
+                <!-- Product 3: CallSense AI -->
+                <a href="https://play.google.com/store/apps/details?id=com.callsense.ai.callsense_ai&hl=en-US&ah=RQvyIaj51T_KWk9a9jImgjE0yU4" target="_blank" rel="noopener" class="product-menu-item" (click)="closeProductsDropdown()">
+                  <div class="menu-icon-box icon-purple">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                  </div>
+                  <div class="menu-item-content">
+                    <div class="menu-item-title-row">
+                      <span class="item-name">CallSense AI</span>
+                      <span class="badge-mini live">Google Play</span>
+                    </div>
+                    <span class="item-desc">Smart call filtering, robocall blocker & on-device spam detection for Android.</span>
+                  </div>
+                </a>
+              </div>
+
+              <div class="mega-footer">
+                <a routerLink="/tools" class="btn-mega-all" (click)="closeProductsDropdown()">
+                  <span>Browse Full Utilities Directory (16+ Tools) &rarr;</span>
+                </a>
               </div>
             </div>
           }
@@ -79,23 +132,26 @@
     <!-- Mobile Drawer Navigation -->
     @if (mobileMenuOpen()) {
       <div class="mobile-drawer">
+        <div class="drawer-section-title">Studio Products</div>
+        <div class="drawer-links">
+          <a routerLink="/tools" class="drawer-item highlight-item" (click)="closeMobileMenu()">
+            <strong>Online Utilities Suite</strong> (16+ Web Tools)
+          </a>
+          <a routerLink="/quicktools" class="drawer-item" (click)="closeMobileMenu()">
+            <strong>QuickTools on WhatsApp</strong> (Active Bot)
+          </a>
+          <a href="https://play.google.com/store/apps/details?id=com.callsense.ai.callsense_ai&hl=en-US&ah=RQvyIaj51T_KWk9a9jImgjE0yU4" target="_blank" rel="noopener" class="drawer-item" (click)="closeMobileMenu()">
+            <strong>CallSense AI</strong> (Google Play)
+          </a>
+        </div>
+        <hr class="drawer-sep">
         <div class="drawer-section-title">Navigation</div>
         <div class="drawer-links">
-          <a routerLink="/" class="drawer-item" (click)="closeMobileMenu()">Home & Portfolio</a>
-          <a routerLink="/tools" class="drawer-item highlight-item" (click)="closeMobileMenu()">All Tools (16+ Utilities)</a>
-          <a routerLink="/about" class="drawer-item" (click)="closeMobileMenu()">About JSNS Works</a>
+          <a routerLink="/" class="drawer-item" (click)="closeMobileMenu()">Home</a>
+          <a routerLink="/about" class="drawer-item" (click)="closeMobileMenu()">About JSANS DevStudio</a>
           <a routerLink="/contact" class="drawer-item" (click)="closeMobileMenu()">Support & Contact</a>
           <a routerLink="/privacy-policy" class="drawer-item" (click)="closeMobileMenu()">Privacy Policy</a>
           <a routerLink="/terms" class="drawer-item" (click)="closeMobileMenu()">Terms of Service</a>
-        </div>
-        <hr class="drawer-sep">
-        <div class="drawer-section-title">Quick Jump to Tools</div>
-        <div class="drawer-tools">
-          @for (tool of toolsList(); track tool.id) {
-            <a [routerLink]="tool.route" class="drawer-item" (click)="closeMobileMenu()">
-              {{ tool.title }}
-            </a>
-          }
         </div>
       </div>
     }
@@ -120,47 +176,56 @@
               <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
             </svg>
           </span>
-          <span>JSNS Works</span>
+          <span>JSANS DevStudio</span>
         </div>
         <p class="footer-copy">
-          A suite of private, client-side web tools built for speed, accuracy, and everyday productivity. All calculations and file conversions execute entirely inside your browser memory. Zero cloud uploads. No account required.
+          A digital product engineering studio crafting high-speed, private web utilities, cloud automation bots, and modern workflow tools.
         </p>
         <div class="status-indicator">
           <span class="live-pulse"></span>
-          <span>100% In-Browser Execution &bull; Zero Server Ingestion</span>
+          <span>Modern Digital Products &bull; Web, Mobile & Cloud</span>
         </div>
       </div>
 
-      <!-- Col 2: Tools Directory -->
+      <!-- Col 2: Products Directory -->
       <div class="footer-col">
-        <h4>All Tools</h4>
+        <h4>Products</h4>
         <ul class="footer-nav">
-          <li><a routerLink="/tools">Complete Directory (16+ Tools)</a></li>
-          <li><a routerLink="/tools/pdf-merger">PDF Merger & Combiner</a></li>
-          <li><a routerLink="/tools/image-compressor">Image Size Reducer</a></li>
-          <li><a routerLink="/tools/finance-calculator">Loan EMI & FD Calculator</a></li>
-          <li><a routerLink="/tools/barcode-generator">QR Code & Barcode Maker</a></li>
-          <li><a routerLink="/tools/base64-tool">JWT Decoder & Base64</a></li>
-          <li><a routerLink="/tools/unit-converter">Universal Unit Converter</a></li>
+          <li><a routerLink="/tools">Online Utilities Suite (16+ Tools)</a></li>
+          <li><a routerLink="/quicktools">QuickTools on WhatsApp (Live Bot)</a></li>
+          <li><a href="https://play.google.com/store/apps/details?id=com.callsense.ai.callsense_ai&hl=en-US&ah=RQvyIaj51T_KWk9a9jImgjE0yU4" target="_blank" rel="noopener">CallSense AI (Google Play)</a></li>
+          <li><a routerLink="/tools/readme-to-pdf">README to PDF Converter</a></li>
         </ul>
       </div>
 
-      <!-- Col 3: Company & Trust -->
+      <!-- Col 3: Popular Utilities -->
       <div class="footer-col">
-        <h4>About & Policies</h4>
+        <h4>Popular Tools</h4>
         <ul class="footer-nav">
-          <li><a routerLink="/about">About Abhishek & JSNS Works</a></li>
-          <li><a routerLink="/contact">Contact & Support</a></li>
+          <li><a routerLink="/tools/image-compressor">Image Size Reducer</a></li>
+          <li><a routerLink="/tools/pdf-merger">PDF Merger & Combiner</a></li>
+          <li><a routerLink="/tools/password-generator">Password & Key Generator</a></li>
+          <li><a routerLink="/tools/age-calculator">Age & Cutoff Calculator</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 4: Studio & Legal -->
+      <div class="footer-col">
+        <h4>Studio & Legal</h4>
+        <ul class="footer-nav">
+          <li><a routerLink="/about">About JSANS DevStudio</a></li>
+          <li><a routerLink="/contact">Contact Support</a></li>
           <li><a routerLink="/privacy-policy">Privacy & Cookies Policy</a></li>
           <li><a routerLink="/terms">Terms of Service</a></li>
+          <li><a routerLink="/admin" class="admin-link">Admin Portal</a></li>
         </ul>
       </div>
     </div>
 
     <div class="footer-bottom">
       <div class="footer-bottom-content">
-        <span>&copy; 2026 JSNS Works. Designed & Engineered by Abhishek S.</span>
-        <span>Local-First &bull; Privacy-First &bull; Free Forever</span>
+        <span>&copy; 2026 JSANS DevStudio. All rights reserved. Engineered for speed & client-side privacy.</span>
+        <span>Support: <a href="mailto:jsansdevstudio@gmail.com" class="footer-email-link">jsansdevstudio@gmail.com</a></span>
       </div>
     </div>
   </footer>

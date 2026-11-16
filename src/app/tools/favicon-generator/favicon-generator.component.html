@@ -1,7 +1,9 @@
-<div class="tool-page-container">
+﻿<div class="tool-page-container">
   <!-- Breadcrumb Navigation -->
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <a routerLink="/tools">All Tools</a>
     <span class="sep">/</span>
     <span class="current">SVG to Favicon & Multi-Res Icon Generator</span>
   </nav>
@@ -67,28 +69,4 @@
     }
   </div>
 
-  <!-- Mid Content Ad Banner -->
-  <app-ad-banner slot="midContent"></app-ad-banner>
-
-  <!-- Educational SEO Section -->
-  <div class="seo-guide">
-    <h2>Favicon Implementation Guidelines</h2>
-    <div class="features-grid">
-      <div class="feature-card">
-        <h3>Standard 32×32 and 16×16</h3>
-        <p>Modern browsers display the 32×32 favicon in browser tabs and bookmark lists, scaling down to 16×16 for compact taskbar shortcuts.</p>
-      </div>
-      <div class="feature-card">
-        <h3>Apple Touch Icon (180×180)</h3>
-        <p>iOS and Safari require a 180×180 high-resolution icon when users save web applications or bookmarks to their iPhone or iPad home screens.</p>
-      </div>
-      <div class="feature-card">
-        <h3>HTML Link Code</h3>
-        <p>Include <code>&lt;link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"&gt;</code> in your website header for seamless cross-browser branding.</p>
-      </div>
-    </div>
   </div>
-
-  <!-- Bottom Ad Banner -->
-  <app-ad-banner slot="bottomBanner"></app-ad-banner>
-</div>

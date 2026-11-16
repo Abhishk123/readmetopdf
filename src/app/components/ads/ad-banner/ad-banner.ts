@@ -16,7 +16,13 @@ export class AdBannerComponent implements OnInit, AfterViewInit {
   protected adsService = inject(AdsService);
   private sanitizer = inject(DomSanitizer);
 
-  @ViewChild('customIframe') customIframeRef?: ElementRef<HTMLIFrameElement>;
+  @ViewChild('customIframe') set customIframe(ref: ElementRef<HTMLIFrameElement> | undefined) {
+    if (ref) {
+      this.customIframeRef = ref;
+      setTimeout(() => this.renderCustomAd(), 50);
+    }
+  }
+  private customIframeRef?: ElementRef<HTMLIFrameElement>;
 
   @Input() slot: string = '';
   @Input() format: AdFormat = 'horizontal';
@@ -60,18 +66,46 @@ export class AdBannerComponent implements OnInit, AfterViewInit {
 
   private getSnippetForFormat(): string {
     const custom = this.customConfig;
-    if (!custom) return '';
-
-    if (this.format === 'vertical' && custom.skyscraperSnippet) {
-      return custom.skyscraperSnippet;
+    if (this.format === 'vertical') {
+      return custom?.skyscraperSnippet || `
+        <script type="text/javascript">
+          atOptions = {
+            'key' : 'f6ac1328ab2561c5740963f903492c2d',
+            'format' : 'iframe',
+            'height' : 300,
+            'width' : 160,
+            'params' : {}
+          };
+        </script>
+        <script type="text/javascript" src="https://bauval.org/22/f6ac1328ab2561c5740963f903492c2d"></script>
+      `;
     }
-    if (this.format === 'rectangle' && custom.rectangleSnippet) {
-      return custom.rectangleSnippet;
+    if (this.format === 'rectangle') {
+      return custom?.rectangleSnippet || `
+        <script type="text/javascript">
+          atOptions = {
+            'key' : '4d8d0573b25bbd2f4bede8ef0c711b69',
+            'format' : 'iframe',
+            'height' : 250,
+            'width' : 300,
+            'params' : {}
+          };
+        </script>
+        <script type="text/javascript" src="https://bauval.org/22/4d8d0573b25bbd2f4bede8ef0c711b69"></script>
+      `;
     }
-    if (this.format === 'horizontal' && custom.horizontalSnippet) {
-      return custom.horizontalSnippet;
-    }
-    return custom.htmlSnippet || custom.horizontalSnippet || '';
+    return custom?.horizontalSnippet || custom?.htmlSnippet || `
+      <script type="text/javascript">
+        atOptions = {
+          'key' : 'd6a506bca45e9e2d16f0297c4f0ff849',
+          'format' : 'iframe',
+          'height' : 90,
+          'width' : 728,
+          'params' : {}
+        };
+      </script>
+      <script type="text/javascript" src="https://bauval.org/22/d6a506bca45e9e2d16f0297c4f0ff849"></script>
+    `;
   }
 
   ngOnInit(): void {

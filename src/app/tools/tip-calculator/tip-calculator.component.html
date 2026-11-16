@@ -1,7 +1,9 @@
-<div class="tool-page-container">
+﻿<div class="tool-page-container">
   <!-- Breadcrumb Navigation -->
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <a routerLink="/tools">All Tools</a>
     <span class="sep">/</span>
     <span class="current">Tip & Bill Splitter</span>
   </nav>
@@ -14,17 +16,17 @@
     <div class="tool-badge">Everyday Dining Utility</div>
     <h1 class="tool-title">Tip & Bill Splitter</h1>
     <p class="tool-subtitle">
-      Calculate tip amounts and split restaurant or party bills evenly between friends with customizable tip percentages.
+      Calculate tip amounts and split restaurant or dining bills evenly between friends with customizable tip percentages.
     </p>
   </div>
 
   <div class="calculator-grid">
     <!-- Left Card: Inputs -->
     <div class="card inputs-card">
-      <h3>Bill Details</h3>
+      <h3 class="card-heading">Bill Details</h3>
 
       <div class="input-group">
-        <label>Total Bill Amount (₹)</label>
+        <label class="group-label">Total Bill Amount (₹)</label>
         <div class="input-with-prefix">
           <span class="p-symbol">₹</span>
           <input type="number" min="0" [(ngModel)]="billAmount" class="input-num" placeholder="1200">
@@ -33,7 +35,7 @@
 
       <div class="input-group">
         <div class="label-row">
-          <label>Tip Percentage (%)</label>
+          <label class="group-label">Tip Percentage (%)</label>
           <div class="input-with-suffix">
             <input type="number" min="0" max="100" step="1"
                    [ngModel]="tipPercent()" (ngModelChange)="tipPercent.set($event)"
@@ -53,11 +55,11 @@
       </div>
 
       <div class="input-group">
-        <label>Number of People (Split Bill)</label>
+        <label class="group-label">Number of People (Split Bill)</label>
         <div class="people-counter">
-          <button type="button" class="btn-step" (click)="decrementPeople()">−</button>
+          <button type="button" class="btn-step" (click)="decrementPeople()" aria-label="Decrease people">−</button>
           <span class="people-count">{{ peopleCount() }}</span>
-          <button type="button" class="btn-step" (click)="incrementPeople()">+</button>
+          <button type="button" class="btn-step" (click)="incrementPeople()" aria-label="Increase people">+</button>
         </div>
       </div>
     </div>
@@ -65,23 +67,23 @@
     <!-- Right Card: Results -->
     <div class="card results-card">
       <div class="highlight-box">
-        <span class="h-lbl">Share Per Person</span>
+        <span class="h-lbl">SHARE PER PERSON</span>
         <div class="h-val">₹ {{ results().totalPerPerson | number:'1.2-2' }}</div>
         <span class="h-sub">Tip per person: ₹ {{ results().tipPerPerson | number:'1.2-2' }}</span>
       </div>
 
       <div class="summary-list">
         <div class="summary-row">
-          <span>Total Bill (Before Tip):</span>
-          <strong>₹ {{ billAmount() | number }}</strong>
+          <span class="row-label">Total Bill (Before Tip):</span>
+          <strong class="row-val">₹ {{ billAmount() | number }}</strong>
         </div>
         <div class="summary-row">
-          <span>Tip Amount ({{ tipPercent() }}%):</span>
-          <strong class="green">+ ₹ {{ results().totalTip | number:'1.2-2' }}</strong>
+          <span class="row-label">Tip Amount ({{ tipPercent() }}%):</span>
+          <strong class="row-val green">+ ₹ {{ results().totalTip | number:'1.2-2' }}</strong>
         </div>
         <div class="summary-row total">
-          <span>Grand Total to Pay:</span>
-          <strong class="primary">₹ {{ results().totalBill | number:'1.2-2' }}</strong>
+          <span class="row-label total-label">Grand Total with Tip:</span>
+          <strong class="row-val primary">₹ {{ results().totalBill | number:'1.2-2' }}</strong>
         </div>
       </div>
     </div>
@@ -89,25 +91,6 @@
 
   <!-- Mid Content Ad Banner -->
   <app-ad-banner slot="midContent"></app-ad-banner>
-
-  <!-- Educational SEO Section -->
-  <div class="seo-guide">
-    <h2>Tipping & UPI Bill Splitting in India</h2>
-    <div class="features-grid">
-      <div class="feature-card">
-        <h3>Restaurant Tipping Norms in India</h3>
-        <p>In India, 5% to 10% tip is customary at sit-down cafes and restaurants if a service charge is not already added. Under consumer guidelines, tipping remains completely voluntary.</p>
-      </div>
-      <div class="feature-card">
-        <h3>Even UPI Bill Splitting</h3>
-        <p>Divide restaurant or party bills evenly between friends down to the exact rupee for seamless payments via Google Pay, PhonePe, or Paytm.</p>
-      </div>
-      <div class="feature-card">
-        <h3>Delivery & Service Tips</h3>
-        <p>For online food delivery or valet services, flat round tips (₹20, ₹30, ₹50) or 5-10% of order totals are widely appreciated gestures.</p>
-      </div>
-    </div>
-  </div>
 
   <!-- Bottom Ad Banner -->
   <app-ad-banner slot="bottomBanner"></app-ad-banner>

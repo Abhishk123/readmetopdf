@@ -2,13 +2,11 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { AdBannerComponent } from '../../components/ads/ad-banner/ad-banner';
-import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, AdBannerComponent],
+  imports: [CommonModule, FormsModule, RouterLink],
   template: `
     <div class="page-container">
       <nav class="breadcrumb">
@@ -16,8 +14,6 @@ import { environment } from '../../../environments/environment';
         <span class="sep">/</span>
         <span class="current">Contact Us</span>
       </nav>
-
-      <app-ad-banner slot="topBanner"></app-ad-banner>
 
       <div class="content-card">
         <h1>Contact & Support</h1>
@@ -59,7 +55,7 @@ import { environment } from '../../../environments/environment';
                   <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                   <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                 </svg>
-                <span>{{ copiedEmail() ? 'Address Copied' : 'Copy support@jsnsworks.site' }}</span>
+                <span>{{ copiedEmail() ? 'Address Copied' : 'Copy ' + contactEmail }}</span>
               </button>
               <button type="button" class="btn-copy-chip" (click)="copyFullMessage()">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
@@ -120,57 +116,58 @@ import { environment } from '../../../environments/environment';
           </p>
         </div>
       </div>
-
-      <app-ad-banner slot="bottomBanner"></app-ad-banner>
     </div>
   `,
   styles: [`
-    .page-container { max-width: 760px; margin: 0 auto; padding: 24px 16px 48px; }
-    .breadcrumb { display: flex; gap: 8px; font-size: 13px; color: #64748b; margin-bottom: 20px; }
-    .breadcrumb a { color: #818cf8; text-decoration: none; }
-    .sep { color: rgba(148, 163, 184, 0.4); }
-    .current { color: #ffffff; font-weight: 600; }
+    .page-container { max-width: 760px; margin: 0 auto; padding: 24px 20px 60px; }
+    .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #64748b; margin-bottom: 24px; }
+    .breadcrumb a { color: #4f46e5; text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .sep { color: #cbd5e1; }
+    .current { color: #0f172a; font-weight: 600; }
+
     .content-card {
-      background: rgba(15, 23, 42, 0.82);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid rgba(99, 102, 241, 0.22);
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
       border-radius: 16px;
       padding: 36px 32px;
-      box-shadow: 0 4px 28px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
     }
-    h1 { font-size: 30px; font-weight: 800; color: #ffffff; margin: 0 0 8px; }
-    .subtitle { font-size: 15px; color: #94a3b8; margin-bottom: 28px; }
+    h1 { font-size: 30px; font-weight: 800; color: #0f172a; margin: 0 0 8px; letter-spacing: -0.02em; }
+    .subtitle { font-size: 15px; color: #64748b; margin-bottom: 28px; line-height: 1.5; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .form-group { margin-bottom: 20px; }
-    label { display: block; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
+    label { display: block; font-size: 13.5px; font-weight: 600; color: #334155; margin-bottom: 6px; }
+
     .input-text, .input-select, .input-textarea {
       width: 100%;
       box-sizing: border-box;
       padding: 10px 14px;
-      font-size: 14px;
-      background: rgba(11, 17, 32, 0.88);
-      border: 1.5px solid rgba(129, 140, 248, 0.28);
-      color: #ffffff;
+      font-size: 14.5px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      color: #0f172a;
       border-radius: 8px;
       outline: none;
       font-family: inherit;
-      transition: all 0.2s ease;
+      transition: all 0.15s ease;
     }
     .input-text:focus, .input-select:focus, .input-textarea:focus {
-      border-color: #818cf8;
-      box-shadow: 0 0 16px rgba(99, 102, 241, 0.35);
+      border-color: #4f46e5;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
     }
     .input-select option {
-      background: #0f172a;
-      color: #ffffff;
+      background: #ffffff;
+      color: #0f172a;
     }
+
     .btn-submit {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      background: #4f46e5;
       color: #ffffff;
       border: none;
       font-size: 14px;
@@ -178,19 +175,19 @@ import { environment } from '../../../environments/environment';
       padding: 12px 28px;
       border-radius: 8px;
       cursor: pointer;
-      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+      transition: all 0.15s ease;
     }
     .btn-submit:hover:not(:disabled) {
+      background: #4338ca;
       transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(124, 58, 237, 0.5);
     }
     .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 
     /* Ready to Send Box */
     .email-ready-box {
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
       border-radius: 14px;
       padding: 28px;
       text-align: center;
@@ -198,9 +195,9 @@ import { environment } from '../../../environments/environment';
     }
     .ready-badge {
       display: inline-block;
-      background: #ecfdf5;
-      color: #059669;
-      border: 1px solid #a7f3d0;
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #86efac;
       font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
@@ -208,8 +205,8 @@ import { environment } from '../../../environments/environment';
       border-radius: 999px;
       margin-bottom: 12px;
     }
-    .email-ready-box h3 { margin: 0 0 8px; font-size: 20px; color: #0f172a; }
-    .ready-desc { font-size: 14px; color: #64748b; margin: 0 0 20px; }
+    .email-ready-box h3 { margin: 0 0 8px; font-size: 20px; color: #0f172a; font-weight: 700; }
+    .ready-desc { font-size: 14px; color: #475569; margin: 0 0 20px; }
 
     .send-options-grid {
       display: grid;
@@ -222,12 +219,12 @@ import { environment } from '../../../environments/environment';
       align-items: center;
       justify-content: center;
       gap: 10px;
-      padding: 14px 20px;
-      border-radius: 10px;
+      padding: 12px 20px;
+      border-radius: 8px;
       text-decoration: none;
       font-weight: 700;
       font-size: 14px;
-      transition: all 0.2s ease;
+      transition: all 0.15s ease;
     }
     .btn-email-option.gmail {
       background: #ea4335;
@@ -281,13 +278,17 @@ import { environment } from '../../../environments/environment';
     .btn-secondary:hover { color: #0f172a; }
 
     .direct-contact-box {
-      margin-top: 36px;
+      margin-top: 32px;
       border-top: 1px solid #f1f5f9;
       padding-top: 24px;
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 16px 20px;
     }
-    .direct-contact-box h3 { font-size: 15px; font-weight: 700; color: #1e293b; margin: 0 0 6px; }
-    .direct-contact-box p { font-size: 13px; color: #64748b; margin: 0; }
-    .direct-contact-box a { color: #2563eb; text-decoration: none; font-weight: 600; }
+    .direct-contact-box h3 { font-size: 15px; font-weight: 700; color: #0f172a; margin: 0 0 6px; }
+    .direct-contact-box p { font-size: 13.5px; color: #64748b; margin: 0; }
+    .direct-contact-box a { color: #4f46e5; text-decoration: none; font-weight: 600; }
+    .direct-contact-box a:hover { text-decoration: underline; }
 
     @media (max-width: 600px) {
       .form-row { grid-template-columns: 1fr; }
@@ -300,66 +301,53 @@ export class ContactComponent {
   public email = '';
   public topic = 'General Feedback';
   public message = '';
+  public contactEmail = 'jsansdevstudio@gmail.com';
+
   public isSubmitted = signal<boolean>(false);
-  public mailtoUrl = signal<string>('');
-  public gmailComposeUrl = signal<string>('');
   public copiedEmail = signal<boolean>(false);
   public copiedBody = signal<boolean>(false);
-  public contactEmail = environment.contactEmail;
 
   public submitForm(): void {
     if (!this.name || !this.email || !this.message) return;
-
-    const subjectText = `[JSNS Works - ${this.topic}] Inquiry from ${this.name}`;
-    const bodyText = `Hello JSNS Works Support,\n\nName: ${this.name}\nEmail: ${this.email}\nTopic: ${this.topic}\n\nMessage:\n${this.message}\n\n---\nSent via https://www.jsnsworks.site/contact`;
-
-    const encodedSubject = encodeURIComponent(subjectText);
-    const encodedBody = encodeURIComponent(bodyText);
-
-    // Standard mailto
-    const mailto = `mailto:${this.contactEmail}?subject=${encodedSubject}&body=${encodedBody}`;
-    this.mailtoUrl.set(mailto);
-
-    // Web Gmail direct composer
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(this.contactEmail)}&su=${encodedSubject}&body=${encodedBody}`;
-    this.gmailComposeUrl.set(gmailUrl);
-
     this.isSubmitted.set(true);
-
-    // Try to trigger mailto automatically
-    if (typeof window !== 'undefined') {
-      try {
-        const a = document.createElement('a');
-        a.href = mailto;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      } catch (e) {}
-    }
-  }
-
-  public copyEmail(): void {
-    navigator.clipboard.writeText(this.contactEmail).then(() => {
-      this.copiedEmail.set(true);
-      setTimeout(() => this.copiedEmail.set(false), 2000);
-    });
-  }
-
-  public copyFullMessage(): void {
-    const fullText = `To: ${this.contactEmail}\nSubject: [JSNS Works - ${this.topic}] Inquiry from ${this.name}\n\n${this.message}`;
-    navigator.clipboard.writeText(fullText).then(() => {
-      this.copiedBody.set(true);
-      setTimeout(() => this.copiedBody.set(false), 2000);
-    });
   }
 
   public resetForm(): void {
+    this.isSubmitted.set(false);
     this.name = '';
     this.email = '';
-    this.topic = 'General Feedback';
     this.message = '';
-    this.isSubmitted.set(false);
-    this.mailtoUrl.set('');
-    this.gmailComposeUrl.set('');
+    this.topic = 'General Feedback';
+    this.copiedEmail.set(false);
+    this.copiedBody.set(false);
+  }
+
+  public mailtoUrl(): string {
+    const subject = encodeURIComponent(`[${this.topic}] Inquiry from ${this.name}`);
+    const body = encodeURIComponent(
+      `Hi JSANS DevStudio Support,\n\n${this.message}\n\n---\nFrom: ${this.name}\nReply-To: ${this.email}`
+    );
+    return `mailto:${this.contactEmail}?subject=${subject}&body=${body}`;
+  }
+
+  public gmailComposeUrl(): string {
+    const subject = encodeURIComponent(`[${this.topic}] Inquiry from ${this.name}`);
+    const body = encodeURIComponent(
+      `Hi JSANS DevStudio Support,\n\n${this.message}\n\n---\nFrom: ${this.name}\nReply-To: ${this.email}`
+    );
+    return `https://mail.google.com/mail/?view=cm&fs=1&to=${this.contactEmail}&su=${subject}&body=${body}`;
+  }
+
+  public copyEmail(): void {
+    navigator.clipboard.writeText(this.contactEmail);
+    this.copiedEmail.set(true);
+    setTimeout(() => this.copiedEmail.set(false), 2500);
+  }
+
+  public copyFullMessage(): void {
+    const full = `Topic: ${this.topic}\nFrom: ${this.name} (${this.email})\n\n${this.message}`;
+    navigator.clipboard.writeText(full);
+    this.copiedBody.set(true);
+    setTimeout(() => this.copiedBody.set(false), 2500);
   }
 }

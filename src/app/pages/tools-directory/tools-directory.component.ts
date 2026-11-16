@@ -1,10 +1,10 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TOOLS_CONFIG } from '../../config/tools.config';
 import { ToolItem } from '../../models/tool.model';
-import { AdBannerComponent } from '../../components/ads/ad-banner/ad-banner';
+import { AdminService } from '../../services/admin.service';
 
 interface ToolCategoryGroup {
   id: string;
@@ -19,15 +19,18 @@ interface ToolCategoryGroup {
 @Component({
   selector: 'app-tools-directory',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, AdBannerComponent],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './tools-directory.component.html',
   styleUrl: './tools-directory.component.css'
 })
 export class ToolsDirectoryComponent {
+  private adminService = inject(AdminService);
   searchQuery = signal<string>('');
   selectedFilter = signal<string>('all');
 
-  private allTools: ToolItem[] = TOOLS_CONFIG;
+  private get allTools(): ToolItem[] {
+    return TOOLS_CONFIG.filter(tool => this.adminService.isToolVisible(tool.id));
+  }
 
   // Filtered tools list for active search
   filteredTools = computed(() => {

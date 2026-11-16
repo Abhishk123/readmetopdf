@@ -1,7 +1,9 @@
-<div class="tool-page-container">
+﻿<div class="tool-page-container">
   <!-- Breadcrumb Navigation -->
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <a routerLink="/tools">All Tools</a>
     <span class="sep">/</span>
     <span class="current">JWT & Base64 Encoder / Decoder</span>
   </nav>
@@ -19,16 +21,49 @@
   </div>
 
   <!-- Mode Selector Tabs -->
-  <div class="mode-tabs">
-    <button type="button" class="btn-tab" [class.active]="activeMode() === 'jwt'" (click)="setMode('jwt')">
-      <span>JWT Inspector</span>
-    </button>
-    <button type="button" class="btn-tab" [class.active]="activeMode() === 'base64'" (click)="setMode('base64')">
-      <span>Base64 Encode & Decode</span>
-    </button>
-    <button type="button" class="btn-tab" [class.active]="activeMode() === 'url'" (click)="setMode('url')">
-      <span>URL Encode & Decode</span>
-    </button>
+    <!-- 3 Visual Selection Cards (Replaces Cramped Tabs) -->
+  <div class="modes-selector-grid cols-3">
+    <div class="mode-select-box" [class.active]="activeMode() === 'jwt'" (click)="setMode('jwt')">
+      <div class="mode-icon icon-blue">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+      <div class="mode-info">
+        <h4>JWT Inspector</h4>
+        <p>Inspect headers, claims & expiration</p>
+      </div>
+      <span class="mode-badge">{{ activeMode() === 'jwt' ? 'Active' : 'Select' }}</span>
+    </div>
+
+    <div class="mode-select-box" [class.active]="activeMode() === 'base64'" (click)="setMode('base64')">
+      <div class="mode-icon icon-green">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="16 18 22 12 16 6"></polyline>
+          <polyline points="8 6 2 12 8 18"></polyline>
+        </svg>
+      </div>
+      <div class="mode-info">
+        <h4>Base64 Converter</h4>
+        <p>Two-way UTF-8 string encoding</p>
+      </div>
+      <span class="mode-badge">{{ activeMode() === 'base64' ? 'Active' : 'Select' }}</span>
+    </div>
+
+    <div class="mode-select-box" [class.active]="activeMode() === 'url'" (click)="setMode('url')">
+      <div class="mode-icon icon-purple">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+        </svg>
+      </div>
+      <div class="mode-info">
+        <h4>URL Encoder</h4>
+        <p>Escape query parameters & paths</p>
+      </div>
+      <span class="mode-badge">{{ activeMode() === 'url' ? 'Active' : 'Select' }}</span>
+    </div>
   </div>
 
   <!-- TAB 1: JWT DECODER -->
@@ -190,38 +225,6 @@
 
   <!-- Mid Content Ad Banner -->
   <app-ad-banner slot="midContent"></app-ad-banner>
-
-  <!-- Educational SEO Guide -->
-  <div class="seo-guide">
-    <h2>Understanding JWT and Base64 Encoding</h2>
-    <div class="features-grid">
-      <div class="feature-card">
-        <h3>How JWT Tokens Work</h3>
-        <p>A JSON Web Token consists of three base64url-encoded parts separated by dots: Header (metadata), Payload (user claims), and Signature (tamper-verification hash).</p>
-      </div>
-      <div class="feature-card">
-        <h3>Base64 vs Encryption</h3>
-        <p>Base64 is a binary-to-text encoding scheme, not encryption. It allows binary data and special characters to be safely sent across HTTP headers without corruption.</p>
-      </div>
-      <div class="feature-card">
-        <h3>100% Client-Side Privacy</h3>
-        <p>Your authentication tokens, passwords, and sensitive claims are never sent to external servers. All decoding executes in your local browser sandbox.</p>
-      </div>
-    </div>
-
-    <!-- FAQ Accordion -->
-    <div class="faq-section">
-      <h2>Frequently Asked Questions</h2>
-      <div class="faq-item">
-        <h3>Can someone steal my token by pasting it here?</h3>
-        <p>No. JSNS Works executes all string manipulation completely in your browser session. No data is stored, cached, or transmitted to any server.</p>
-      </div>
-      <div class="faq-item">
-        <h3>Why is my JWT marked EXPIRED?</h3>
-        <p>JWT payloads contain an standard <code>exp</code> Unix timestamp. If the current time is past this timestamp, authentication providers will reject the token.</p>
-      </div>
-    </div>
-  </div>
 
   <!-- Bottom Ad Banner -->
   <app-ad-banner slot="bottomBanner"></app-ad-banner>

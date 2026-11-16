@@ -18,15 +18,14 @@ export class App {
   private analytics = inject(AnalyticsService);
   public readonly toolsList = signal(TOOLS_CONFIG);
   public mobileMenuOpen = signal<boolean>(false);
-  public toolsDropdownOpen = signal<boolean>(false);
+  public productsDropdownOpen = signal<boolean>(false);
 
   constructor() {
-    // Close mobile menu and dropdown on page navigation
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
       this.mobileMenuOpen.set(false);
-      this.toolsDropdownOpen.set(false);
+      this.productsDropdownOpen.set(false);
     });
   }
 
@@ -38,12 +37,12 @@ export class App {
     this.mobileMenuOpen.set(false);
   }
 
-  public toggleToolsDropdown(event: Event): void {
+  public toggleProductsDropdown(event: Event): void {
     event.stopPropagation();
-    this.toolsDropdownOpen.update(v => !v);
+    this.productsDropdownOpen.update(v => !v);
   }
 
-  public closeToolsDropdown(): void {
-    this.toolsDropdownOpen.set(false);
+  public closeProductsDropdown(): void {
+    this.productsDropdownOpen.set(false);
   }
 }

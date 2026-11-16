@@ -1,15 +1,14 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { PdfStateService } from '../../services/pdf-state.service';
 import { PdfConverterService } from '../../services/pdf-converter.service';
 import { ProgressBarComponent } from '../progress-bar/progress-bar';
-import { AdBannerComponent } from '../ads/ad-banner/ad-banner';
 
 @Component({
   selector: 'app-converter-home',
   standalone: true,
-  imports: [CommonModule, ProgressBarComponent, AdBannerComponent],
+  imports: [CommonModule, ProgressBarComponent, RouterLink],
   templateUrl: './converter-home.html',
   styleUrl: './converter-home.css'
 })

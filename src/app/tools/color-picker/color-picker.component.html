@@ -1,7 +1,9 @@
-<div class="tool-page-container">
+﻿<div class="tool-page-container">
   <!-- Breadcrumb Navigation -->
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <a routerLink="/tools">All Tools</a>
     <span class="sep">/</span>
     <span class="current">Image Color Picker & Palette Extractor</span>
   </nav>
@@ -89,28 +91,4 @@
     </div>
   </div>
 
-  <!-- Mid Content Ad Banner -->
-  <app-ad-banner slot="midContent"></app-ad-banner>
-
-  <!-- Educational SEO Section -->
-  <div class="seo-guide">
-    <h2>Color Spaces & Digital Design Basics</h2>
-    <div class="features-grid">
-      <div class="feature-card">
-        <h3>HEX vs RGB vs HSL</h3>
-        <p>HEX (hexadecimal) and RGB represent digital screen channels (Red, Green, Blue from 0 to 255). HSL (Hue, Saturation, Lightness) provides an intuitive human-centric model for adjusting tints and shades.</p>
-      </div>
-      <div class="feature-card">
-        <h3>100% Client-Side Canvas</h3>
-        <p>Pixel reading is performed locally through HTML5 Canvas <code>getImageData()</code> with zero network transfer of your proprietary logos or graphics.</p>
-      </div>
-      <div class="feature-card">
-        <h3>Palette Harmonization</h3>
-        <p>Consistent branding requires complementary or analogous color schemes. Use the extracted swatches to build cohesive CSS design systems.</p>
-      </div>
-    </div>
   </div>
-
-  <!-- Bottom Ad Banner -->
-  <app-ad-banner slot="bottomBanner"></app-ad-banner>
-</div>

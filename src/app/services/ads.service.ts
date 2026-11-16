@@ -1,5 +1,6 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject, effect } from '@angular/core';
 import { ADS_CONFIG, AdsConfiguration, AdProviderType } from '../config/ads.config';
+import { AdminService } from './admin.service';
 
 declare global {
   interface Window {
@@ -11,8 +12,24 @@ declare global {
   providedIn: 'root'
 })
 export class AdsService {
+  private adminService = inject(AdminService);
   private readonly configState = signal<AdsConfiguration>(ADS_CONFIG);
-  public readonly config = this.configState.asReadonly();
+  
+  // Combines static config with live Admin global settings
+  public readonly config = computed(() => {
+    const base = this.configState();
+    const globallyEnabled = this.adminService.adsGloballyEnabled();
+    const selectedProvider = this.adminService.adProvider();
+
+    const isEnabled = globallyEnabled && selectedProvider !== 'disabled';
+    const provider: AdProviderType = selectedProvider === 'adsense' ? 'adsense' : 'custom';
+
+    return {
+      ...base,
+      enabled: isEnabled,
+      defaultProvider: provider
+    };
+  });
   
   public readonly effectiveClient = computed(() => {
     const cfg = this.config();
@@ -23,10 +40,57 @@ export class AdsService {
   });
 
   private scriptLoaded = false;
+  private monetagLoaded = false;
 
   constructor() {
-    if (this.config().enabled && typeof window !== 'undefined') {
-      this.initGoogleAdSense();
+    effect(() => {
+      const monetag = this.adminService.monetagEnabled();
+      const adsense = this.config().enabled && this.config().defaultProvider === 'adsense';
+
+      if (typeof window !== 'undefined') {
+        if (monetag) {
+          this.initMonetag();
+        } else {
+          this.removeMonetag();
+        }
+
+        if (adsense) {
+          this.initGoogleAdSense();
+        }
+      }
+    });
+  }
+
+  public removeMonetag(): void {
+    if (typeof window === 'undefined') return;
+    const existing = document.querySelector('script[src*="nap5k.com"]');
+    if (existing) {
+      existing.remove();
+      this.monetagLoaded = false;
+    }
+  }
+
+  public initMonetag(): void {
+    if (this.monetagLoaded || !this.adminService.monetagEnabled() || typeof window === 'undefined') {
+      return;
+    }
+
+    try {
+      const existing = document.querySelector('script[src*="nap5k.com"]');
+      if (existing) {
+        this.monetagLoaded = true;
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.dataset['zone'] = '12216484';
+      script.src = 'https://nap5k.com/tag.min.js';
+      script.onload = () => {
+        this.monetagLoaded = true;
+      };
+      document.head.appendChild(script);
+    } catch (e) {
+      console.warn('Monetag script injection skipped:', e);
     }
   }
 
@@ -36,7 +100,6 @@ export class AdsService {
     }
 
     try {
-      // Check if already present in DOM from index.html
       const existingScript = document.querySelector('script[src*="adsbygoogle.js"]');
       if (existingScript) {
         this.scriptLoaded = true;
@@ -64,11 +127,11 @@ export class AdsService {
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch (err) {
-      // Safe catch for adblockers or browser extensions
+      // Safe catch
     }
   }
 
   public getProvider(override?: AdProviderType): AdProviderType {
-    return override || this.config().defaultProvider;
+    return this.config().defaultProvider || override || 'custom';
   }
 }

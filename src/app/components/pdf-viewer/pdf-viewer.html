@@ -58,11 +58,6 @@
     </div>
   </header>
 
-  <!-- Top Horizontal Leaderboard Ad -->
-  <div class="top-ad-wrapper">
-    <app-ad-banner slot="topBanner" format="horizontal"></app-ad-banner>
-  </div>
-
   <!-- Viewer Workspace Grid -->
   @if (state.convertedResult()) {
     <div class="viewer-layout">
@@ -110,16 +105,6 @@
           }
         </div>
       </section>
-
-      <!-- Right Sticky Sidebar Ad -->
-      <aside class="viewer-sidebar-ad">
-        <app-ad-banner slot="viewerSidebar" format="rectangle"></app-ad-banner>
-      </aside>
-    </div>
-
-    <!-- Bottom Horizontal Ad Banner on Viewer Page -->
-    <div class="viewer-bottom-ad-wrapper">
-      <app-ad-banner slot="viewerBottomBanner" format="horizontal"></app-ad-banner>
     </div>
   } @else {
     <!-- Fallback if user navigates to viewer directly -->

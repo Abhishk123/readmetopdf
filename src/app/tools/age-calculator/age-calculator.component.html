@@ -1,7 +1,9 @@
-<div class="tool-page-container">
+﻿<div class="tool-page-container">
   <!-- Breadcrumb Navigation -->
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <a routerLink="/tools">All Tools</a>
     <span class="sep">/</span>
     <span class="current">Age & Date Duration Calculator</span>
   </nav>
@@ -87,41 +89,4 @@
     </div>
   </div>
 
-  <!-- Mid Content Ad Banner -->
-  <app-ad-banner slot="midContent"></app-ad-banner>
-
-  <!-- Educational SEO Section -->
-  <div class="seo-guide">
-    <h2>Why Use JSNS Works Age Calculator?</h2>
-    <div class="features-grid">
-      <div class="feature-card">
-        <h3>Government & Exam Portals</h3>
-        <p>Many government exams, visa applications, and competitive tests require age verification as of a specific cutoff date. Quickly confirm eligibility down to the exact day.</p>
-      </div>
-      <div class="feature-card">
-        <h3>Leap Year Accuracy</h3>
-        <p>Our algorithm accounts for varying month lengths (28, 29, 30, and 31 days) and leap years to calculate astronomical precision without approximation rounding.</p>
-      </div>
-      <div class="feature-card">
-        <h3>Milestone Tracking</h3>
-        <p>Track baby milestones in months and weeks, or calculate countdowns for retirement, anniversaries, and major life celebrations.</p>
-      </div>
-    </div>
-
-    <!-- FAQ Accordion -->
-    <div class="faq-section">
-      <h2>Frequently Asked Questions</h2>
-      <div class="faq-item">
-        <h3>How does leap year affect age calculation?</h3>
-        <p>A leap year has 366 days instead of 365. The calculator dynamically considers whether February 29th falls within your age interval.</p>
-      </div>
-      <div class="faq-item">
-        <h3>Can I calculate age for historical dates?</h3>
-        <p>Yes. You can select any Gregorian calendar date to find the time difference between historical events.</p>
-      </div>
-    </div>
   </div>
-
-  <!-- Bottom Ad Banner -->
-  <app-ad-banner slot="bottomBanner"></app-ad-banner>
-</div>

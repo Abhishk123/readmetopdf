@@ -1,0 +1,278 @@
+<div class="admin-container">
+  <!-- When NOT authenticated: Login Card -->
+  @if (!adminService.isAuthenticated()) {
+    <div class="login-wrapper">
+      <div class="login-card">
+        <div class="login-header">
+          <div class="admin-badge">Admin Control</div>
+          <h2>JSANS DevStudio Portal</h2>
+          <p>Sign in to manage global site features, ad networks, and tool visibility.</p>
+        </div>
+
+        @if (loginError()) {
+          <div class="alert-error">
+            <span>{{ loginError() }}</span>
+          </div>
+        }
+
+        <form (submit)="handleLogin(); $event.preventDefault()" class="login-form">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input id="username" 
+                   type="text" 
+                   [ngModel]="usernameInput()" 
+                   (ngModelChange)="usernameInput.set($event)" 
+                   name="username" 
+                   placeholder="admin" 
+                   required />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input id="password" 
+                   type="password" 
+                   [ngModel]="passwordInput()" 
+                   (ngModelChange)="passwordInput.set($event)" 
+                   name="password" 
+                   placeholder="••••••••••••" 
+                   required />
+          </div>
+
+          <button type="submit" class="btn-login">Sign In &rarr;</button>
+        </form>
+
+        <div class="login-footer">
+          <span>Configured via <code>.env</code> credentials</span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- When Authenticated: Full Admin Control Dashboard -->
+  @else {
+    <div class="dashboard-wrapper">
+      <!-- Dashboard Top Header -->
+      <header class="dash-header">
+        <div class="dash-title-group">
+          <span class="studio-badge">JSANS DevStudio</span>
+          <h1>Global System Controls</h1>
+          <p>All settings changed here apply immediately to <strong>every user worldwide</strong>.</p>
+        </div>
+
+        <div class="dash-actions">
+          @if (adminService.statusMessage()) {
+            <span class="status-pill">{{ adminService.statusMessage() }}</span>
+          }
+          <button type="button" class="btn-logout" (click)="handleLogout()">Sign Out</button>
+        </div>
+      </header>
+
+      <!-- Section 1: Comprehensive Ad Networks Management -->
+      <section class="admin-section-box">
+        <div class="section-title-row">
+          <div>
+            <h2>Advertisement Network & Placement Controls</h2>
+            <p>Control whether ads appear, which network provides them, and which ad sizes to render.</p>
+          </div>
+          <!-- Master Ads Switch -->
+          <div class="master-switch-box">
+            <span class="switch-label">Global Ads:</span>
+            <label class="switch">
+              <input type="checkbox" 
+                     [checked]="adminService.adsGloballyEnabled()" 
+                     (change)="toggleAds($event)" />
+              <span class="slider-round"></span>
+            </label>
+            <strong [class.text-green]="adminService.adsGloballyEnabled()" [class.text-red]="!adminService.adsGloballyEnabled()">
+              {{ adminService.adsGloballyEnabled() ? 'ACTIVE (GLOBAL)' : 'DISABLED (GLOBAL)' }}
+            </strong>
+          </div>
+        </div>
+
+        <!-- Provider Selection Cards -->
+        <div class="provider-cards-grid">
+          <div class="provider-card" 
+               [class.selected]="adminService.adProvider() === 'custom'"
+               (click)="setProvider('custom')">
+            <div class="provider-radio">
+              <span class="radio-circle" [class.checked]="adminService.adProvider() === 'custom'"></span>
+            </div>
+            <div class="provider-details">
+              <h3>Adsterra Display Banners</h3>
+              <p>Serves clean, iframe-sandboxed 728×90, 300×250, and 160×300 banners without adult/erotic ads.</p>
+              <span class="provider-status active-status">Primary Network</span>
+            </div>
+          </div>
+
+          <div class="provider-card" 
+               [class.selected]="adminService.adProvider() === 'adsense'"
+               (click)="setProvider('adsense')">
+            <div class="provider-radio">
+              <span class="radio-circle" [class.checked]="adminService.adProvider() === 'adsense'"></span>
+            </div>
+            <div class="provider-details">
+              <h3>Google AdSense</h3>
+              <p>Serves official Google AdSense units (client <code>ca-pub-1326483461218935</code>) when approved.</p>
+              <span class="provider-status ready-status">Ready</span>
+            </div>
+          </div>
+
+          <div class="provider-card" 
+               [class.selected]="adminService.adProvider() === 'monetag'"
+               (click)="setProvider('monetag')">
+            <div class="provider-radio">
+              <span class="radio-circle" [class.checked]="adminService.adProvider() === 'monetag'"></span>
+            </div>
+            <div class="provider-details">
+              <h3>Monetag Push & Interstitials</h3>
+              <p>Serves native In-Page Push notifications and corner alerts (Zone 12216484).</p>
+              <span class="provider-status active-status">Monetag</span>
+            </div>
+          </div>
+
+          <div class="provider-card" 
+               [class.selected]="adminService.adProvider() === 'disabled'"
+               (click)="setProvider('disabled')">
+            <div class="provider-radio">
+              <span class="radio-circle" [class.checked]="adminService.adProvider() === 'disabled'"></span>
+            </div>
+            <div class="provider-details">
+              <h3>Completely Disabled</h3>
+              <p>Zero ads, zero Monetag scripts, zero AdSense, and zero placeholder boxes across the site.</p>
+              <span class="provider-status disabled-status">Ad-Free Mode</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ad Format & Size Toggles -->
+        <div class="format-toggles-row">
+          <div class="format-toggle-item">
+            <label class="switch sm">
+              <input type="checkbox" 
+                     [checked]="adminService.adFormats().leaderboard" 
+                     (change)="toggleFormat('leaderboard', $event)" />
+              <span class="slider-round"></span>
+            </label>
+            <div>
+              <strong>728×90 Leaderboard Banners</strong>
+              <small>Top and Bottom horizontal display slots</small>
+            </div>
+          </div>
+
+          <div class="format-toggle-item">
+            <label class="switch sm">
+              <input type="checkbox" 
+                     [checked]="adminService.adFormats().rectangle" 
+                     (change)="toggleFormat('rectangle', $event)" />
+              <span class="slider-round"></span>
+            </label>
+            <div>
+              <strong>300×250 Rectangle Banners</strong>
+              <small>Mid-content high-CTR display units</small>
+            </div>
+          </div>
+
+          <div class="format-toggle-item">
+            <label class="switch sm">
+              <input type="checkbox" 
+                     [checked]="adminService.adFormats().inPagePush" 
+                     (change)="toggleFormat('inPagePush', $event)" />
+              <span class="slider-round"></span>
+            </label>
+            <div>
+              <strong>Monetag In-Page Push</strong>
+              <small>Corner floating native push notifications</small>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Features & Database Controls -->
+      <div class="features-split-grid">
+        <!-- WhatsApp Bot Switch -->
+        <div class="control-card">
+          <div class="card-icon-box icon-green" [class.active]="adminService.showWhatsApp()">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+            </svg>
+          </div>
+          <div class="control-info">
+            <div class="control-title-row">
+              <h3>WhatsApp Bot Feature</h3>
+              <label class="switch">
+                <input type="checkbox" 
+                       [checked]="adminService.showWhatsApp()" 
+                       (change)="toggleWhatsApp($event)" />
+                <span class="slider-round"></span>
+              </label>
+            </div>
+            <p>
+              Status: 
+              <strong [class.text-green]="adminService.showWhatsApp()" [class.text-red]="!adminService.showWhatsApp()">
+                {{ adminService.showWhatsApp() ? 'ENABLED GLOBALLY' : 'HIDDEN GLOBALLY' }}
+              </strong>
+            </p>
+            <span class="help-text">Controls visibility of the QuickTools WhatsApp project card and webhook features.</span>
+          </div>
+        </div>
+
+        <!-- Database & Storage Adapter -->
+        <div class="control-card info-card">
+          <div class="card-icon-box icon-purple">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+              <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+            </svg>
+          </div>
+          <div class="control-info">
+            <div class="control-title-row">
+              <h3>Database / Storage Adapter</h3>
+              <span class="badge-ready">Extensible Ready</span>
+            </div>
+            <p><strong>Serverless API + .env Hook</strong></p>
+            <span class="help-text">To connect Upstash Redis, MongoDB, or PostgreSQL, simply add <code>UPSTASH_REDIS_REST_URL</code> or <code>DATABASE_URL</code> to <code>.env</code>—zero code changes required!</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Tools Visibility Management -->
+      <section class="tools-mgmt-section">
+        <div class="mgmt-header">
+          <div>
+            <h2>Tool Visibility Manager</h2>
+            <p>Toggle individual utilities on or off across the All Tools directory and dropdown menu.</p>
+          </div>
+          <div class="mgmt-stats-bar">
+            <span class="stat-pill stat-live">{{ visibleToolsCount }} Active</span>
+            <span class="stat-pill stat-hidden" *ngIf="hiddenToolsCount > 0">{{ hiddenToolsCount }} Hidden</span>
+          </div>
+        </div>
+
+        <!-- Compact 3-Column Tool Cards Grid (Replaces Tall Table) -->
+        <div class="tools-compact-grid">
+          @for (tool of toolsList; track tool.id) {
+            <div class="tool-toggle-card" [class.card-hidden]="!adminService.isToolVisible(tool.id)">
+              <div class="tool-card-body">
+                <span class="tool-card-name">{{ tool.title }}</span>
+                <div class="tool-card-tags">
+                  <span class="badge-cat">{{ tool.category }}</span>
+                  <span class="status-dot-label" [class.live]="adminService.isToolVisible(tool.id)">
+                    <span class="dot"></span>
+                    {{ adminService.isToolVisible(tool.id) ? 'Active' : 'Hidden' }}
+                  </span>
+                </div>
+              </div>
+              <label class="switch sm">
+                <input type="checkbox" 
+                       [checked]="adminService.isToolVisible(tool.id)" 
+                       (change)="toggleTool(tool.id, $event)" />
+                <span class="slider-round"></span>
+              </label>
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+  }
+</div>

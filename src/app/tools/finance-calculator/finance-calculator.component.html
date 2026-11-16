@@ -1,119 +1,163 @@
-<div class="tool-page-container">
-  <!-- Breadcrumb Navigation -->
+﻿<div class="tool-page-container">
+  <!-- Breadcrumb Navigation (Clean standard Home / [Tool Name]) -->
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <a routerLink="/">Home</a>
     <span class="sep">/</span>
-    <span class="current">Financial & Investment Calculators</span>
+    <a routerLink="/tools">All Tools</a>
+    <span class="sep">/</span>
+    <span class="current">Loan EMI & Investment Calculators</span>
   </nav>
 
-  <!-- Top Ad Banner -->
+  <!-- Top Ad Banner (Only renders if enabled in Admin) -->
   <app-ad-banner slot="topBanner"></app-ad-banner>
 
   <!-- Tool Hero Header -->
   <div class="tool-header">
     <div class="tool-badge">Financial Planning Suite</div>
-    <h1 class="tool-title">Loan EMI & Investment Calculator</h1>
+    <h1 class="tool-title">Loan EMI & Investment Calculators</h1>
     <p class="tool-subtitle">
-      Plan your finances with accurate multi-currency calculators for Personal/Home/Car Loan EMI, Fixed Deposits (FD), Recurring Deposits (RD), and Compound Growth.
+      Plan your loans and investments with accurate multi-currency calculators for Loan EMIs, Bank Fixed Deposits, Recurring Deposits, and Long-Term Compound Growth.
     </p>
   </div>
 
-  <!-- Global Currency Selector -->
-  <div class="currency-bar-wrapper">
-    <div class="currency-bar-card">
-      <div class="currency-bar-label">
-        <svg class="currency-globe-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="2" y1="12" x2="22" y2="12"></line>
-          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-        </svg>
-        <span>Currency:</span>
-      </div>
-
-      <!-- Quick Popular Currency Chips -->
-      <div class="currency-chips">
-        @for (code of popularCurrencies; track code) {
-          <button type="button" 
-                  class="curr-chip-btn" 
-                  [class.active]="selectedCurrency().code === code"
-                  (click)="onCurrencyCodeChange(code)">
-            <span class="chip-flag">{{ getFlag(code) }}</span>
-            <span class="chip-code">{{ code }}</span>
-          </button>
-        }
-      </div>
-
-      <!-- Full Currency Dropdown -->
-      <div class="currency-dropdown-box">
-        <select [ngModel]="selectedCurrency().code" 
-                (ngModelChange)="onCurrencyCodeChange($event)" 
-                class="currency-select-dropdown"
-                aria-label="Select Currency">
-          @for (curr of currencies; track curr.code) {
-            <option [value]="curr.code">{{ curr.flag }} {{ curr.name }}</option>
-          }
-        </select>
-        <svg class="dropdown-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="6 9 12 15 18 9"></polyline>
+  <!-- 5 Visual Calculator Selection Cards (No Cramped Tabs) -->
+  <div class="calculators-selector-grid">
+    <div class="calc-select-box" [class.active]="activeTab() === 'emi'" (click)="setTab('emi')">
+      <div class="calc-icon icon-blue">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 3h12"></path>
+          <path d="M6 8h12"></path>
+          <path d="M6 13l8.5 8"></path>
+          <path d="M6 13h3a4 4 0 0 0 0-8H6"></path>
         </svg>
       </div>
+      <div class="calc-text">
+        <h4>Loan & EMI</h4>
+        <p>Monthly installments & interest payoff</p>
+      </div>
+      <span class="calc-status-badge">{{ activeTab() === 'emi' ? 'Active' : 'Select' }}</span>
+    </div>
+
+    <div class="calc-select-box" [class.active]="activeTab() === 'fd'" (click)="setTab('fd')">
+      <div class="calc-icon icon-green">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+          <polyline points="17 6 23 6 23 12"></polyline>
+        </svg>
+      </div>
+      <div class="calc-text">
+        <h4>Fixed Deposit (FD)</h4>
+        <p>Quarterly compounding bank returns</p>
+      </div>
+      <span class="calc-status-badge">{{ activeTab() === 'fd' ? 'Active' : 'Select' }}</span>
+    </div>
+
+    <div class="calc-select-box" [class.active]="activeTab() === 'rd'" (click)="setTab('rd')">
+      <div class="calc-icon icon-purple">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <polyline points="1 20 1 14 7 14"></polyline>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+      </div>
+      <div class="calc-text">
+        <h4>Recurring Deposit (RD)</h4>
+        <p>Disciplined monthly savings growth</p>
+      </div>
+      <span class="calc-status-badge">{{ activeTab() === 'rd' ? 'Active' : 'Select' }}</span>
+    </div>
+
+    <div class="calc-select-box" [class.active]="activeTab() === 'ppf'" (click)="setTab('ppf')">
+      <div class="calc-icon icon-emerald">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+      </div>
+      <div class="calc-text">
+        <h4>PPF Scheme</h4>
+        <p>15-Year sovereign tax-exempt wealth</p>
+      </div>
+      <span class="calc-status-badge">{{ activeTab() === 'ppf' ? 'Active' : 'Select' }}</span>
+    </div>
+
+    <div class="calc-select-box" [class.active]="activeTab() === 'interest'" (click)="setTab('interest')">
+      <div class="calc-icon icon-orange">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
+      </div>
+      <div class="calc-text">
+        <h4>Simple vs Compound</h4>
+        <p>Direct yield comparison over time</p>
+      </div>
+      <span class="calc-status-badge">{{ activeTab() === 'interest' ? 'Active' : 'Select' }}</span>
     </div>
   </div>
 
-  <!-- Finance Category Tabs -->
-  <div class="finance-tabs">
-    <button type="button" class="tab-btn" [class.active]="activeTab() === 'emi'" (click)="setTab('emi')">
-      <span>Loan & EMI</span>
-    </button>
-    <button type="button" class="tab-btn" [class.active]="activeTab() === 'fd'" (click)="setTab('fd')">
-      <span>Fixed Deposit (FD)</span>
-    </button>
-    <button type="button" class="tab-btn" [class.active]="activeTab() === 'rd'" (click)="setTab('rd')">
-      <span>Recurring Deposit (RD)</span>
-    </button>
-    <button type="button" class="tab-btn" [class.active]="activeTab() === 'ppf'" (click)="setTab('ppf')">
-      <span>PPF Scheme</span>
-    </button>
-    <button type="button" class="tab-btn" [class.active]="activeTab() === 'interest'" (click)="setTab('interest')">
-      <span>Simple vs Compound</span>
-    </button>
+  <!-- Clean, Minimalistic Currency Selector -->
+  <div class="clean-currency-bar">
+    <div class="curr-bar-left">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="2" y1="12" x2="22" y2="12"></line>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+      </svg>
+      <span>Display Currency:</span>
+    </div>
+    <div class="curr-select-container">
+      <select [ngModel]="selectedCurrency().code" 
+              (ngModelChange)="onCurrencyCodeChange($event)" 
+              class="clean-curr-select"
+              aria-label="Select Currency">
+        @for (curr of currencies; track curr.code) {
+          <option [value]="curr.code">{{ curr.flag }} {{ curr.name }}</option>
+        }
+      </select>
+    </div>
   </div>
 
-  <!-- TAB 1: LOAN / EMI CALCULATOR -->
+  <!-- ======================================================================
+       TAB 1: GROWW-STYLE LOAN & EMI CALCULATOR
+       ====================================================================== -->
   @if (activeTab() === 'emi') {
-    <div class="calculator-layout">
-      <!-- Inputs Column -->
-      <div class="card inputs-card">
-        <div class="card-head-row">
-          <h3>Loan Parameters</h3>
-          <span class="active-curr-badge">{{ selectedCurrency().code }} ({{ currencySymbol() }})</span>
-        </div>
-
-        <!-- 1. Loan Amount Input -->
-        <div class="input-field">
-          <div class="field-header-row">
-            <div class="field-label-group">
-              <label class="field-title">Loan Amount</label>
+    <div class="groww-calc-grid">
+      <!-- Left: Modern Input Card -->
+      <div class="groww-card inputs-pane">
+        <!-- 1. Loan Amount Input Row -->
+        <div class="groww-input-block">
+          <div class="block-top-row">
+            <div class="label-group">
+              <label class="block-label">Loan amount</label>
               @if (getAmountInWords(loanAmount())) {
-                <span class="amount-badge">{{ getAmountInWords(loanAmount()) }}</span>
+                <span class="word-badge">{{ getAmountInWords(loanAmount()) }}</span>
               }
             </div>
-            <div class="field-input-box">
-              <span class="tag-prefix">{{ currencySymbol() }}</span>
-              <input type="number" min="1000" max="100000000" step="1000"
+            <div class="groww-num-box">
+              <span class="sym-prefix">{{ currencySymbol() }}</span>
+              <input type="number" min="1000" max="100000000" step="10000"
                      [ngModel]="loanAmount()" (ngModelChange)="loanAmount.set(+$event || 0)"
-                     class="typed-input wide"
-                     placeholder="500000">
+                     class="clean-num-input"
+                     placeholder="2500000">
             </div>
           </div>
 
-          <!-- Quick Presets -->
-          <div class="quick-presets">
-            <span class="preset-label">Quick select:</span>
-            <div class="preset-pills">
+          <!-- Ultra-smooth Groww Slider -->
+          <div class="slider-wrapper">
+            <input type="range" min="100000" max="10000000" step="50000"
+                   [ngModel]="loanAmount()" (ngModelChange)="loanAmount.set(+$event || 0)" 
+                   class="groww-range-slider"
+                   aria-label="Loan Amount Slider">
+          </div>
+
+          <!-- Quick Amount Chips -->
+          <div class="groww-chip-row">
+            <span class="chip-hint">Quick:</span>
+            <div class="chip-list">
               @for (preset of loanPresets(); track preset.value) {
                 <button type="button" 
-                        class="preset-pill" 
+                        class="groww-chip" 
                         [class.active]="loanAmount() === preset.value"
                         (click)="setLoanAmount(preset.value)">
                   {{ preset.label }}
@@ -121,65 +165,67 @@
               }
             </div>
           </div>
-
-          <input type="range" min="10000" max="10000000" step="10000"
-                 [ngModel]="loanAmount()" (ngModelChange)="loanAmount.set(+$event || 0)" class="slider"
-                 aria-label="Loan Amount Slider">
-          <div class="range-limits">
-            <span>{{ formatCompact(10000) }}</span>
-            <span>{{ formatCompact(5000000) }}</span>
-            <span>{{ formatCompact(10000000) }}</span>
-          </div>
         </div>
 
-        <!-- 2. Interest Rate Input -->
-        <div class="input-field">
-          <div class="field-header-row">
-            <div class="field-label-group">
-              <label class="field-title">Interest Rate (p.a)</label>
-              <span class="field-hint">Annual %</span>
+        <!-- 2. Rate of Interest Input Row -->
+        <div class="groww-input-block">
+          <div class="block-top-row">
+            <div class="label-group">
+              <label class="block-label">Rate of interest (p.a)</label>
             </div>
-            <div class="field-input-box">
-              <input type="number" min="0.1" max="50" step="0.1"
+            <div class="groww-num-box">
+              <input type="number" min="1" max="30" step="0.1"
                      [ngModel]="loanInterestRate()" (ngModelChange)="loanInterestRate.set(+$event || 0)"
-                     class="typed-input"
+                     class="clean-num-input"
                      placeholder="8.5">
-              <span class="tag-suffix">%</span>
+              <span class="sym-suffix">%</span>
             </div>
           </div>
-          <input type="range" min="1" max="25" step="0.1"
-                 [ngModel]="loanInterestRate()" (ngModelChange)="loanInterestRate.set(+$event || 0)" class="slider"
-                 aria-label="Interest Rate Slider">
-          <div class="range-limits">
+
+          <div class="slider-wrapper">
+            <input type="range" min="1" max="25" step="0.1"
+                   [ngModel]="loanInterestRate()" (ngModelChange)="loanInterestRate.set(+$event || 0)" 
+                   class="groww-range-slider"
+                   aria-label="Interest Rate Slider">
+          </div>
+
+          <div class="limits-row">
             <span>1%</span>
             <span>12.5%</span>
             <span>25%</span>
           </div>
         </div>
 
-        <!-- 3. Tenure Input -->
-        <div class="input-field">
-          <div class="field-header-row">
-            <div class="field-label-group">
-              <label class="field-title">Loan Tenure</label>
-              <span class="field-hint">{{ loanTenureYears() * 12 }} Months</span>
+        <!-- 3. Loan Tenure Input Row -->
+        <div class="groww-input-block">
+          <div class="block-top-row">
+            <div class="label-group">
+              <label class="block-label">Loan tenure</label>
+              <span class="tenure-months-hint">({{ loanTenureYears() * 12 }} Months)</span>
             </div>
-            <div class="field-input-box">
+            <div class="groww-num-box">
               <input type="number" min="1" max="40" step="1"
                      [ngModel]="loanTenureYears()" (ngModelChange)="loanTenureYears.set(+$event || 0)"
-                     class="typed-input"
-                     placeholder="5">
-              <span class="tag-suffix">Years</span>
+                     class="clean-num-input"
+                     placeholder="20">
+              <span class="sym-suffix">Yr</span>
             </div>
           </div>
 
-          <!-- Quick Tenure Pills -->
-          <div class="quick-presets">
-            <span class="preset-label">Tenure:</span>
-            <div class="preset-pills">
+          <div class="slider-wrapper">
+            <input type="range" min="1" max="30" step="1"
+                   [ngModel]="loanTenureYears()" (ngModelChange)="loanTenureYears.set(+$event || 0)" 
+                   class="groww-range-slider"
+                   aria-label="Loan Tenure Slider">
+          </div>
+
+          <!-- Quick Tenure Chips -->
+          <div class="groww-chip-row">
+            <span class="chip-hint">Tenure:</span>
+            <div class="chip-list">
               @for (preset of tenurePresets; track preset.value) {
                 <button type="button" 
-                        class="preset-pill" 
+                        class="groww-chip" 
                         [class.active]="loanTenureYears() === preset.value"
                         (click)="setLoanTenure(preset.value)">
                   {{ preset.label }}
@@ -187,415 +233,410 @@
               }
             </div>
           </div>
-
-          <input type="range" min="1" max="30" step="1"
-                 [ngModel]="loanTenureYears()" (ngModelChange)="loanTenureYears.set(+$event || 0)" class="slider"
-                 aria-label="Loan Tenure Slider">
-          <div class="range-limits">
-            <span>1 Yr (12 Mo)</span>
-            <span>15 Yrs</span>
-            <span>30 Yrs</span>
-          </div>
         </div>
       </div>
 
-      <!-- Results Column -->
-      <div class="card results-card">
-        <div class="highlight-result">
-          <span class="res-label">Monthly EMI Payment</span>
-          <div class="res-amount primary">{{ currencySymbol() }} {{ formatCurrency(emiResults().monthlyEmi) }}</div>
-        </div>
-
-        <div class="breakdown-list">
-          <div class="breakdown-row">
-            <span>Principal Loan Amount:</span>
-            <strong>{{ currencySymbol() }} {{ formatCurrency(loanAmount()) }}</strong>
-          </div>
-          <div class="breakdown-row">
-            <span>Total Interest Payable:</span>
-            <strong class="orange">{{ currencySymbol() }} {{ formatCurrency(emiResults().totalInterest) }}</strong>
-          </div>
-          <div class="breakdown-row total">
-            <span>Total Amount Payable:</span>
-            <strong>{{ currencySymbol() }} {{ formatCurrency(emiResults().totalPayment) }}</strong>
+      <!-- Right: Groww-Style Results & Donut Chart Card -->
+      <div class="groww-card results-pane">
+        <!-- Monthly EMI Highlight -->
+        <div class="emi-hero-card">
+          <span class="emi-hero-label">Monthly EMI</span>
+          <div class="emi-hero-amount">
+            <span class="hero-sym">{{ currencySymbol() }}</span>
+            <span class="hero-val">{{ formatCurrency(emiResults().monthlyEmi) }}</span>
           </div>
         </div>
 
-        <!-- Visual Ratio Bar -->
-        <div class="ratio-bar-wrapper">
-          <div class="ratio-labels">
-            <span class="lbl-p">Principal: {{ emiResults().principalPercent }}%</span>
-            <span class="lbl-i">Interest: {{ emiResults().interestPercent }}%</span>
+        <!-- Summary Metrics Table -->
+        <div class="groww-summary-list">
+          <div class="summary-item">
+            <span class="item-label">Principal amount</span>
+            <span class="item-value">{{ currencySymbol() }} {{ formatCurrency(loanAmount()) }}</span>
           </div>
-          <div class="ratio-bar">
-            <div class="bar-principal" [style.width.%]="emiResults().principalPercent"></div>
-            <div class="bar-interest" [style.width.%]="emiResults().interestPercent"></div>
+          <div class="summary-item">
+            <span class="item-label">Total interest</span>
+            <span class="item-value interest-color">{{ currencySymbol() }} {{ formatCurrency(emiResults().totalInterest) }}</span>
+          </div>
+          <div class="summary-item total-row">
+            <span class="item-label">Total amount payable</span>
+            <span class="item-value total-bold">{{ currencySymbol() }} {{ formatCurrency(emiResults().totalPayment) }}</span>
+          </div>
+        </div>
+
+        <!-- Authentic SVG Donut Chart (Groww Style) -->
+        <div class="donut-chart-container">
+          <div class="donut-svg-wrapper">
+            <svg viewBox="0 0 100 100" class="donut-svg">
+              <!-- Base Circle (Total Interest - Orange/Coral) -->
+              <circle cx="50" cy="50" r="40" 
+                      class="donut-circle base-track"></circle>
+              <!-- Progress Arc (Principal - Emerald Green) -->
+              <circle cx="50" cy="50" r="40" 
+                      class="donut-circle principal-arc"
+                      [style.strokeDashoffset]="emiDonutDashOffset()"></circle>
+            </svg>
+            <div class="donut-center-info">
+              <span class="center-ratio">{{ emiResults().principalPercent }}%</span>
+              <span class="center-sub">Principal</span>
+            </div>
+          </div>
+
+          <!-- Color Coded Legend -->
+          <div class="donut-legend">
+            <div class="legend-row">
+              <span class="legend-dot dot-principal"></span>
+              <span class="legend-text">Principal Amount ({{ emiResults().principalPercent }}%)</span>
+            </div>
+            <div class="legend-row">
+              <span class="legend-dot dot-interest"></span>
+              <span class="legend-text">Total Interest ({{ emiResults().interestPercent }}%)</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
   }
 
-  <!-- TAB 2: FIXED DEPOSIT (FD) CALCULATOR -->
+  <!-- ======================================================================
+       TAB 2: FIXED DEPOSIT (FD) CALCULATOR
+       ====================================================================== -->
   @if (activeTab() === 'fd') {
-    <div class="calculator-layout">
-      <div class="card inputs-card">
-        <div class="card-head-row">
-          <h3>Fixed Deposit Setup</h3>
-          <span class="active-curr-badge">{{ selectedCurrency().code }} ({{ currencySymbol() }})</span>
-        </div>
-
-        <div class="input-field">
-          <div class="field-header-row">
-            <div class="field-label-group">
-              <label class="field-title">Deposit Amount</label>
+    <div class="groww-calc-grid">
+      <div class="groww-card inputs-pane">
+        <div class="groww-input-block">
+          <div class="block-top-row">
+            <div class="label-group">
+              <label class="block-label">Total investment</label>
               @if (getAmountInWords(fdDeposit())) {
-                <span class="amount-badge">{{ getAmountInWords(fdDeposit()) }}</span>
+                <span class="word-badge">{{ getAmountInWords(fdDeposit()) }}</span>
               }
             </div>
-            <div class="field-input-box">
-              <span class="tag-prefix">{{ currencySymbol() }}</span>
-              <input type="number" min="1000" max="50000000" step="5000"
+            <div class="groww-num-box">
+              <span class="sym-prefix">{{ currencySymbol() }}</span>
+              <input type="number" min="1000" max="50000000" step="10000"
                      [ngModel]="fdDeposit()" (ngModelChange)="fdDeposit.set(+$event || 0)"
-                     class="typed-input wide">
+                     class="clean-num-input">
             </div>
           </div>
-          <input type="range" min="5000" max="5000000" step="5000"
-                 [ngModel]="fdDeposit()" (ngModelChange)="fdDeposit.set(+$event || 0)" class="slider">
-          <div class="range-limits">
-            <span>{{ formatCompact(5000) }}</span>
-            <span>{{ formatCompact(2500000) }}</span>
-            <span>{{ formatCompact(5000000) }}</span>
+          <div class="slider-wrapper">
+            <input type="range" min="10000" max="5000000" step="10000"
+                   [ngModel]="fdDeposit()" (ngModelChange)="fdDeposit.set(+$event || 0)" 
+                   class="groww-range-slider">
           </div>
         </div>
 
-        <div class="input-field">
-          <div class="field-header-row">
-            <label class="field-title">Interest Rate (% p.a)</label>
-            <div class="field-input-box">
-              <input type="number" min="1" max="25" step="0.1"
+        <div class="groww-input-block">
+          <div class="block-top-row">
+            <label class="block-label">Rate of interest (p.a)</label>
+            <div class="groww-num-box">
+              <input type="number" min="1" max="20" step="0.1"
                      [ngModel]="fdRate()" (ngModelChange)="fdRate.set(+$event || 0)"
-                     class="typed-input">
-              <span class="tag-suffix">%</span>
+                     class="clean-num-input">
+              <span class="sym-suffix">%</span>
             </div>
           </div>
-          <input type="range" min="2" max="15" step="0.1"
-                 [ngModel]="fdRate()" (ngModelChange)="fdRate.set(+$event || 0)" class="slider">
-          <div class="range-limits">
-            <span>2%</span>
-            <span>8.5%</span>
-            <span>15%</span>
+          <div class="slider-wrapper">
+            <input type="range" min="2" max="15" step="0.1"
+                   [ngModel]="fdRate()" (ngModelChange)="fdRate.set(+$event || 0)" 
+                   class="groww-range-slider">
           </div>
         </div>
 
-        <div class="input-field">
-          <div class="field-header-row">
-            <label class="field-title">Tenure (Years)</label>
-            <div class="field-input-box">
-              <input type="number" min="1" max="25" step="1"
+        <div class="groww-input-block">
+          <div class="block-top-row">
+            <label class="block-label">Time period (Years)</label>
+            <div class="groww-num-box">
+              <input type="number" min="1" max="15" step="1"
                      [ngModel]="fdYears()" (ngModelChange)="fdYears.set(+$event || 0)"
-                     class="typed-input">
-              <span class="tag-suffix">Yr</span>
+                     class="clean-num-input">
+              <span class="sym-suffix">Yr</span>
             </div>
           </div>
-          <input type="range" min="1" max="10" step="1"
-                 [ngModel]="fdYears()" (ngModelChange)="fdYears.set(+$event || 0)" class="slider">
-          <div class="range-limits">
-            <span>1 Year</span>
-            <span>5 Years</span>
-            <span>10 Years</span>
+          <div class="slider-wrapper">
+            <input type="range" min="1" max="10" step="1"
+                   [ngModel]="fdYears()" (ngModelChange)="fdYears.set(+$event || 0)" 
+                   class="groww-range-slider">
           </div>
         </div>
       </div>
 
-      <div class="card results-card">
-        <div class="highlight-result">
-          <span class="res-label">Maturity Value</span>
-          <div class="res-amount green">{{ currencySymbol() }} {{ formatCurrency(fdResults().maturityValue) }}</div>
+      <div class="groww-card results-pane">
+        <div class="emi-hero-card">
+          <span class="emi-hero-label">Total Maturity Value</span>
+          <div class="emi-hero-amount">
+            <span class="hero-sym">{{ currencySymbol() }}</span>
+            <span class="hero-val">{{ formatCurrency(fdResults().maturityValue) }}</span>
+          </div>
         </div>
 
-        <div class="breakdown-list">
-          <div class="breakdown-row">
-            <span>Invested Amount:</span>
-            <strong>{{ currencySymbol() }} {{ formatCurrency(fdDeposit()) }}</strong>
+        <div class="groww-summary-list">
+          <div class="summary-item">
+            <span class="item-label">Invested amount</span>
+            <span class="item-value">{{ currencySymbol() }} {{ formatCurrency(fdDeposit()) }}</span>
           </div>
-          <div class="breakdown-row">
-            <span>Total Interest Earned:</span>
-            <strong class="green">{{ currencySymbol() }} {{ formatCurrency(fdResults().totalInterest) }}</strong>
+          <div class="summary-item">
+            <span class="item-label">Est. return (Interest)</span>
+            <span class="item-value interest-color">{{ currencySymbol() }} {{ formatCurrency(fdResults().totalInterest) }}</span>
+          </div>
+          <div class="summary-item total-row">
+            <span class="item-label">Total value</span>
+            <span class="item-value total-bold">{{ currencySymbol() }} {{ formatCurrency(fdResults().maturityValue) }}</span>
           </div>
         </div>
       </div>
     </div>
   }
 
-  <!-- TAB 3: RECURRING DEPOSIT (RD) CALCULATOR -->
+  <!-- ======================================================================
+       TAB 3: RECURRING DEPOSIT (RD) CALCULATOR
+       ====================================================================== -->
   @if (activeTab() === 'rd') {
-    <div class="calculator-layout">
-      <div class="card inputs-card">
-        <div class="card-head-row">
-          <h3>Recurring Deposit Setup</h3>
-          <span class="active-curr-badge">{{ selectedCurrency().code }} ({{ currencySymbol() }})</span>
-        </div>
-
-        <div class="input-field">
-          <div class="field-header-row">
-            <div class="field-label-group">
-              <label class="field-title">Monthly Deposit</label>
+    <div class="groww-calc-grid">
+      <div class="groww-card inputs-pane">
+        <div class="groww-input-block">
+          <div class="block-top-row">
+            <div class="label-group">
+              <label class="block-label">Monthly investment</label>
               @if (getAmountInWords(rdMonthly())) {
-                <span class="amount-badge">{{ getAmountInWords(rdMonthly()) }}</span>
+                <span class="word-badge">{{ getAmountInWords(rdMonthly()) }}</span>
               }
             </div>
-            <div class="field-input-box">
-              <span class="tag-prefix">{{ currencySymbol() }}</span>
-              <input type="number" min="100" max="1000000" step="500"
+            <div class="groww-num-box">
+              <span class="sym-prefix">{{ currencySymbol() }}</span>
+              <input type="number" min="500" max="1000000" step="500"
                      [ngModel]="rdMonthly()" (ngModelChange)="rdMonthly.set(+$event || 0)"
-                     class="typed-input wide">
+                     class="clean-num-input">
             </div>
           </div>
-          <input type="range" min="500" max="100000" step="500"
-                 [ngModel]="rdMonthly()" (ngModelChange)="rdMonthly.set(+$event || 0)" class="slider">
-          <div class="range-limits">
-            <span>{{ formatCompact(500) }}</span>
-            <span>{{ formatCompact(50000) }}</span>
-            <span>{{ formatCompact(100000) }}</span>
+          <div class="slider-wrapper">
+            <input type="range" min="500" max="100000" step="500"
+                   [ngModel]="rdMonthly()" (ngModelChange)="rdMonthly.set(+$event || 0)" 
+                   class="groww-range-slider">
           </div>
         </div>
 
-        <div class="input-field">
-          <div class="field-header-row">
-            <label class="field-title">Interest Rate (% p.a)</label>
-            <div class="field-input-box">
-              <input type="number" min="1" max="25" step="0.1"
+        <div class="groww-input-block">
+          <div class="block-top-row">
+            <label class="block-label">Rate of interest (p.a)</label>
+            <div class="groww-num-box">
+              <input type="number" min="1" max="20" step="0.1"
                      [ngModel]="rdRate()" (ngModelChange)="rdRate.set(+$event || 0)"
-                     class="typed-input">
-              <span class="tag-suffix">%</span>
+                     class="clean-num-input">
+              <span class="sym-suffix">%</span>
             </div>
           </div>
-          <input type="range" min="2" max="15" step="0.1"
-                 [ngModel]="rdRate()" (ngModelChange)="rdRate.set(+$event || 0)" class="slider">
-          <div class="range-limits">
-            <span>2%</span>
-            <span>8.5%</span>
-            <span>15%</span>
+          <div class="slider-wrapper">
+            <input type="range" min="2" max="15" step="0.1"
+                   [ngModel]="rdRate()" (ngModelChange)="rdRate.set(+$event || 0)" 
+                   class="groww-range-slider">
           </div>
         </div>
 
-        <div class="input-field">
-          <div class="field-header-row">
-            <label class="field-title">Tenure (Months)</label>
-            <div class="field-input-box">
-              <input type="number" min="3" max="240" step="1"
+        <div class="groww-input-block">
+          <div class="block-top-row">
+            <label class="block-label">Time period (Months)</label>
+            <div class="groww-num-box">
+              <input type="number" min="6" max="240" step="6"
                      [ngModel]="rdMonths()" (ngModelChange)="rdMonths.set(+$event || 0)"
-                     class="typed-input">
-              <span class="tag-suffix">Mo</span>
+                     class="clean-num-input">
+              <span class="sym-suffix">Mo</span>
             </div>
           </div>
-          <input type="range" min="6" max="120" step="6"
-                 [ngModel]="rdMonths()" (ngModelChange)="rdMonths.set(+$event || 0)" class="slider">
-          <div class="range-limits">
-            <span>6 Months</span>
-            <span>60 Months (5 Yrs)</span>
-            <span>120 Months (10 Yrs)</span>
+          <div class="slider-wrapper">
+            <input type="range" min="6" max="120" step="6"
+                   [ngModel]="rdMonths()" (ngModelChange)="rdMonths.set(+$event || 0)" 
+                   class="groww-range-slider">
           </div>
         </div>
       </div>
 
-      <div class="card results-card">
-        <div class="highlight-result">
-          <span class="res-label">Total Maturity Value</span>
-          <div class="res-amount green">{{ currencySymbol() }} {{ formatCurrency(rdResults().maturityValue) }}</div>
+      <div class="groww-card results-pane">
+        <div class="emi-hero-card">
+          <span class="emi-hero-label">Total Maturity Value</span>
+          <div class="emi-hero-amount">
+            <span class="hero-sym">{{ currencySymbol() }}</span>
+            <span class="hero-val">{{ formatCurrency(rdResults().maturityValue) }}</span>
+          </div>
         </div>
 
-        <div class="breakdown-list">
-          <div class="breakdown-row">
-            <span>Total Invested:</span>
-            <strong>{{ currencySymbol() }} {{ formatCurrency(rdResults().totalInvested) }}</strong>
+        <div class="groww-summary-list">
+          <div class="summary-item">
+            <span class="item-label">Total invested</span>
+            <span class="item-value">{{ currencySymbol() }} {{ formatCurrency(rdResults().totalInvested) }}</span>
           </div>
-          <div class="breakdown-row">
-            <span>Interest Return:</span>
-            <strong class="green">{{ currencySymbol() }} {{ formatCurrency(rdResults().totalInterest) }}</strong>
+          <div class="summary-item">
+            <span class="item-label">Total interest earned</span>
+            <span class="item-value interest-color">{{ currencySymbol() }} {{ formatCurrency(rdResults().totalInterest) }}</span>
+          </div>
+          <div class="summary-item total-row">
+            <span class="item-label">Maturity corpus</span>
+            <span class="item-value total-bold">{{ currencySymbol() }} {{ formatCurrency(rdResults().maturityValue) }}</span>
           </div>
         </div>
       </div>
     </div>
   }
 
-  <!-- TAB 4: PPF (PROVIDENT FUND) CALCULATOR -->
+  <!-- ======================================================================
+       TAB 4: PPF (PUBLIC PROVIDENT FUND) CALCULATOR
+       ====================================================================== -->
   @if (activeTab() === 'ppf') {
-    <div class="calculator-layout">
-      <div class="card inputs-card">
-        <div class="card-head-row">
-          <h3>PPF Scheme Parameters</h3>
-          <span class="active-curr-badge">{{ selectedCurrency().code }} ({{ currencySymbol() }})</span>
-        </div>
-
-        <div class="input-field">
-          <div class="field-header-row">
-            <div class="field-label-group">
-              <label class="field-title">Yearly Deposit (Max 150K)</label>
+    <div class="groww-calc-grid">
+      <div class="groww-card inputs-pane">
+        <div class="groww-input-block">
+          <div class="block-top-row">
+            <div class="label-group">
+              <label class="block-label">Yearly investment (Max ₹1.5L)</label>
               @if (getAmountInWords(ppfYearly())) {
-                <span class="amount-badge">{{ getAmountInWords(ppfYearly()) }}</span>
+                <span class="word-badge">{{ getAmountInWords(ppfYearly()) }}</span>
               }
             </div>
-            <div class="field-input-box">
-              <span class="tag-prefix">{{ currencySymbol() }}</span>
+            <div class="groww-num-box">
+              <span class="sym-prefix">{{ currencySymbol() }}</span>
               <input type="number" min="500" max="150000" step="500"
                      [ngModel]="ppfYearly()" (ngModelChange)="ppfYearly.set(+$event || 0)"
-                     class="typed-input wide">
+                     class="clean-num-input">
             </div>
           </div>
-          <input type="range" min="500" max="150000" step="500"
-                 [ngModel]="ppfYearly()" (ngModelChange)="ppfYearly.set(+$event || 0)" class="slider">
-          <div class="range-limits">
-            <span>{{ formatCompact(500) }}</span>
-            <span>{{ formatCompact(75000) }}</span>
-            <span>{{ formatCompact(150000) }}</span>
+          <div class="slider-wrapper">
+            <input type="range" min="500" max="150000" step="500"
+                   [ngModel]="ppfYearly()" (ngModelChange)="ppfYearly.set(+$event || 0)" 
+                   class="groww-range-slider">
           </div>
         </div>
 
-        <div class="input-field">
-          <div class="field-header-row">
-            <label class="field-title">Current Benchmark Rate</label>
-            <div class="field-input-box">
-              <span class="tag-prefix">{{ ppfRate }}%</span>
-              <span class="tag-suffix">Govt. Benchmark</span>
+        <div class="groww-input-block">
+          <div class="block-top-row">
+            <label class="block-label">Current Govt. Benchmark Rate</label>
+            <div class="groww-num-box">
+              <span class="clean-readonly">{{ ppfRate }}%</span>
             </div>
           </div>
-          <p class="field-note">PPF interest is compounded annually and tax-exempt (EEE Status under 80C).</p>
+          <p class="groww-field-hint">Compounded annually with 100% sovereign tax exemption (EEE Status under 80C).</p>
         </div>
 
-        <div class="input-field">
-          <div class="field-header-row">
-            <label class="field-title">Tenure (Years)</label>
-            <div class="field-input-box">
-              <input type="number" min="15" max="50" step="5"
+        <div class="groww-input-block">
+          <div class="block-top-row">
+            <label class="block-label">Time period (Years)</label>
+            <div class="groww-num-box">
+              <input type="number" min="15" max="30" step="5"
                      [ngModel]="ppfYears()" (ngModelChange)="ppfYears.set(+$event || 0)"
-                     class="typed-input">
-              <span class="tag-suffix">Yr</span>
+                     class="clean-num-input">
+              <span class="sym-suffix">Yr</span>
             </div>
           </div>
-          <input type="range" min="15" max="30" step="5"
-                 [ngModel]="ppfYears()" (ngModelChange)="ppfYears.set(+$event || 0)" class="slider">
-          <div class="range-limits">
-            <span>15 Years (Min)</span>
-            <span>20 Years</span>
-            <span>30 Years</span>
+          <div class="slider-wrapper">
+            <input type="range" min="15" max="30" step="5"
+                   [ngModel]="ppfYears()" (ngModelChange)="ppfYears.set(+$event || 0)" 
+                   class="groww-range-slider">
           </div>
         </div>
       </div>
 
-      <div class="card results-card">
-        <div class="highlight-result">
-          <span class="res-label">Maturity Corpus</span>
-          <div class="res-amount green">{{ currencySymbol() }} {{ formatCurrency(ppfResults().maturityValue) }}</div>
+      <div class="groww-card results-pane">
+        <div class="emi-hero-card">
+          <span class="emi-hero-label">Total Maturity Corpus</span>
+          <div class="emi-hero-amount">
+            <span class="hero-sym">{{ currencySymbol() }}</span>
+            <span class="hero-val">{{ formatCurrency(ppfResults().maturityValue) }}</span>
+          </div>
         </div>
 
-        <div class="breakdown-list">
-          <div class="breakdown-row">
-            <span>Total Investment:</span>
-            <strong>{{ currencySymbol() }} {{ formatCurrency(ppfResults().totalInvested) }}</strong>
+        <div class="groww-summary-list">
+          <div class="summary-item">
+            <span class="item-label">Total investment</span>
+            <span class="item-value">{{ currencySymbol() }} {{ formatCurrency(ppfResults().totalInvested) }}</span>
           </div>
-          <div class="breakdown-row">
-            <span>Total Compound Interest:</span>
-            <strong class="green">{{ currencySymbol() }} {{ formatCurrency(ppfResults().totalInterest) }}</strong>
+          <div class="summary-item">
+            <span class="item-label">Total compound interest</span>
+            <span class="item-value interest-color">{{ currencySymbol() }} {{ formatCurrency(ppfResults().totalInterest) }}</span>
+          </div>
+          <div class="summary-item total-row">
+            <span class="item-label">Maturity value (Tax-Free)</span>
+            <span class="item-value total-bold">{{ currencySymbol() }} {{ formatCurrency(ppfResults().maturityValue) }}</span>
           </div>
         </div>
       </div>
     </div>
   }
 
-  <!-- TAB 5: SIMPLE VS COMPOUND INTEREST -->
+  <!-- ======================================================================
+       TAB 5: SIMPLE VS COMPOUND INTEREST
+       ====================================================================== -->
   @if (activeTab() === 'interest') {
-    <div class="calculator-layout">
-      <div class="card inputs-card">
-        <div class="card-head-row">
-          <h3>Principal & Growth Rate</h3>
-          <span class="active-curr-badge">{{ selectedCurrency().code }} ({{ currencySymbol() }})</span>
-        </div>
-
-        <div class="input-field">
-          <div class="field-header-row">
-            <div class="field-label-group">
-              <label class="field-title">Principal Amount</label>
+    <div class="groww-calc-grid">
+      <div class="groww-card inputs-pane">
+        <div class="groww-input-block">
+          <div class="block-top-row">
+            <div class="label-group">
+              <label class="block-label">Principal amount</label>
               @if (getAmountInWords(interestPrincipal())) {
-                <span class="amount-badge">{{ getAmountInWords(interestPrincipal()) }}</span>
+                <span class="word-badge">{{ getAmountInWords(interestPrincipal()) }}</span>
               }
             </div>
-            <div class="field-input-box">
-              <span class="tag-prefix">{{ currencySymbol() }}</span>
-              <input type="number" min="500" max="50000000" step="1000"
+            <div class="groww-num-box">
+              <span class="sym-prefix">{{ currencySymbol() }}</span>
+              <input type="number" min="1000" max="10000000" step="1000"
                      [ngModel]="interestPrincipal()" (ngModelChange)="interestPrincipal.set(+$event || 0)"
-                     class="typed-input wide">
+                     class="clean-num-input">
             </div>
           </div>
-          <input type="range" min="1000" max="1000000" step="1000"
-                 [ngModel]="interestPrincipal()" (ngModelChange)="interestPrincipal.set(+$event || 0)" class="slider">
-          <div class="range-limits">
-            <span>{{ formatCompact(1000) }}</span>
-            <span>{{ formatCompact(500000) }}</span>
-            <span>{{ formatCompact(1000000) }}</span>
+          <div class="slider-wrapper">
+            <input type="range" min="1000" max="1000000" step="1000"
+                   [ngModel]="interestPrincipal()" (ngModelChange)="interestPrincipal.set(+$event || 0)" 
+                   class="groww-range-slider">
           </div>
         </div>
 
-        <div class="input-field">
-          <div class="field-header-row">
-            <label class="field-title">Annual Interest Rate</label>
-            <div class="field-input-box">
-              <input type="number" min="0.1" max="40" step="0.5"
+        <div class="groww-input-block">
+          <div class="block-top-row">
+            <label class="block-label">Rate of interest (p.a)</label>
+            <div class="groww-num-box">
+              <input type="number" min="1" max="25" step="0.5"
                      [ngModel]="interestRate()" (ngModelChange)="interestRate.set(+$event || 0)"
-                     class="typed-input">
-              <span class="tag-suffix">%</span>
+                     class="clean-num-input">
+              <span class="sym-suffix">%</span>
             </div>
           </div>
-          <input type="range" min="1" max="25" step="0.5"
-                 [ngModel]="interestRate()" (ngModelChange)="interestRate.set(+$event || 0)" class="slider">
-          <div class="range-limits">
-            <span>1%</span>
-            <span>12%</span>
-            <span>25%</span>
+          <div class="slider-wrapper">
+            <input type="range" min="1" max="25" step="0.5"
+                   [ngModel]="interestRate()" (ngModelChange)="interestRate.set(+$event || 0)" 
+                   class="groww-range-slider">
           </div>
         </div>
 
-        <div class="input-field">
-          <div class="field-header-row">
-            <label class="field-title">Time Period (Years)</label>
-            <div class="field-input-box">
-              <input type="number" min="1" max="40" step="1"
+        <div class="groww-input-block">
+          <div class="block-top-row">
+            <label class="block-label">Time period (Years)</label>
+            <div class="groww-num-box">
+              <input type="number" min="1" max="20" step="1"
                      [ngModel]="interestTimeYears()" (ngModelChange)="interestTimeYears.set(+$event || 0)"
-                     class="typed-input">
-              <span class="tag-suffix">Yr</span>
+                     class="clean-num-input">
+              <span class="sym-suffix">Yr</span>
             </div>
           </div>
-          <input type="range" min="1" max="20" step="1"
-                 [ngModel]="interestTimeYears()" (ngModelChange)="interestTimeYears.set(+$event || 0)" class="slider">
-          <div class="range-limits">
-            <span>1 Year</span>
-            <span>10 Years</span>
-            <span>20 Years</span>
+          <div class="slider-wrapper">
+            <input type="range" min="1" max="20" step="1"
+                   [ngModel]="interestTimeYears()" (ngModelChange)="interestTimeYears.set(+$event || 0)" 
+                   class="groww-range-slider">
           </div>
         </div>
       </div>
 
-      <div class="card results-card">
-        <div class="comparison-row">
-          <div class="comp-box">
-            <span class="comp-label">Simple Interest Total</span>
-            <strong class="comp-val">{{ currencySymbol() }} {{ formatCurrency(interestResults().simpleTotal) }}</strong>
-            <small>Earned: {{ currencySymbol() }} {{ formatCurrency(interestResults().simpleInterest) }}</small>
+      <div class="groww-card results-pane">
+        <div class="groww-summary-list">
+          <div class="summary-item">
+            <span class="item-label">Simple Interest Return</span>
+            <span class="item-value">{{ currencySymbol() }} {{ formatCurrency(interestResults().simpleInterest) }}</span>
           </div>
-          <div class="comp-box highlighted">
-            <span class="comp-label">Compound Interest Total</span>
-            <strong class="comp-val green">{{ currencySymbol() }} {{ formatCurrency(interestResults().compoundTotal) }}</strong>
-            <small>Earned: {{ currencySymbol() }} {{ formatCurrency(interestResults().compoundInterest) }}</small>
+          <div class="summary-item">
+            <span class="item-label">Compound Interest Return</span>
+            <span class="item-value interest-color">{{ currencySymbol() }} {{ formatCurrency(interestResults().compoundInterest) }}</span>
           </div>
-        </div>
-
-        <div class="comp-diff-banner">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-            <polyline points="17 6 23 6 23 12"></polyline>
-          </svg>
-          <span>Compounding yield advantage: <strong>{{ currencySymbol() }} {{ formatCurrency(interestResults().compoundDifference) }}</strong></span>
+          <div class="summary-item total-row">
+            <span class="item-label">Compounding Advantage</span>
+            <span class="item-value total-bold green-text">+ {{ currencySymbol() }} {{ formatCurrency(interestResults().compoundDifference) }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -603,147 +644,6 @@
 
   <!-- Mid Content Ad Banner -->
   <app-ad-banner slot="midContent"></app-ad-banner>
-
-  <!-- Educational Authority & SEO Guide Section (800+ words of authentic financial planning depth) -->
-  <article class="seo-guide" itemscope itemtype="https://schema.org/Article">
-    <header class="guide-header">
-      <div class="guide-tag">Comprehensive Financial Handbook</div>
-      <h2 itemprop="headline">Understanding Loan Amortization, Compound Growth & Wealth Calculations</h2>
-      <p class="guide-intro">
-        Whether financing a home, taking a car loan, or investing in fixed income instruments, understanding the underlying mathematical formulas protects you from hidden bank charges, deceptive flat-rate promotions, and compounding inefficiencies. Below is an authoritative guide to the algorithms and strategies powering this financial suite.
-      </p>
-    </header>
-
-    <div class="guide-sections">
-      <!-- Section 1: The Reducing Balance EMI Formula -->
-      <section class="guide-block">
-        <h3>1. The Equated Monthly Installment (EMI) Formula Explained</h3>
-        <p>
-          Most consumer and mortgage loans across global commercial banks use the <strong>Reducing Balance Amortization Method</strong>. In this system, interest is calculated solely on the outstanding principal balance remaining at the end of each monthly billing cycle—never on the original loan total.
-        </p>
-
-        <div class="formula-box">
-          <div class="formula-title">Standard Reducing Balance EMI Formula</div>
-          <div class="formula-code">EMI = [P &times; r &times; (1 + r)<sup>N</sup>] &divide; [(1 + r)<sup>N</sup> &minus; 1]</div>
-          <ul class="formula-vars">
-            <li><strong>P (Principal):</strong> The total capital borrowed from the lender.</li>
-            <li><strong>r (Periodic Monthly Interest):</strong> Annual interest rate divided by 12 months, expressed as a decimal: <code>r = (Annual Rate &divide; 12) &divide; 100</code>.</li>
-            <li><strong>N (Total Monthly Tenures):</strong> Total number of monthly installments: <code>N = Years &times; 12</code>.</li>
-          </ul>
-        </div>
-
-        <h4>Step-by-Step Worked Example</h4>
-        <p>
-          Assume a borrower takes a loan of <strong>$100,000 (or ₹10,00,000)</strong> at an annual rate of <strong>9.0%</strong> for a duration of <strong>5 years (60 months)</strong>:
-        </p>
-        <ol class="steps-list">
-          <li><strong>Calculate Monthly Rate (r):</strong> <code>9.0% &divide; 12 = 0.75% per month = 0.0075</code></li>
-          <li><strong>Calculate Growth Factor:</strong> <code>(1 + 0.0075)<sup>60</sup> &approx; 1.56568</code></li>
-          <li><strong>Apply Numerator:</strong> <code>100,000 &times; 0.0075 &times; 1.56568 = 1,174.26</code></li>
-          <li><strong>Apply Denominator:</strong> <code>1.56568 &minus; 1 = 0.56568</code></li>
-          <li><strong>Final Monthly Payment:</strong> <code>1,174.26 &divide; 0.56568 = $2,075.84</code></li>
-        </ol>
-      </section>
-
-      <!-- Section 2: Reducing Balance vs Flat Rate Warning -->
-      <section class="guide-block">
-        <h3>2. Why "Flat Rate" Interest Is Deceptive Compared to Reducing Balance</h3>
-        <p>
-          Lenders frequently advertise "Flat Rate" interest (e.g. <em>"Get a personal loan at just 6% flat rate!"</em>). In a flat-rate loan, interest is calculated on the full initial loan amount for the entire tenure, even when you have already repaid 90% of the loan. This results in an effective real interest rate nearly double the stated percentage.
-        </p>
-
-        <div class="comparison-table-wrapper">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Feature</th>
-                <th>Reducing Balance Loan (Standard)</th>
-                <th>Flat Rate Loan (Deceptive)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Interest Calculation Base</strong></td>
-                <td>Outstanding principal only (decreases each month)</td>
-                <td>Original principal (never decreases)</td>
-              </tr>
-              <tr>
-                <td><strong>Effective Annual Rate (APR)</strong></td>
-                <td>Matches stated interest rate (e.g., 10%)</td>
-                <td>Almost double stated rate (e.g., 10% flat &approx; 18.5% APR)</td>
-              </tr>
-              <tr>
-                <td><strong>Prepayment Benefit</strong></td>
-                <td>High: extra principal payments immediately drop future interest</td>
-                <td>Zero or minimal benefit</td>
-              </tr>
-              <tr>
-                <td><strong>Recommended Use</strong></td>
-                <td>Home loans, Education loans, Reputable auto loans</td>
-                <td>Avoid whenever possible</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- Section 3: The Compounding Engine -->
-      <section class="guide-block">
-        <h3>3. Fixed Deposit (FD) Quarterly Compounding Dynamics</h3>
-        <p>
-          Unlike simple interest, where interest is paid out and stops growing, bank Fixed Deposits compound interest periodically. In most central banking systems, commercial Fixed Deposits compound quarterly (4 times per year):
-        </p>
-        <div class="formula-box">
-          <div class="formula-title">Compound Interest Formula</div>
-          <div class="formula-code">A = P &times; (1 + r / n)<sup>n &times; t</sup></div>
-          <ul class="formula-vars">
-            <li><strong>A:</strong> Total maturity corpus (Principal + Accumulated Interest).</li>
-            <li><strong>n:</strong> Compounding frequency per annum (Quarterly = 4, Semi-Annual = 2, Annual = 1).</li>
-            <li><strong>t:</strong> Total tenure in years.</li>
-          </ul>
-        </div>
-        <p>
-          Because interest earned in Q1 begins earning interest in Q2, Q3, and Q4, the <strong>Effective Annual Yield (APY)</strong> is always higher than the nominal coupon rate. For example, a 7.5% nominal FD compounded quarterly yields an effective annual return of <strong>7.71%</strong>.
-        </p>
-      </section>
-
-      <!-- Section 4: Triple Tax-Exempt Retirement Wealth (PPF) -->
-      <section class="guide-block">
-        <h3>4. Public Provident Fund (PPF) & Long-Term Compounding</h3>
-        <p>
-          The Public Provident Fund (PPF) scheme is widely recognized as one of the most powerful low-risk, fixed-income compounding vehicles due to its <strong>Exempt-Exempt-Exempt (EEE)</strong> sovereign tax status:
-        </p>
-        <ul class="bullet-list">
-          <li><strong>Investment Phase:</strong> Contributions qualify for full tax deduction under Section 80C (up to ₹1.5 Lakh annually).</li>
-          <li><strong>Accumulation Phase:</strong> Annual compound interest generated across the 15-year tenure is completely tax-free.</li>
-          <li><strong>Maturity Phase:</strong> The entire corpus withdrawn at maturity is 100% exempt from income and capital gains tax.</li>
-        </ul>
-      </section>
-    </div>
-
-    <!-- Comprehensive FAQ Section -->
-    <div class="faq-section">
-      <h3>Frequently Asked Financial Questions</h3>
-      <div class="faq-grid">
-        <div class="faq-item">
-          <h4>Why does early loan EMI consist of mostly interest rather than principal?</h4>
-          <p>During the first few years of a long-term loan, your outstanding principal balance is at its highest. Since interest is calculated against this large balance, the interest charge consumes the majority of your monthly installment. As the principal diminishes over time, the interest fraction shrinks, and an increasing share goes toward principal payoff.</p>
-        </div>
-        <div class="faq-item">
-          <h4>How does making one extra EMI payment per year impact my mortgage?</h4>
-          <p>Making just one additional EMI payment per year directly against your principal balance can shave 3 to 5 years off a 25-year mortgage and save between 15% and 25% of your total interest cost. Because the extra payment bypasses the interest cycle, 100% of it reduces the compounding principal base.</p>
-        </div>
-        <div class="faq-item">
-          <h4>What is the difference between a Fixed Rate and Floating Rate loan?</h4>
-          <p>A Fixed Rate loan locks your interest rate for the entire tenure, providing predictable monthly budgeting regardless of market fluctuations. A Floating (Variable) Rate loan benchmarks your rate to the central bank's repo or prime rate, meaning your monthly EMI or tenure adjusts upward when benchmark rates rise and decreases when central banks cut rates.</p>
-        </div>
-        <div class="faq-item">
-          <h4>How often is Recurring Deposit (RD) interest compounded?</h4>
-          <p>Under standard commercial banking rules, Recurring Deposits compound interest on a quarterly basis. Each monthly installment earns interest for the exact number of remaining months until maturity, calculated via quarterly compounding tables.</p>
-        </div>
-      </div>
-    </div>
-  </article>
 
   <!-- Bottom Ad Banner -->
   <app-ad-banner slot="bottomBanner"></app-ad-banner>

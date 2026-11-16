@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    GLOBAL DESIGN SYSTEM: MODERN, CLEAN, COLORFUL & TRUSTWORTHY
    Inspired by world-class utilities (iLovePDF, Linear, Stripe, Vercel)
    ========================================================================== */
@@ -70,7 +70,7 @@ html, body {
    ========================================================================== */
 
 .tool-page-container {
-  max-width: 1040px;
+  max-width: 1240px;
   margin: 0 auto;
   padding: 16px 0 48px;
 }
@@ -203,7 +203,6 @@ html, body {
 .btn-convert,
 .btn-merge,
 .btn-compress,
-.btn-action,
 .btn-download {
   display: inline-flex;
   align-items: center;
@@ -414,4 +413,108 @@ app-ad-banner {
   color: #94a3b8;
   text-transform: uppercase;
   margin-bottom: 6px;
+}
+
+/* Shared Modes / Tabs Replacement Grid across all Tools */
+.modes-selector-grid {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.modes-selector-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.modes-selector-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.modes-selector-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+.modes-selector-grid.cols-5 { grid-template-columns: repeat(5, 1fr); }
+.modes-selector-grid.cols-6 { grid-template-columns: repeat(6, 1fr); }
+
+.mode-select-box {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.mode-select-box:hover {
+  border-color: #94a3b8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px -4px rgba(0, 0, 0, 0.08);
+}
+
+.mode-select-box.active {
+  border-color: #2563eb;
+  background: #eff6ff;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.mode-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+
+.mode-icon.icon-blue { background: #eff6ff; color: #2563eb; }
+.mode-icon.icon-green { background: #ecfdf5; color: #059669; }
+.mode-icon.icon-purple { background: #faf5ff; color: #9333ea; }
+.mode-icon.icon-emerald { background: #f0fdf4; color: #16a34a; }
+.mode-icon.icon-orange { background: #fff7ed; color: #ea580c; }
+
+.mode-info h4 {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 3px;
+}
+
+.mode-info p {
+  font-size: 11.5px;
+  color: #64748b;
+  line-height: 1.35;
+  margin: 0 0 8px;
+}
+
+.mode-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #f1f5f9;
+  color: #64748b;
+  margin-top: auto;
+}
+
+.mode-select-box.active .mode-badge {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+@media (max-width: 800px) {
+  .modes-selector-grid.cols-3,
+  .modes-selector-grid.cols-4,
+  .modes-selector-grid.cols-5,
+  .modes-selector-grid.cols-6 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .modes-selector-grid.cols-2,
+  .modes-selector-grid.cols-3,
+  .modes-selector-grid.cols-4,
+  .modes-selector-grid.cols-5,
+  .modes-selector-grid.cols-6 {
+    grid-template-columns: 1fr;
+  }
 }

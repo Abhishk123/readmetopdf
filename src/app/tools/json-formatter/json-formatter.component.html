@@ -1,7 +1,9 @@
-<div class="tool-page-container">
+﻿<div class="tool-page-container">
   <!-- Breadcrumb Navigation -->
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <a routerLink="/tools">All Tools</a>
     <span class="sep">/</span>
     <span class="current">JSON Formatter & CSV Converter</span>
   </nav>
@@ -94,38 +96,6 @@
 
   <!-- Mid Content Ad Banner -->
   <app-ad-banner slot="midContent"></app-ad-banner>
-
-  <!-- Educational SEO Guide -->
-  <div class="seo-guide">
-    <h2>Why Use JSNS Works JSON Formatter?</h2>
-    <div class="features-grid">
-      <div class="feature-card">
-        <h3>Instant Syntax Validation</h3>
-        <p>Pinpoint syntax bugs, unescaped characters, missing trailing commas, and incorrect quotation marks with detailed parser feedback.</p>
-      </div>
-      <div class="feature-card">
-        <h3>One-Click CSV Export</h3>
-        <p>Instantly convert database queries or API JSON array payloads into clean tabular CSV files compatible with Excel and Google Sheets.</p>
-      </div>
-      <div class="feature-card">
-        <h3>Confidential & Offline Safe</h3>
-        <p>No backend servers or cloud logging. All JSON parsing and formatting execute 100% client-side in your local browser sandbox.</p>
-      </div>
-    </div>
-
-    <!-- FAQ Accordion -->
-    <div class="faq-section">
-      <h2>Frequently Asked Questions</h2>
-      <div class="faq-item">
-        <h3>Why does my JSON say "Unexpected token"?</h3>
-        <p>Standard JSON strictly requires double quotes <code>"</code> around keys and strings. Single quotes <code>'</code> and trailing commas after the last item will trigger syntax errors.</p>
-      </div>
-      <div class="faq-item">
-        <h3>Can I export nested JSON to CSV?</h3>
-        <p>Yes, nested objects or arrays are serialized into JSON string cells, making them easy to view in Excel or CSV readers.</p>
-      </div>
-    </div>
-  </div>
 
   <!-- Bottom Ad Banner -->
   <app-ad-banner slot="bottomBanner"></app-ad-banner>

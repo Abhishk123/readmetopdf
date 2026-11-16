@@ -1,209 +1,192 @@
 <div class="home-container">
-  <!-- Top Responsive Ad Banner -->
-  <app-ad-banner slot="topBanner"></app-ad-banner>
+  <!-- NO ADS ON HOME PAGE (Clean & Focused) -->
 
-  <!-- Hero Section -->
+  <!-- Hero Section: JSANS DevStudio -->
   <section class="hero-section">
-    <div class="ambient-orb orb-1"></div>
-    <div class="ambient-orb orb-2"></div>
-    <div class="hero-chip">
-      <span class="chip-pulse"></span>
-      <span>100% In-Browser Execution • Zero Server Latency</span>
+    <div class="hero-badge-row">
+      <div class="studio-pill">
+        <span class="pill-dot"></span>
+        <span>JSANS DevStudio &bull; Digital Products & Engineering</span>
+      </div>
+      <div class="status-chip">
+        <span class="live-pulse"></span>
+        <span>All Systems Operational</span>
+      </div>
     </div>
-    <h1 class="hero-title">No uploads. No logins. <span class="gradient-text">Instant tools.</span></h1>
+
+    <h1 class="hero-title">
+      Engineering Modern <span class="highlight-blue">Web Utilities</span>, Mobile Apps & Automation Bots.
+    </h1>
+
     <p class="hero-subtitle">
-      Fast, private web utilities for financial calculations, media conversions, and everyday data tasks. Everything runs directly inside your browser memory.
+      We build fast, intuitive digital products and automation tools for everyday productivity. Designed with clean interfaces, zero clutter, and high performance.
     </p>
 
-    <!-- Search Bar with Keyboard Shortcut -->
-    <div class="search-box-wrapper">
-      <div class="search-input-box">
-        <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    <!-- Hero Actions -->
+    <div class="hero-cta-group">
+      <a routerLink="/tools" class="btn-hero-primary">
+        <span>Explore Utilities Suite (16+ Tools)</span>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
         </svg>
-        <input #searchInput
-               type="text"
-               placeholder="Search tools by name, formula, or format..."
-               [ngModel]="searchQuery()"
-               (ngModelChange)="searchQuery.set($event)"
-               class="search-input">
-        @if (searchQuery()) {
-          <button type="button" class="btn-clear-search" (click)="clearSearch()">✕</button>
-        } @else {
-          <kbd class="kbd-shortcut">/</kbd>
-        }
-      </div>
+      </a>
+      <button type="button" class="btn-hero-secondary" (click)="scrollToSection('products-section')">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+          <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+          <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+          <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+        </svg>
+        <span>View All Products</span>
+      </button>
     </div>
 
-    <!-- Category Filter Pills -->
-    <div class="category-pills">
-      @for (cat of categories; track cat.value) {
-        <button type="button"
-                class="pill-btn"
-                [class.active]="selectedCategory() === cat.value"
-                (click)="setCategory(cat.value)">
-          {{ cat.label }}
-        </button>
-      }
+    <!-- Value Metrics Row (Normal Sized & Balanced) -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-number">16+</div>
+        <div class="metric-label">Online Utilities</div>
+        <div class="metric-sub">PDF, Media, Finance & Dev</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-number">WhatsApp Bot</div>
+        <div class="metric-label">Cloud Automation</div>
+        <div class="metric-sub">Meta Graph API Powered</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-number">CallSense AI</div>
+        <div class="metric-label">Live on Google Play</div>
+        <div class="metric-sub">Smart Spam & Intent Shield</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-number">Cross-Platform</div>
+        <div class="metric-label">Web, Mobile & Bot</div>
+        <div class="metric-sub">High-Speed Digital Solutions</div>
+      </div>
     </div>
   </section>
 
-  <!-- Tools Catalog Grid -->
-  <section class="tools-section">
-    <div class="section-header">
-      <div class="header-left">
-        <h2>Available Utilities</h2>
-        <span class="count-badge">{{ filteredTools().length }}</span>
+  <!-- Products Showcase Section (Normal Size Boxes, Product Details Only) -->
+  <section class="products-section" id="products-section">
+    <div class="section-top-bar">
+      <div>
+        <span class="section-tag">DevStudio Portfolio</span>
+        <h2 class="section-heading">Our Products</h2>
+        <p class="section-subheading">Digital products and platforms engineered by JSANS DevStudio</p>
       </div>
-      @if (searchQuery()) {
-        <span class="search-indicator">Filtering by "{{ searchQuery() }}"</span>
-      }
     </div>
 
-    @if (filteredTools().length === 0) {
-      <div class="empty-results">
-        <p>No tools matched your search.</p>
-        <button type="button" class="btn-reset-filters" (click)="clearSearch(); setCategory('all')">Show all utilities</button>
-      </div>
-    } @else {
-      <div class="tools-grid">
-        @for (tool of filteredTools(); track tool.id) {
-          <a [routerLink]="tool.route" class="tool-card-link">
-            <div class="tool-card" [attr.data-cat]="tool.category">
-              <div class="card-header">
-                <div class="tool-icon-box" [ngClass]="'icon-' + tool.category">
-                  @if (tool.id === 'finance-calculator') {
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M6 3h12"></path>
-                      <path d="M6 8h12"></path>
-                      <path d="M6 13l8.5 8"></path>
-                      <path d="M6 13h3a4 4 0 0 0 0-8H6"></path>
-                    </svg>
-                  } @else if (tool.id === 'pdf-merger' || tool.id === 'readme-to-pdf') {
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                      <polyline points="14 2 14 8 20 8"></polyline>
-                      <line x1="12" y1="18" x2="12" y2="12"></line>
-                    </svg>
-                  } @else if (tool.id === 'image-compressor' || tool.id === 'image-converter' || tool.id === 'favicon-generator') {
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                      <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                      <polyline points="21 15 16 10 5 21"></polyline>
-                    </svg>
-                  } @else if (tool.id === 'base64-tool' || tool.id === 'json-formatter') {
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                      <polyline points="16 18 22 12 16 6"></polyline>
-                      <polyline points="8 6 2 12 8 18"></polyline>
-                    </svg>
-                  } @else if (tool.id === 'color-picker') {
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="m15 11-1 1-5.5-5.5a1.5 1.5 0 0 1 0-2.12l.88-.88a1.5 1.5 0 0 1 2.12 0L15 7.5"></path>
-                      <path d="M19 15v4a2 2 0 0 1-2 2H7"></path>
-                    </svg>
-                  } @else if (tool.id === 'unit-converter') {
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M4 14h6v6"></path>
-                      <path d="M20 10h-6V4"></path>
-                      <path d="m14 10 7-7"></path>
-                      <path d="m3 21 7-7"></path>
-                    </svg>
-                  } @else if (tool.id === 'percentage-calculator') {
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                      <line x1="19" y1="5" x2="5" y2="19"></line>
-                      <circle cx="6.5" cy="6.5" r="2.5"></circle>
-                      <circle cx="17.5" cy="17.5" r="2.5"></circle>
-                    </svg>
-                  } @else if (tool.id === 'tip-calculator') {
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                      <circle cx="9" cy="7" r="4"></circle>
-                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    </svg>
-                  } @else if (tool.id === 'age-calculator') {
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                      <line x1="16" y1="2" x2="16" y2="6"></line>
-                      <line x1="8" y1="2" x2="8" y2="6"></line>
-                      <line x1="3" y1="10" x2="21" y2="10"></line>
-                    </svg>
-                  } @else if (tool.id === 'word-counter') {
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                      <polyline points="4 7 4 4 20 4 20 7"></polyline>
-                      <line x1="9" y1="20" x2="15" y2="20"></line>
-                      <line x1="12" y1="4" x2="12" y2="20"></line>
-                    </svg>
-                  } @else if (tool.id === 'url-tools') {
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                    </svg>
-                  } @else {
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="4" y="4" width="16" height="16" rx="2"></rect>
-                      <line x1="9" y1="9" x2="15" y2="15"></line>
-                      <line x1="15" y1="9" x2="9" y2="15"></line>
-                    </svg>
-                  }
-                </div>
+    <div class="products-grid">
+      <!-- Product 1: Online Utilities Suite -->
+      <div class="product-box highlight-box">
+        <div class="box-head">
+          <div class="box-icon icon-blue">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+              <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+              <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+              <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+            </svg>
+          </div>
+          <div class="box-badges">
+            <span class="badge-tag">Web Platform</span>
+            <span class="badge-live">16+ Tools</span>
+          </div>
+        </div>
 
-                @if (tool.badge) {
-                  <span class="tag-chip">{{ tool.badge }}</span>
-                }
-              </div>
+        <h3 class="box-title">Online Utilities Suite</h3>
+        <p class="box-desc">
+          A full-featured suite of 16+ browser-based utilities for PDF merging, image compression, multi-currency loan EMI & investment calculations, QR codes, and developer tokens.
+        </p>
 
-              <h3 class="card-title">{{ tool.title }}</h3>
-              <p class="card-desc">{{ tool.shortDescription }}</p>
+        <ul class="box-features">
+          <li>PDF Merger & Format Converters</li>
+          <li>Loan EMI, FD & PPF Calculators</li>
+          <li>Barcode & 2D QR Code Generator</li>
+        </ul>
 
-              <div class="card-footer">
-                <span class="action-link">
-                  <span>Open utility</span>
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" class="arrow-icon">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                  </svg>
-                </span>
-              </div>
-            </div>
+        <div class="box-footer">
+          <a routerLink="/tools" class="btn-box-action">
+            <span>Open Utilities Suite</span>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
           </a>
-        }
+        </div>
       </div>
-    }
-  </section>
 
-  <!-- Mid-Page Content Ad Slot -->
-  <app-ad-banner slot="midContent"></app-ad-banner>
+      <!-- Product 2: QuickTools on WhatsApp -->
+      <div class="product-box" id="project-whatsapp">
+        <div class="box-head">
+          <div class="box-icon icon-green">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+            </svg>
+          </div>
+          <div class="box-badges">
+            <span class="badge-tag">Automation Bot</span>
+            <span class="badge-live">Live Webhook</span>
+          </div>
+        </div>
 
-  <!-- Technical Transparency Section (Builds Genuine Authority) -->
-  <section class="tech-section">
-    <div class="tech-header">
-      <h2>Engineered for privacy and zero latency</h2>
-      <p>How JSNS Works operates under the hood</p>
+        <h3 class="box-title">QuickTools on WhatsApp</h3>
+        <p class="box-desc">
+          An everyday multi-utility bot on WhatsApp. Resize exam photos under 20KB, 50KB, or 100KB, calculate loan EMIs, compute exact age for govt jobs, and create QR codes in chat.
+        </p>
+
+        <ul class="box-features">
+          <li>Photo Resizer for Admit Cards (20KB / 50KB)</li>
+          <li>Instant Math: <code>EMI 500000 8.5 5</code></li>
+          <li>Age & Date Duration: <code>AGE 15-08-1998</code></li>
+        </ul>
+
+        <div class="box-footer">
+          <a routerLink="/quicktools" class="btn-box-action btn-green">
+            <span>Explore QuickTools Bot</span>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Product 3: CallSense AI -->
+      <div class="product-box">
+        <div class="box-head">
+          <div class="box-icon icon-purple">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+          </div>
+          <div class="box-badges">
+            <span class="badge-tag">Android App</span>
+            <span class="badge-live">Live on Play Store</span>
+          </div>
+        </div>
+
+        <h3 class="box-title">CallSense AI</h3>
+        <p class="box-desc">
+          Intelligent communication and real-time spam protection for Android. Dynamically evaluates incoming call patterns to intercept robocalls and fraud numbers with 100% on-device privacy.
+        </p>
+
+        <ul class="box-features">
+          <li>Real-Time AI Spam & Intent Analysis</li>
+          <li>Smart Silence & Robocall Filtering</li>
+          <li>100% On-Device Privacy (Zero cloud contact harvesting)</li>
+        </ul>
+
+        <div class="box-footer">
+          <a href="https://play.google.com/store/apps/details?id=com.callsense.ai.callsense_ai&hl=en-US&ah=RQvyIaj51T_KWk9a9jImgjE0yU4" target="_blank" rel="noopener" class="btn-box-action btn-playstore">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path d="M3.609 1.814L13.793 12 3.61 22.186a1.5 1.5 0 0 1-.61-.956V2.77c0-.38.163-.733.61-.956zm11.536 11.537l2.43 2.43-12.02 6.94 9.59-9.37zm0-2.702L5.555.28 17.575 7.22l-2.43 2.43zM18.92 8l3.19 1.84c.89.51.89 1.81 0 2.32L18.92 14l-2.12-2.12 2.12-2.12z"/>
+            </svg>
+            <span>Get on Google Play</span>
+          </a>
+        </div>
+      </div>
     </div>
-
-    <div class="tech-grid">
-      <div class="tech-card">
-        <div class="tech-badge">01</div>
-        <h3>In-Memory Execution</h3>
-        <p>File compression, PDF assembly, and string parsing run exclusively within your local browser sandbox via modern WebAssembly and HTML5 Canvas.</p>
-      </div>
-
-      <div class="tech-card">
-        <div class="tech-badge">02</div>
-        <h3>Zero Cloud Ingestion</h3>
-        <p>No backend servers store or log your documents, photos, or authentication tokens. Your proprietary information never leaves your device RAM.</p>
-      </div>
-
-      <div class="tech-card">
-        <div class="tech-badge">03</div>
-        <h3>No Authentication Walls</h3>
-        <p>No accounts, passwords, or rate limits. Immediate access to every calculator and file tool without marketing gatekeeping.</p>
-      </div>
-    </div>
   </section>
-
-  <!-- Bottom Ad Banner -->
-  <app-ad-banner slot="bottomBanner"></app-ad-banner>
 </div>
