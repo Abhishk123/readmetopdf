@@ -90,17 +90,21 @@ export default async function handler(req: Request): Promise<Response> {
 
   // 2. Incoming Messages & Events (POST)
   if (req.method === 'POST') {
-    let body: WhatsAppWebhookBody;
+    let body: any;
     try {
       body = await req.json();
     } catch {
       return Response.json({ status: 'invalid_json' }, { status: 400 });
     }
 
-    if (body.object && body.entry?.[0]?.changes?.[0]?.value?.messages?.[0]) {
+    console.log('[WhatsApp Inbound Webhook Payload]:', JSON.stringify(body));
+
+    if (body?.object && body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]) {
       const messageData = body.entry[0].changes[0].value.messages[0];
       const from = messageData.from; // Sender WhatsApp phone number
       const phoneNumberId = body.entry[0].changes[0].value.metadata?.phone_number_id || process.env['WHATSAPP_PHONE_NUMBER_ID'];
+
+      console.log('[WhatsApp Processing User Message]:', { from, phoneNumberId, type: messageData.type, body: messageData.text?.body });
 
       try {
         let replyText = '';
@@ -129,7 +133,10 @@ export default async function handler(req: Request): Promise<Response> {
         }
 
         if (replyText && phoneNumberId) {
+          console.log('[WhatsApp Dispatching Outbound Reply]:', { to: from, replySnippet: replyText.slice(0, 60) });
           await sendWhatsAppMessage(phoneNumberId, from, replyText);
+        } else {
+          console.warn('[WhatsApp Missing Reply or PhoneID]:', { hasReply: !!replyText, phoneNumberId });
         }
       } catch (err) {
         console.error('[WhatsApp Webhook] Error processing message:', err);
@@ -138,6 +145,7 @@ export default async function handler(req: Request): Promise<Response> {
       return Response.json({ status: 'ok' });
     }
 
+    console.log('[WhatsApp Non-Message Event (status/delivery)]: Ignored');
     return Response.json({ status: 'ignored' });
   }
 
@@ -305,7 +313,7 @@ function processUserCommand(rawText: string): string {
 async function sendWhatsAppMessage(phoneNumberId: string, to: string, text: string): Promise<void> {
   const token = process.env['WHATSAPP_ACCESS_TOKEN'];
   if (!token) {
-    console.log('[WhatsApp Webhook Mock Response - Token not set]:', { to, text });
+    console.error('[WhatsApp Config Error]: WHATSAPP_ACCESS_TOKEN is missing or undefined in environment variables.');
     return;
   }
 
@@ -319,17 +327,23 @@ async function sendWhatsAppMessage(phoneNumberId: string, to: string, text: stri
     text: { preview_url: true, body: text }
   };
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(payload)
-  });
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('[WhatsApp API Error]:', errorText);
+    const resText = await response.text();
+    if (!response.ok) {
+      console.error('[WhatsApp Graph API Error Response]:', { status: response.status, error: resText });
+    } else {
+      console.log('[WhatsApp Graph API Success Response]:', { status: response.status, body: resText });
+    }
+  } catch (e) {
+    console.error('[WhatsApp Network/Fetch Exception]:', e);
   }
 }
