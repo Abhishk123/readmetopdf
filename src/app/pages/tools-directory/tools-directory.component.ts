@@ -63,7 +63,7 @@ export class ToolsDirectoryComponent {
         accentClass: 'accent-pdf',
         badgeBg: '#fef2f2',
         badgeText: '#ef4444',
-        tools: this.allTools.filter(t => ['pdf-merger', 'readme-to-pdf'].includes(t.id))
+        tools: this.allTools.filter(t => ['watermark', 'pdf-merger', 'readme-to-pdf'].includes(t.id))
       },
       {
         id: 'image-media',
@@ -133,7 +133,7 @@ export class ToolsDirectoryComponent {
   }
 
   private getGroupForTool(toolId: string): string {
-    if (['pdf-merger', 'readme-to-pdf'].includes(toolId)) return 'pdf-docs';
+    if (['watermark', 'pdf-merger', 'readme-to-pdf'].includes(toolId)) return 'pdf-docs';
     if (['image-compressor', 'image-converter', 'favicon-generator', 'color-picker'].includes(toolId)) return 'image-media';
     if (['finance-calculator', 'percentage-calculator', 'tip-calculator'].includes(toolId)) return 'finance-banking';
     if (['base64-tool', 'json-formatter', 'password-generator', 'url-tools'].includes(toolId)) return 'dev-security';

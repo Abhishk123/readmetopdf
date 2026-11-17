@@ -1,6 +1,36 @@
 import { ToolItem } from '../models/tool.model';
 
 export const TOOLS_CONFIG: ToolItem[] = [
+  // --- 0. PRIVACY & SECURITY UTILITIES ---
+  {
+    id: 'watermark',
+    title: 'Safe-KYC Document Watermarker',
+    shortDescription: 'Stamp tamper-proof diagonal purpose watermarks across Aadhaar, PAN card, Voter ID, and certificates to prevent identity fraud.',
+    fullDescription: 'Secure your sensitive identity documents. Add customizable tamper-proof watermarks like "ONLY FOR AIRTEL SIM" or "ONLY FOR HOTEL CHECK-IN" with automatic date stamps. 100% private in-browser canvas processing with zero server uploads.',
+    category: 'documents',
+    route: '/tools/watermark',
+    icon: 'shield',
+    badge: 'Safe-KYC',
+    isPopular: true,
+    keywords: ['watermark aadhaar', 'mask aadhaar', 'safe kyc', 'pan card watermark', 'id card security', 'tamper proof watermark', 'document watermark'],
+    features: [
+      '100% In-browser processing — documents never leave your device',
+      'Quick presets for Hotel check-in, SIM activation, and Bank KYC',
+      'Repeating fraud-prevention grid pattern with auto date stamp',
+      'Adjustable opacity, font size, and stamp color',
+      'Instant high-resolution PNG download'
+    ],
+    howToSteps: [
+      { name: 'Upload Document', text: 'Select or drag your Aadhaar, PAN, or Passport photo into the browser.' },
+      { name: 'Pick Preset or Custom Text', text: 'Choose a quick verification preset (Hotel Check-In, SIM activation) or type your own.' },
+      { name: 'Download Protected File', text: 'Preview the diagonal tamper-proof watermark and download your secure image instantly.' }
+    ],
+    faqs: [
+      { question: 'Is it safe to upload my Aadhaar card here?', answer: 'Yes! This tool runs 100% inside your browser memory using HTML5 Canvas. Your document is never sent to any server.' },
+      { question: 'Why should I watermark my ID card?', answer: 'UIDAI and cybersecurity authorities recommend stamping the specific purpose (e.g., "Only for Hotel Check-In") on copies of Aadhaar to prevent misuse in unauthorized loan or SIM issuance.' }
+    ]
+  },
+
   // --- 1. FINANCIAL CALCULATORS ---
   {
     id: 'finance-calculator',

@@ -112,7 +112,37 @@ export default async function handler(req: Request): Promise<Response> {
 
         // Handle text message or interactive button clicks
         if (messageData.type === 'text' && messageData.text?.body) {
-          replyText = await processUserCommand(messageData.text.body.trim());
+          const rawInput = messageData.text.body.trim();
+          const upperInput = rawInput.toUpperCase();
+
+          // If greeting, send clean numbered menu with interactive buttons
+          if (['HI', 'HELLO', 'START', 'MENU', 'HELP', 'TOOLS'].includes(upperInput)) {
+            if (phoneNumberId) {
+              await sendWhatsAppButtons(
+                phoneNumberId,
+                from,
+                '👋 Welcome to QuickTools!',
+                `Reply with a *number (1 - 6)* or tap an option below:
+
+1️⃣ *Loan EMI Calculator*
+2️⃣ *Exact Age & Birthday*
+3️⃣ *UPI Payment QR Code*
+4️⃣ *GST Tax Calculator*
+5️⃣ *Safe-KYC Document Watermark*
+6️⃣ *Photo Size Reducer (20KB / 50KB)*
+
+💬 _Or ask me any question in plain words!_`,
+                [
+                  { id: '1', title: '📊 Loan EMI' },
+                  { id: '2', title: '🎂 Exact Age' },
+                  { id: '5', title: '🛡️ Safe KYC' }
+                ]
+              );
+              return Response.json({ status: 'ok' });
+            }
+          }
+
+          replyText = await processUserCommand(rawInput);
         } else if (messageData.type === 'interactive') {
           const buttonId = messageData.interactive?.button_reply?.id || messageData.interactive?.list_reply?.id || '';
           replyText = await processUserCommand(buttonId);
@@ -125,8 +155,8 @@ export default async function handler(req: Request): Promise<Response> {
               '📸 Photo Received!',
               'What would you like to do with this image? Choose an action below:',
               [
-                { id: 'ACTION_WATERMARK', title: '🛡️ Safe-KYC Mask' },
-                { id: 'ACTION_COMPRESS_20KB', title: '🗜️ Compress to 20KB' },
+                { id: '5', title: '🛡️ Safe-KYC Mask' },
+                { id: '6', title: '🗜️ Compress to 20KB' },
                 { id: 'ACTION_CONVERT_PDF', title: '📄 Convert to PDF' }
               ]
             );
@@ -171,34 +201,51 @@ async function processUserCommand(rawText: string): Promise<string> {
   const text = rawText.trim();
   const upper = text.toUpperCase();
 
-  // 1. Sleek Modern AI Menu
-  if (upper === 'HELP' || upper === 'MENU' || upper === 'HI' || upper === 'HELLO' || upper === 'START') {
-    return `✨ *JSANS QuickTools AI* ✨
-_Your Smart Utilities & AI Assistant on WhatsApp_
-━━━━━━━━━━━━━━━━━━━━
+  // 0. Main Menu
+  if (['HELP', 'MENU', 'HI', 'HELLO', 'START', 'TOOLS'].includes(upper)) {
+    return `👋 *Welcome to QuickTools!*
+Reply with a *number (1 - 6)*:
 
-💬 *You can ask me ANYTHING naturally:*
-• *"Calculate EMI for 20 lakh home loan for 15 yrs at 8.5%"*
-• *"Mera age calculate karo - 15 August 1998"*
-• *"Create UPI QR for rahul@okhdfcbank 500"*
-• *"Calculate 18% GST on 2,500"*
-• *"Write a sick leave letter for 2 days"*
-• *"Tell me a joke / explain quantum physics"*
+1️⃣ *Loan EMI Calculator*
+2️⃣ *Exact Age & Birthday*
+3️⃣ *UPI Payment QR Code*
+4️⃣ *GST Tax Calculator*
+5️⃣ *Safe-KYC Document Watermark*
+6️⃣ *Photo Size Reducer (20KB / 50KB)*
 
-🛠️ *Quick Shortcuts:*
-💳 *Loan EMI:* \`EMI 500000 8.5 5\`
-🎂 *Exact Age:* \`AGE 15-08-1998\`
-🧾 *GST Tax:* \`GST 1250 18\`
-💸 *UPI QR:* \`UPI payee@bank 500\`
-🛡️ *Safe KYC:* Send any photo to watermark
-
-🌐 *Explore 16+ Web Tools (Free & Private):*
-👉 https://www.jsnsworks.site/tools
-
-_Just reply in your own words — I understand English, Hindi, Telugu, and more!_`;
+💬 _Or ask me any question in plain words!_`;
   }
 
-  // 2. Exact Loan EMI Shortcut
+  // --- TOOL 1: LOAN EMI CALCULATOR ---
+  if (upper === '1' || upper === 'LOAN' || upper === 'EMI') {
+    return `📊 *Loan EMI Calculator*
+━━━━━━━━━━━━━━━━━━━━
+Reply with a preset letter or type your own values:
+
+• Reply *1A* ➔ Home Loan: ₹25L, 8.5%, 15 Yrs
+• Reply *1B* ➔ Car Loan: ₹8L, 9.0%, 5 Yrs
+• Reply *1C* ➔ Personal Loan: ₹3L, 12.0%, 3 Yrs
+
+✏️ *Or enter custom values:*
+\`EMI [Amount] [Rate%] [Years]\`
+_Example:_ \`EMI 1000000 8.5 7\``;
+  }
+
+  // Presets for 1A, 1B, 1C
+  if (upper === '1A') {
+    const res = calculateLoanEmi(2500000, 8.5, 15);
+    return formatEmiResult(2500000, 8.5, 15, res, 'Home Loan Preset');
+  }
+  if (upper === '1B') {
+    const res = calculateLoanEmi(800000, 9.0, 5);
+    return formatEmiResult(800000, 9.0, 5, res, 'Car Loan Preset');
+  }
+  if (upper === '1C') {
+    const res = calculateLoanEmi(300000, 12.0, 3);
+    return formatEmiResult(300000, 12.0, 3, res, 'Personal Loan Preset');
+  }
+
+  // Custom EMI format: EMI 500000 8.5 5
   if (upper.startsWith('EMI') && text.split(/\s+/).length >= 4) {
     const parts = text.split(/\s+/).slice(1);
     const p = parseFloat(parts[0].replace(/,/g, ''));
@@ -207,23 +254,49 @@ _Just reply in your own words — I understand English, Hindi, Telugu, and more!
 
     if (!isNaN(p) && !isNaN(rAnnual) && !isNaN(years) && p > 0 && rAnnual >= 0 && years > 0) {
       const emiRes = calculateLoanEmi(p, rAnnual, years);
-      const fmt = (val: number) => '₹' + Math.round(val).toLocaleString('en-IN');
-
-      return `📊 *Loan EMI Calculation Results*
-━━━━━━━━━━━━━━━━━━━━
-• *Principal Amount:* ${fmt(p)}
-• *Interest Rate:* ${rAnnual}% p.a.
-• *Tenure:* ${years} Years (${Math.round(years * 12)} Months)
-
-💰 *Monthly EMI:* *${fmt(emiRes.monthlyEmi)}*
-📈 *Total Interest:* ${fmt(emiRes.totalInterest)} (${emiRes.interestPercent}%)
-💳 *Total Payment:* ${fmt(emiRes.totalPayment)}
-
-🌐 _Visual sliders & FD/RD tools: https://www.jsnsworks.site/tools/finance-calculator_`;
+      return formatEmiResult(p, rAnnual, years, emiRes, 'Custom Loan Calculation');
     }
   }
 
-  // 3. Exact UPI Payment QR Code Generator
+  // --- TOOL 2: AGE CALCULATOR ---
+  if (upper === '2' || upper === 'AGE') {
+    return `🎂 *Exact Age Calculator*
+━━━━━━━━━━━━━━━━━━━━
+Enter your birth date in this format:
+👉 \`AGE DD-MM-YYYY\`
+
+_Example:_ \`AGE 15-08-1998\`
+_Or say naturally:_ *"I was born on 15 August 1998"*`;
+  }
+
+  // Custom Age format: AGE 15-08-1998
+  if (upper.startsWith('AGE') && text.split(/\s+/).length === 2) {
+    const rawDate = text.replace(/^AGE\s*/i, '').trim();
+    const ageRes = calculateExactAge(rawDate);
+    if (ageRes) {
+      return `🎂 *Age & Date Milestone*
+━━━━━━━━━━━━━━━━━━━━
+• *Exact Age:* *${ageRes.formattedString}*
+• *Total Days Lived:* ${ageRes.totalDays.toLocaleString('en-IN')} days
+• *Total Weeks:* ${ageRes.totalWeeks.toLocaleString('en-IN')} weeks
+• *Next Birthday:* In *${ageRes.daysUntilNextBirthday} days* 🎈
+
+🌐 _Full breakdown: https://www.jsnsworks.site/tools/age-calculator_`;
+    }
+  }
+
+  // --- TOOL 3: UPI QR GENERATOR ---
+  if (upper === '3' || upper === 'UPI' || upper === 'QR') {
+    return `💸 *Instant UPI Payment QR Code*
+━━━━━━━━━━━━━━━━━━━━
+Generate a scannable QR code for GPay / PhonePe / Paytm:
+
+✏️ *Reply in this format:*
+\`UPI [yourVPA] [Amount]\`
+
+_Example:_ \`UPI rahul@okhdfcbank 500\``;
+  }
+
   if (upper.startsWith('UPI')) {
     const upiConfig = parseUpiCommand(text);
     if (upiConfig) {
@@ -244,72 +317,61 @@ _Scan from any Indian UPI app to pay directly._`;
     }
   }
 
-  // 4. Exact Age Calculator Shortcut
-  if (upper.startsWith('AGE') && text.split(/\s+/).length === 2) {
-    const rawDate = text.replace(/^AGE\s*/i, '').trim();
-    const ageRes = calculateExactAge(rawDate);
-    if (ageRes) {
-      return `🎂 *Age & Date Milestone*
+  // --- TOOL 4: GST TAX CALCULATOR ---
+  if (upper === '4' || upper === 'GST') {
+    return `🧾 *GST Tax Calculator*
 ━━━━━━━━━━━━━━━━━━━━
-• *Exact Age:* *${ageRes.formattedString}*
-• *Total Days Lived:* ${ageRes.totalDays.toLocaleString('en-IN')} days
-• *Total Weeks:* ${ageRes.totalWeeks.toLocaleString('en-IN')} weeks
-• *Next Birthday:* In *${ageRes.daysUntilNextBirthday} days* 🎈
+Reply with a preset rate or custom amount:
 
-🌐 _Full breakdown: https://www.jsnsworks.site/tools/age-calculator_`;
-    }
+• Reply *4A* ➔ 18% GST on ₹1,000
+• Reply *4B* ➔ 18% GST on ₹5,000
+• Reply *4C* ➔ 12% GST on ₹2,500
+
+✏️ *Or custom amount:*
+\`GST [Amount] [Rate%]\`
+_Example:_ \`GST 1500 18\``;
   }
 
-  // 5. Exact GST Calculator Shortcut
+  if (upper === '4A') return formatGstResult(1000, 18, calculateGst(1000, 18));
+  if (upper === '4B') return formatGstResult(5000, 18, calculateGst(5000, 18));
+  if (upper === '4C') return formatGstResult(2500, 12, calculateGst(2500, 12));
+
   if (upper.startsWith('GST') && text.split(/\s+/).length >= 3) {
     const parts = text.split(/\s+/).slice(1);
     const amount = parseFloat(parts[0].replace(/,/g, ''));
     const rate = parseFloat(parts[1].replace(/%/g, ''));
 
     if (!isNaN(amount) && !isNaN(rate) && amount > 0 && rate >= 0) {
-      const gstRes = calculateGst(amount, rate);
-      const fmt = (v: number) => '₹' + v.toLocaleString('en-IN', { minimumFractionDigits: 2 });
-
-      return `🧾 *GST Tax Breakdown*
-━━━━━━━━━━━━━━━━━━━━
-• *Net Amount:* ${fmt(gstRes.netAmount)}
-• *GST Rate:* ${rate}%
-• *CGST (${rate / 2}%):* ${fmt(gstRes.cgst)}
-• *SGST (${rate / 2}%):* ${fmt(gstRes.sgst)}
-• *Total GST Tax:* ${fmt(gstRes.gstAmount)}
-
-💵 *Total Invoice Amount:* *${fmt(gstRes.totalAmount)}*`;
+      return formatGstResult(amount, rate, calculateGst(amount, rate));
     }
   }
 
-  // 6. Safe-KYC Watermark Button / Instruction
-  if (upper === 'ACTION_WATERMARK' || upper.startsWith('WATERMARK')) {
-    const purpose = text.replace(/^WATERMARK\s*/i, '').trim();
-    const purposeText = purpose && purpose !== 'ACTION_WATERMARK' ? `"${purpose.toUpperCase()}"` : '"FOR VERIFICATION ONLY"';
-
-    return `🛡️ *Safe-KYC Watermarker*
+  // --- TOOL 5: SAFE-KYC WATERMARKER ---
+  if (upper === '5' || upper === 'WATERMARK' || upper === 'ACTION_WATERMARK') {
+    return `🛡️ *Safe-KYC Document Watermarker*
 ━━━━━━━━━━━━━━━━━━━━
-Your watermark purpose is set to:
-👉 *${purposeText}*
+Prevent identity fraud on your Aadhaar, PAN & Voter ID cards!
 
-Protect your ID cards against unauthorized loan or SIM fraud right now:
-👉 Stamp on your device (100% Private, zero upload):
-https://www.jsnsworks.site/tools/aadhaar-masker
+1️⃣ *Open 1-Click Browser Studio:*
+👉 https://www.jsnsworks.site/tools/watermark
+_Pick quick presets (Hotel Check-In, SIM activation, Bank KYC) and download protected image in 1 click (100% Private, zero upload)._
 
-_Your ID never leaves your device — 100% compliant with Indian UIDAI Aadhaar privacy guidelines!_`;
+2️⃣ *Or Watermark on WhatsApp:*
+Send any ID photo here with caption:
+\`WATERMARK ONLY FOR HOTEL CHECK-IN\` or
+\`WATERMARK ONLY FOR AIRTEL SIM\``;
   }
 
-  // 6b. Interactive Button: Compress to 20KB
-  if (upper === 'ACTION_COMPRESS_20KB' || upper.includes('COMPRESS 20')) {
-    return `🗜️ *20KB Photo & Signature Compression*
+  // --- TOOL 6: PHOTO SIZE REDUCER (20KB / 50KB) ---
+  if (upper === '6' || upper === 'COMPRESS' || upper === 'ACTION_COMPRESS_20KB') {
+    return `🗜️ *Photo Size Reducer (20KB / 50KB)*
 ━━━━━━━━━━━━━━━━━━━━
-Compress your passport photo or signature for SSC, UPSC, and State Govt portals:
+Compress photos & signatures for SSC, UPSC, and State Govt applications:
 👉 https://www.jsnsworks.site/tools/image-converter
 
 _Simply select 'Compress to Target Size: 20 KB' and download your verified photo instantly!_`;
   }
 
-  // 6c. Interactive Button: Convert to PDF
   if (upper === 'ACTION_CONVERT_PDF' || upper.includes('CONVERT PDF')) {
     return `📄 *Convert Photo to PDF Document*
 ━━━━━━━━━━━━━━━━━━━━
@@ -319,23 +381,37 @@ Convert single or multiple images to a clean, crisp PDF:
 _Fast, high-resolution, and completely free in your browser!_`;
   }
 
-  // 7. QR Code Generator
-  if (upper.startsWith('QR ') && text.length > 3) {
-    const qrData = text.replace(/^QR\s*/i, '').trim();
-    const encoded = encodeURIComponent(qrData);
-    const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encoded}&format=png`;
-
-    return `📲 *QR Code Generated!*
-━━━━━━━━━━━━━━━━━━━━
-• *Content:* ${qrData.slice(0, 80)}${qrData.length > 80 ? '...' : ''}
-• *Download PNG:* ${qrImageUrl}
-
-🌐 _Custom colors & SVG: https://www.jsnsworks.site/tools/barcode-generator_`;
-  }
-
   // 8. Natural Language & AI Queries powered by Google Gemini AI
   console.log('[Routing to Gemini AI]:', text);
   return await askGeminiAi(text);
+}
+
+function formatEmiResult(p: number, rAnnual: number, years: number, emiRes: any, title: string): string {
+  const fmt = (val: number) => '₹' + Math.round(val).toLocaleString('en-IN');
+  return `📊 *${title}*
+━━━━━━━━━━━━━━━━━━━━
+• *Principal Amount:* ${fmt(p)}
+• *Interest Rate:* ${rAnnual}% p.a.
+• *Tenure:* ${years} Years (${Math.round(years * 12)} Months)
+
+💰 *Monthly EMI:* *${fmt(emiRes.monthlyEmi)}*
+📈 *Total Interest:* ${fmt(emiRes.totalInterest)} (${emiRes.interestPercent}%)
+💳 *Total Payment:* ${fmt(emiRes.totalPayment)}
+
+🌐 _Visual sliders & tools: https://www.jsnsworks.site/tools/finance-calculator_`;
+}
+
+function formatGstResult(amount: number, rate: number, gstRes: any): string {
+  const fmt = (v: number) => '₹' + v.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+  return `🧾 *GST Tax Breakdown*
+━━━━━━━━━━━━━━━━━━━━
+• *Net Amount:* ${fmt(gstRes.netAmount)}
+• *GST Rate:* ${rate}%
+• *CGST (${rate / 2}%):* ${fmt(gstRes.cgst)}
+• *SGST (${rate / 2}%):* ${fmt(gstRes.sgst)}
+• *Total GST Tax:* ${fmt(gstRes.gstAmount)}
+
+💵 *Total Invoice Amount:* *${fmt(gstRes.totalAmount)}*`;
 }
 
 /**

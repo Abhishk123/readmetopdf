@@ -1,0 +1,172 @@
+<div class="tool-page-container">
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">/</span>
+    <a routerLink="/tools">All Tools</a>
+    <span class="sep">/</span>
+    <span class="current">Safe-KYC Document Watermarker</span>
+  </nav>
+
+  <!-- Top Ad Slot -->
+  <app-ad-banner slot="topBanner"></app-ad-banner>
+
+  <!-- Tool Header -->
+  <div class="tool-header">
+    <div class="tool-badge">🛡️ 100% In-Browser & Private • Zero Server Upload</div>
+    <h1 class="tool-title">Safe-KYC Document Watermarker</h1>
+    <p class="tool-subtitle">
+      Stamp tamper-proof diagonal purpose watermarks across Aadhaar, PAN card, Voter ID, and certificates to prevent identity theft.
+    </p>
+  </div>
+
+  <!-- Main Card -->
+  <div class="tool-card">
+    @if (errorMessage()) {
+      <div class="alert-error">
+        <span>{{ errorMessage() }}</span>
+        <button type="button" class="btn-dismiss" (click)="errorMessage.set('')">✕</button>
+      </div>
+    }
+
+    <!-- Upload Zone (when no image chosen) -->
+    @if (!selectedImage()) {
+      <div class="drop-zone"
+           [class.dragging]="isDragging()"
+           (dragover)="onDragOver($event)"
+           (dragleave)="onDragLeave()"
+           (drop)="onDrop($event)">
+        <div class="drop-content">
+          <div class="drop-icon">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <h3>Select your ID or Document photo</h3>
+          <p class="drop-hint">Drop your Aadhaar, PAN, Passport, or Bill photo here (JPG, PNG, WebP)</p>
+          <label class="btn-upload">
+            Choose Document
+            <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
+          </label>
+          <div class="privacy-note">🔒 Runs 100% offline inside your browser memory. Your ID is never uploaded to any server.</div>
+        </div>
+      </div>
+    }
+
+    <!-- Watermarking Studio (once image is loaded) -->
+    @if (selectedImage()) {
+      <div class="studio-layout">
+        <!-- Controls Column -->
+        <div class="controls-panel">
+          <div class="panel-section">
+            <label class="section-label">1. Quick Purpose Presets</label>
+            <div class="preset-grid">
+              @for (preset of presets; track preset.text) {
+                <button type="button"
+                        class="btn-preset"
+                        [class.active]="watermarkText() === preset.text"
+                        (click)="applyPreset(preset.text)">
+                  {{ preset.label }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="panel-section">
+            <label class="section-label" for="customText">2. Custom Watermark Text</label>
+            <input type="text"
+                   id="customText"
+                   class="input-text"
+                   [ngModel]="watermarkText()"
+                   (ngModelChange)="watermarkText.set($event); renderCanvas()"
+                   placeholder="e.g. ONLY FOR AIRTEL SIM" />
+          </div>
+
+          <div class="panel-section">
+            <div class="toggle-row">
+              <label class="checkbox-label">
+                <input type="checkbox"
+                       [ngModel]="dateStamp()"
+                       (ngModelChange)="dateStamp.set($event); renderCanvas()" />
+                <span>Stamp Today's Date Automatically</span>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <label class="checkbox-label">
+                <input type="checkbox"
+                       [ngModel]="repeatPattern()"
+                       (ngModelChange)="repeatPattern.set($event); renderCanvas()" />
+                <span>Full Document Grid Pattern (Recommended for Fraud Prevention)</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="panel-section slider-group">
+            <div class="slider-row">
+              <div class="slider-label">
+                <span>Opacity</span>
+                <span class="slider-val">{{ opacity() }}%</span>
+              </div>
+              <input type="range"
+                     min="20"
+                     max="90"
+                     [ngModel]="opacity()"
+                     (ngModelChange)="opacity.set($event); renderCanvas()" />
+            </div>
+
+            <div class="slider-row">
+              <div class="slider-label">
+                <span>Font Size</span>
+                <span class="slider-val">{{ fontSize() }}px</span>
+              </div>
+              <input type="range"
+                     min="20"
+                     max="72"
+                     [ngModel]="fontSize()"
+                     (ngModelChange)="fontSize.set($event); renderCanvas()" />
+            </div>
+          </div>
+
+          <div class="panel-section">
+            <label class="section-label">Stamp Color</label>
+            <div class="color-options">
+              <button type="button" class="color-dot red" [class.selected]="textColor() === '#dc2626'" (click)="textColor.set('#dc2626'); renderCanvas()"></button>
+              <button type="button" class="color-dot blue" [class.selected]="textColor() === '#2563eb'" (click)="textColor.set('#2563eb'); renderCanvas()"></button>
+              <button type="button" class="color-dot dark" [class.selected]="textColor() === '#0f172a'" (click)="textColor.set('#0f172a'); renderCanvas()"></button>
+              <button type="button" class="color-dot green" [class.selected]="textColor() === '#16a34a'" (click)="textColor.set('#16a34a'); renderCanvas()"></button>
+            </div>
+          </div>
+
+          <!-- Download Action -->
+          <div class="actions-group">
+            <button type="button" class="btn-download" (click)="downloadProtectedImage()">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Download Protected Document
+            </button>
+            <button type="button" class="btn-change" (click)="resetImage()">
+              Choose Another Document
+            </button>
+          </div>
+        </div>
+
+        <!-- Canvas Preview Column -->
+        <div class="preview-panel">
+          <div class="preview-header">
+            <span class="preview-title">Live Tamper-Proof Preview</span>
+            <span class="preview-badge">Protected</span>
+          </div>
+          <div class="canvas-container">
+            <canvas #previewCanvas></canvas>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Bottom Ad Slot -->
+  <app-ad-banner slot="bottomBanner"></app-ad-banner>
+</div>
