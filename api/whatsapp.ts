@@ -6,9 +6,7 @@ import {
   buildUpiUri
 } from './calculators.js';
 import { askGeminiAi } from './gemini.js';
-import { Jimp, loadFont } from 'jimp';
-// @ts-ignore
-import * as fonts from 'jimp/fonts';
+import { Jimp } from 'jimp';
 import { neon } from '@neondatabase/serverless';
 
 declare const process: {
@@ -924,23 +922,109 @@ _Reply *0* for Main Menu_`;
   }
 }
 
+// 5x7 ASCII Bitmap Font Definition (Zero external files needed)
+const FONT_5X7: Record<string, number[]> = {
+  ' ': [0x00, 0x00, 0x00, 0x00, 0x00],
+  '-': [0x08, 0x08, 0x08, 0x08, 0x08],
+  '.': [0x00, 0x00, 0x60, 0x60, 0x00],
+  ':': [0x00, 0x36, 0x36, 0x00, 0x00],
+  '/': [0x60, 0x18, 0x06, 0x01, 0x00],
+  '(': [0x00, 0x1c, 0x22, 0x41, 0x00],
+  ')': [0x00, 0x41, 0x22, 0x1c, 0x00],
+  '[': [0x00, 0x7f, 0x41, 0x41, 0x00],
+  ']': [0x00, 0x41, 0x41, 0x7f, 0x00],
+  '0': [0x3e, 0x51, 0x49, 0x45, 0x3e],
+  '1': [0x00, 0x42, 0x7f, 0x40, 0x00],
+  '2': [0x42, 0x61, 0x51, 0x49, 0x46],
+  '3': [0x21, 0x41, 0x45, 0x4b, 0x31],
+  '4': [0x18, 0x14, 0x12, 0x7f, 0x10],
+  '5': [0x27, 0x45, 0x45, 0x45, 0x39],
+  '6': [0x3c, 0x4a, 0x49, 0x49, 0x30],
+  '7': [0x01, 0x71, 0x09, 0x05, 0x03],
+  '8': [0x36, 0x49, 0x49, 0x49, 0x36],
+  '9': [0x06, 0x49, 0x49, 0x29, 0x1e],
+  'A': [0x7e, 0x11, 0x11, 0x11, 0x7e],
+  'B': [0x7f, 0x49, 0x49, 0x49, 0x36],
+  'C': [0x3e, 0x41, 0x41, 0x41, 0x22],
+  'D': [0x7f, 0x41, 0x41, 0x22, 0x1c],
+  'E': [0x7f, 0x49, 0x49, 0x49, 0x41],
+  'F': [0x7f, 0x09, 0x09, 0x09, 0x01],
+  'G': [0x3e, 0x41, 0x49, 0x49, 0x7a],
+  'H': [0x7f, 0x08, 0x08, 0x08, 0x7f],
+  'I': [0x00, 0x41, 0x7f, 0x41, 0x00],
+  'J': [0x20, 0x40, 0x41, 0x3f, 0x01],
+  'K': [0x7f, 0x08, 0x14, 0x22, 0x41],
+  'L': [0x7f, 0x40, 0x40, 0x40, 0x40],
+  'M': [0x7f, 0x02, 0x0c, 0x02, 0x7f],
+  'N': [0x7f, 0x04, 0x08, 0x10, 0x7f],
+  'O': [0x3e, 0x41, 0x41, 0x41, 0x3e],
+  'P': [0x7f, 0x09, 0x09, 0x09, 0x06],
+  'Q': [0x3e, 0x41, 0x51, 0x21, 0x5e],
+  'R': [0x7f, 0x09, 0x19, 0x29, 0x46],
+  'S': [0x46, 0x49, 0x49, 0x49, 0x31],
+  'T': [0x01, 0x01, 0x7f, 0x01, 0x01],
+  'U': [0x3f, 0x40, 0x40, 0x40, 0x3f],
+  'V': [0x1f, 0x20, 0x40, 0x20, 0x1f],
+  'W': [0x7f, 0x20, 0x18, 0x20, 0x7f],
+  'X': [0x63, 0x14, 0x08, 0x14, 0x63],
+  'Y': [0x07, 0x08, 0x70, 0x08, 0x07],
+  'Z': [0x61, 0x51, 0x49, 0x45, 0x43]
+};
+
+function drawBitmapText(image: any, startX: number, startY: number, text: string, scale = 3) {
+  const upper = text.toUpperCase();
+  let cursorX = startX;
+  const w = image.bitmap.width;
+  const h = image.bitmap.height;
+
+  for (let c = 0; c < upper.length; c++) {
+    const char = upper[c];
+    const glyph = FONT_5X7[char] || FONT_5X7[' '];
+
+    for (let col = 0; col < 5; col++) {
+      const colBits = glyph[col];
+      for (let row = 0; row < 7; row++) {
+        if ((colBits & (1 << row)) !== 0) {
+          for (let dx = 0; dx < scale; dx++) {
+            for (let dy = 0; dy < scale; dy++) {
+              const px = cursorX + col * scale + dx;
+              const py = startY + row * scale + dy;
+              if (px < w && py < h && px >= 0 && py >= 0) {
+                // Drop shadow (black)
+                image.setPixelColor(0x000000dd, px + 2, py + 2);
+                // Foreground (white)
+                image.setPixelColor(0xffffffff, px, py);
+              }
+            }
+          }
+        }
+      }
+    }
+    cursorX += (5 + 1) * scale;
+  }
+}
+
 /**
- * Draw repeating diagonal watermark lines over the image in RAM
+ * Draw repeating diagonal watermark lines over the image in RAM (Zero External Files)
  */
 async function applyWatermarkToBuffer(buffer: Buffer, watermarkText: string): Promise<Buffer> {
   const image = await Jimp.read(buffer);
-  const fontWhite = await loadFont(fonts.SANS_32_WHITE);
-  const fontBlack = await loadFont(fonts.SANS_32_BLACK);
-
   const w = image.bitmap.width;
   const h = image.bitmap.height;
   const text = watermarkText.toUpperCase();
 
-  // Print repeating watermark lines across the image
-  const stepY = Math.max(120, Math.floor(h / 4));
-  for (let y = 60; y < h; y += stepY) {
-    image.print({ font: fontBlack, x: 22, y: y + 2, text });
-    image.print({ font: fontWhite, x: 20, y: y, text });
+  // Dynamic scale so text is proportional and fits nicely
+  const charWidth = 6;
+  const desiredScale = Math.max(2, Math.min(5, Math.floor(w / (text.length * charWidth + 20))));
+  const scale = desiredScale || 3;
+
+  // Draw 3 repeating staggered watermark lines across the image
+  const stepY = Math.max(100, Math.floor(h / 4));
+  let startX = 20;
+
+  for (let y = Math.floor(stepY * 0.7); y < h - 40; y += stepY) {
+    drawBitmapText(image, startX, y, text, scale);
+    startX = (startX === 20) ? 60 : 20; // stagger pattern
   }
 
   return await image.getBuffer('image/jpeg', { quality: 85 });
