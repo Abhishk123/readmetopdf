@@ -53,69 +53,65 @@ function updateSession(phone: string, updates: Partial<UserSession>): UserSessio
   return session;
 }
 
-export default async function handler(req: Request): Promise<Response> {
+export async function GET(req: Request): Promise<Response> {
   const verifyToken = process.env['META_VERIFY_TOKEN'] || 'quicktools_verify_token_2026';
+  const url = new URL(req.url);
+  const mode = url.searchParams.get('hub.mode');
+  const token = url.searchParams.get('hub.verify_token');
+  const challenge = url.searchParams.get('hub.challenge');
 
-  // 1. Meta Webhook Verification Handshake (GET)
-  if (req.method === 'GET') {
-    const url = new URL(req.url);
-    const mode = url.searchParams.get('hub.mode');
-    const token = url.searchParams.get('hub.verify_token');
-    const challenge = url.searchParams.get('hub.challenge');
-
-    if (mode === 'subscribe' && token === verifyToken) {
-      console.log('[WhatsApp Webhook] Handshake verified successfully.');
-      return new Response(challenge || '', {
-        status: 200,
-        headers: { 'Content-Type': 'text/plain' }
-      });
-    }
-
-    if (!mode && !token) {
-      return Response.json({
-        status: 'online',
-        service: 'JSANS QuickTools WhatsApp Bot Webhook',
-        version: '3.0.0',
-        message: 'Endpoint is active with in-memory image conversion & single-digit submenus.'
-      });
-    }
-
-    console.warn('[WhatsApp Webhook] Verification token mismatch.');
-    return Response.json({ error: 'Verification failed' }, { status: 403 });
+  if (mode === 'subscribe' && token === verifyToken) {
+    console.log('[WhatsApp Webhook] Handshake verified successfully.');
+    return new Response(challenge || '', {
+      status: 200,
+      headers: { 'Content-Type': 'text/plain' }
+    });
   }
 
-  // 2. Incoming Messages & Events (POST)
-  if (req.method === 'POST') {
-    let body: any;
+  if (!mode && !token) {
+    return Response.json({
+      status: 'online',
+      service: 'JSANS QuickTools WhatsApp Bot Webhook',
+      version: '3.0.0',
+      message: 'Endpoint is active with in-memory image conversion & single-digit submenus.'
+    });
+  }
+
+  console.warn('[WhatsApp Webhook] Verification token mismatch.');
+  return Response.json({ error: 'Verification failed' }, { status: 403 });
+}
+
+export async function POST(req: Request): Promise<Response> {
+  let body: any;
+  try {
+    body = await req.json();
+  } catch {
+    return Response.json({ status: 'invalid_json' }, { status: 400 });
+  }
+
+  if (body?.object && body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]) {
+    const messageData = body.entry[0].changes[0].value.messages[0];
+    const from = messageData.from; // Sender WhatsApp phone number
+    const phoneNumberId = body.entry[0].changes[0].value.metadata?.phone_number_id || process.env['WHATSAPP_PHONE_NUMBER_ID'];
+
+    console.log('[WhatsApp Processing User Message]:', { from, phoneNumberId, type: messageData.type, body: messageData.text?.body });
+
     try {
-      body = await req.json();
-    } catch {
-      return Response.json({ status: 'invalid_json' }, { status: 400 });
-    }
+      let replyText = '';
 
-    if (body?.object && body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]) {
-      const messageData = body.entry[0].changes[0].value.messages[0];
-      const from = messageData.from; // Sender WhatsApp phone number
-      const phoneNumberId = body.entry[0].changes[0].value.metadata?.phone_number_id || process.env['WHATSAPP_PHONE_NUMBER_ID'];
+      if (messageData.type === 'text' && messageData.text?.body) {
+        const rawInput = messageData.text.body.trim();
+        replyText = await processUserCommand(rawInput, phoneNumberId, from);
+      } else if (messageData.type === 'interactive') {
+        const buttonId = messageData.interactive?.button_reply?.id || messageData.interactive?.list_reply?.id || '';
+        replyText = await processUserCommand(buttonId, phoneNumberId, from);
+      } else if (messageData.type === 'image') {
+        // Save image reference in memory session
+        const mediaId = messageData.image?.id;
+        const mimeType = messageData.image?.mime_type || 'image/jpeg';
+        updateSession(from, { currentMenu: 'PHOTO', lastMediaId: mediaId, lastMediaMime: mimeType });
 
-      console.log('[WhatsApp Processing User Message]:', { from, phoneNumberId, type: messageData.type, body: messageData.text?.body });
-
-      try {
-        let replyText = '';
-
-        if (messageData.type === 'text' && messageData.text?.body) {
-          const rawInput = messageData.text.body.trim();
-          replyText = await processUserCommand(rawInput, phoneNumberId, from);
-        } else if (messageData.type === 'interactive') {
-          const buttonId = messageData.interactive?.button_reply?.id || messageData.interactive?.list_reply?.id || '';
-          replyText = await processUserCommand(buttonId, phoneNumberId, from);
-        } else if (messageData.type === 'image') {
-          // Save image reference in memory session
-          const mediaId = messageData.image?.id;
-          const mimeType = messageData.image?.mime_type || 'image/jpeg';
-          updateSession(from, { currentMenu: 'PHOTO', lastMediaId: mediaId, lastMediaMime: mimeType });
-
-          replyText = `📸 *Photo Received!*
+        replyText = `📸 *Photo Received!*
 ━━━━━━━━━━━━━━━━━━━━
 Reply with a *single number* to edit this photo directly:
 
@@ -131,33 +127,63 @@ Reply with a *single number* to edit this photo directly:
 _(e.g. \`WATERMARK Abhishek - HDFC Bank Only\`)_
 
 0️⃣ *Back to Main Menu*`;
-        } else if (messageData.type === 'document') {
-          replyText = `📄 *Document Received!*
+      } else if (messageData.type === 'document') {
+        replyText = `📄 *Document Received!*
 ━━━━━━━━━━━━━━━━━━━━
 Merge, extract, or sign PDF documents securely in browser memory:
 👉 https://www.jsnsworks.site/tools/pdf-merger
 
 _Or reply *0* to see all tools!_`;
-        } else {
-          replyText = getMainMenuText();
-        }
-
-        // Send outbound text message if non-empty (if image was sent, replyText is empty)
-        if (replyText && phoneNumberId) {
-          console.log('[WhatsApp Dispatching Outbound Reply]:', { to: from, replySnippet: replyText.slice(0, 60) });
-          await sendWhatsAppMessage(phoneNumberId, from, replyText);
-        }
-      } catch (err) {
-        console.error('[WhatsApp Webhook] Error processing message:', err);
+      } else {
+        replyText = getMainMenuText();
       }
 
-      return Response.json({ status: 'ok' });
+      // Send outbound text message if non-empty (if image was sent, replyText is empty)
+      if (replyText && phoneNumberId) {
+        console.log('[WhatsApp Dispatching Outbound Reply]:', { to: from, replySnippet: replyText.slice(0, 60) });
+        await sendWhatsAppMessage(phoneNumberId, from, replyText);
+      }
+    } catch (err) {
+      console.error('[WhatsApp Webhook] Error processing message:', err);
     }
 
-    return Response.json({ status: 'ignored' });
+    return Response.json({ status: 'ok' });
   }
 
-  return Response.json({ error: 'Method not allowed' }, { status: 405 });
+  return Response.json({ status: 'ignored' });
+}
+
+export default async function handler(req: any, res?: any) {
+  if (req instanceof Request) {
+    if (req.method === 'GET') return GET(req);
+    if (req.method === 'POST') return POST(req);
+    return Response.json({ error: 'Method not allowed' }, { status: 405 });
+  }
+
+  // Classic Node.js (req, res) signature
+  if (res && typeof res.status === 'function') {
+    if (req.method === 'GET') {
+      const verifyToken = process.env['META_VERIFY_TOKEN'] || 'quicktools_verify_token_2026';
+      const mode = req.query?.['hub.mode'];
+      const token = req.query?.['hub.verify_token'];
+      const challenge = req.query?.['hub.challenge'];
+      if (mode === 'subscribe' && token === verifyToken) {
+        return res.status(200).send(challenge || '');
+      }
+      return res.status(200).json({ status: 'online', version: '3.0.0' });
+    }
+    if (req.method === 'POST') {
+      const fakeReq = new Request('https://www.jsnsworks.site/api/whatsapp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(req.body)
+      });
+      const webRes = await POST(fakeReq);
+      const data = await webRes.json().catch(() => ({}));
+      return res.status(webRes.status).json(data);
+    }
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 }
 
 /**
