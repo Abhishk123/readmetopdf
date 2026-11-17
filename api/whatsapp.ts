@@ -4,8 +4,8 @@ import {
   calculateGst,
   parseUpiCommand,
   buildUpiUri
-} from './calculators';
-import { askGeminiAi } from './gemini';
+} from './calculators.js';
+import { askGeminiAi } from './gemini.js';
 import { Jimp, loadFont } from 'jimp';
 // @ts-ignore
 import * as fonts from 'jimp/fonts';
