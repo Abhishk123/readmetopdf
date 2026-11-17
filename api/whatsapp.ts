@@ -9,6 +9,7 @@ import { askGeminiAi } from './gemini.js';
 import { Jimp, loadFont } from 'jimp';
 // @ts-ignore
 import * as fonts from 'jimp/fonts';
+import { neon } from '@neondatabase/serverless';
 
 declare const process: {
   env: Record<string, string | undefined>;
@@ -18,9 +19,10 @@ declare const process: {
  * PROJECT BLUEPRINT: All-in-One WhatsApp Utility Bot ("QuickTools")
  * Webhook Endpoint: https://www.jsnsworks.site/api/whatsapp
  * Features:
- * - In-Memory Session State (tracks active submenu per user)
+ * - Persistent & In-Memory Session State
  * - Single-Digit Submenu Navigation (1, 2, 3...)
- * - In-Memory Image Watermarking & Compression (Zero DB storage, 100% private)
+ * - In-Memory Image Watermarking & Compression (Zero DB storage)
+ * - Single-Message Photo + Caption Instant Processing
  * - Custom User Inputs (Custom Name for Watermark, UPI, EMI, GST)
  * - Google Gemini AI Fallthrough for natural queries
  */
@@ -34,23 +36,106 @@ interface UserSession {
   updatedAt: number;
 }
 
-// In-memory session store (30-minute session per user)
-const userSessions = new Map<string, UserSession>();
+// In-memory fallback cache
+const memorySessions = new Map<string, UserSession>();
 
-function getSession(phone: string): UserSession {
-  let session = userSessions.get(phone);
-  if (!session || Date.now() - session.updatedAt > 30 * 60 * 1000) {
-    session = { phone, currentMenu: 'MAIN', updatedAt: Date.now() };
-    userSessions.set(phone, session);
+async function savePersistentSession(phone: string, updates: Partial<UserSession>): Promise<UserSession> {
+  let session = memorySessions.get(phone) || { phone, currentMenu: 'MAIN', updatedAt: Date.now() };
+  Object.assign(session, updates, { updatedAt: Date.now() });
+  memorySessions.set(phone, session);
+
+  // 1. Neon Database Persistence (if configured)
+  const dbUrl = process.env['POSTGRES_URL'] || process.env['DATABASE_URL'] || process.env['NEON_DATABASE_URL'];
+  if (dbUrl) {
+    try {
+      const sql = neon(dbUrl);
+      await sql`
+        CREATE TABLE IF NOT EXISTS whatsapp_sessions (
+          phone VARCHAR(32) PRIMARY KEY,
+          current_menu VARCHAR(32) NOT NULL,
+          last_media_id TEXT,
+          updated_at BIGINT NOT NULL
+        );
+      `;
+      await sql`
+        INSERT INTO whatsapp_sessions (phone, current_menu, last_media_id, updated_at)
+        VALUES (${phone}, ${session.currentMenu}, ${session.lastMediaId || null}, ${Date.now()})
+        ON CONFLICT (phone) DO UPDATE
+        SET current_menu = ${session.currentMenu},
+            last_media_id = COALESCE(${session.lastMediaId || null}, whatsapp_sessions.last_media_id),
+            updated_at = ${Date.now()};
+      `;
+    } catch (e) {
+      console.warn('[Session DB write error]:', e);
+    }
   }
+
+  // 2. Upstash Redis / Vercel KV Persistence (if configured)
+  const kvUrl = process.env['UPSTASH_REDIS_REST_URL'] || process.env['KV_REST_API_URL'];
+  const kvToken = process.env['UPSTASH_REDIS_REST_TOKEN'] || process.env['KV_REST_API_TOKEN'];
+  if (kvUrl && kvToken) {
+    try {
+      await fetch(`${kvUrl}/set/wa_sess_${phone}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${kvToken}` },
+        body: JSON.stringify(session)
+      });
+    } catch {}
+  }
+
   return session;
 }
 
-function updateSession(phone: string, updates: Partial<UserSession>): UserSession {
-  const session = getSession(phone);
-  Object.assign(session, updates, { updatedAt: Date.now() });
-  userSessions.set(phone, session);
-  return session;
+async function loadPersistentSession(phone: string): Promise<UserSession> {
+  // Check memory cache first
+  const mem = memorySessions.get(phone);
+  if (mem && Date.now() - mem.updatedAt < 30 * 60 * 1000) {
+    return mem;
+  }
+
+  // Check Neon DB
+  const dbUrl = process.env['POSTGRES_URL'] || process.env['DATABASE_URL'] || process.env['NEON_DATABASE_URL'];
+  if (dbUrl) {
+    try {
+      const sql = neon(dbUrl);
+      const rows = await sql`
+        SELECT current_menu, last_media_id, updated_at FROM whatsapp_sessions WHERE phone = ${phone} LIMIT 1;
+      `;
+      if (rows && rows.length > 0) {
+        const s: UserSession = {
+          phone,
+          currentMenu: rows[0].current_menu as any,
+          lastMediaId: rows[0].last_media_id || undefined,
+          updatedAt: Number(rows[0].updated_at)
+        };
+        memorySessions.set(phone, s);
+        return s;
+      }
+    } catch {}
+  }
+
+  // Check Upstash Redis
+  const kvUrl = process.env['UPSTASH_REDIS_REST_URL'] || process.env['KV_REST_API_URL'];
+  const kvToken = process.env['UPSTASH_REDIS_REST_TOKEN'] || process.env['KV_REST_API_TOKEN'];
+  if (kvUrl && kvToken) {
+    try {
+      const res = await fetch(`${kvUrl}/get/wa_sess_${phone}`, {
+        headers: { Authorization: `Bearer ${kvToken}` }
+      });
+      if (res.ok) {
+        const data = (await res.json()) as any;
+        if (data?.result) {
+          const parsed = typeof data.result === 'string' ? JSON.parse(data.result) : data.result;
+          memorySessions.set(phone, parsed);
+          return parsed;
+        }
+      }
+    } catch {}
+  }
+
+  const fresh: UserSession = { phone, currentMenu: 'MAIN', updatedAt: Date.now() };
+  memorySessions.set(phone, fresh);
+  return fresh;
 }
 
 export async function GET(req: Request): Promise<Response> {
@@ -72,8 +157,8 @@ export async function GET(req: Request): Promise<Response> {
     return Response.json({
       status: 'online',
       service: 'JSANS QuickTools WhatsApp Bot Webhook',
-      version: '3.0.0',
-      message: 'Endpoint is active with in-memory image conversion & single-digit submenus.'
+      version: '3.1.0',
+      message: 'Endpoint active with persistent session memory & in-memory image editing.'
     });
   }
 
@@ -101,31 +186,46 @@ export async function POST(req: Request): Promise<Response> {
 
       if (messageData.type === 'text' && messageData.text?.body) {
         const rawInput = messageData.text.body.trim();
-        replyText = await processUserCommand(rawInput, phoneNumberId, from);
+        const session = await loadPersistentSession(from);
+        replyText = await processUserCommand(rawInput, phoneNumberId, from, session);
       } else if (messageData.type === 'interactive') {
         const buttonId = messageData.interactive?.button_reply?.id || messageData.interactive?.list_reply?.id || '';
-        replyText = await processUserCommand(buttonId, phoneNumberId, from);
+        const session = await loadPersistentSession(from);
+        replyText = await processUserCommand(buttonId, phoneNumberId, from, session);
       } else if (messageData.type === 'image') {
-        // Save image reference in memory session
         const mediaId = messageData.image?.id;
         const mimeType = messageData.image?.mime_type || 'image/jpeg';
-        updateSession(from, { currentMenu: 'PHOTO', lastMediaId: mediaId, lastMediaMime: mimeType });
+        const imageCaption = (messageData.image?.caption || '').trim();
 
+        // Save session state
+        await savePersistentSession(from, { currentMenu: 'PHOTO', lastMediaId: mediaId, lastMediaMime: mimeType });
+
+        // IF USER SENT PHOTO WITH CAPTION (e.g. caption: "1" or "HOTEL" or "20KB" or "WATERMARK Abhishek"):
+        // Immediately watermark/compress and reply with the edited photo in the same turn!
+        if (imageCaption && phoneNumberId) {
+          const handled = await handlePhotoAction(phoneNumberId, from, mediaId, imageCaption);
+          if (handled) {
+            return Response.json({ status: 'ok' });
+          }
+        }
+
+        // Otherwise reply with clear numbered options
         replyText = `📸 *Photo Received!*
 ━━━━━━━━━━━━━━━━━━━━
-Reply with a *single number* to edit this photo directly:
+Reply with a *number* or *keyword* to edit this photo:
 
-1️⃣ *Safe-KYC Hotel Check-In Watermark*
-2️⃣ *Safe-KYC SIM Activation Watermark*
-3️⃣ *Safe-KYC Bank / Loan KYC Watermark*
-4️⃣ *Safe-KYC Job Verification Watermark*
-5️⃣ *Compress Photo to 20 KB* (Govt Exams)
-6️⃣ *Compress Photo to 50 KB* (Passport/Visa)
+1️⃣ *Reply 1 or HOTEL* ➔ Hotel Check-In Watermark
+2️⃣ *Reply 2 or SIM* ➔ SIM Activation Watermark
+3️⃣ *Reply 3 or BANK* ➔ Bank & Loan KYC Watermark
+4️⃣ *Reply 4 or JOB* ➔ Job Verification Watermark
+5️⃣ *Reply 5 or 20KB* ➔ Compress to 20 KB (Govt Exams)
+6️⃣ *Reply 6 or 50KB* ➔ Compress to 50 KB (Passport/Visa)
 
 ✏️ *Or type custom watermark with your name:*
 \`WATERMARK <Your Name / Purpose>\`
 _(e.g. \`WATERMARK Abhishek - HDFC Bank Only\`)_
 
+💡 *Tip:* You can also send photos with caption \`1\` or \`HOTEL\` directly!
 0️⃣ *Back to Main Menu*`;
       } else if (messageData.type === 'document') {
         replyText = `📄 *Document Received!*
@@ -138,7 +238,6 @@ _Or reply *0* to see all tools!_`;
         replyText = getMainMenuText();
       }
 
-      // Send outbound text message if non-empty (if image was sent, replyText is empty)
       if (replyText && phoneNumberId) {
         console.log('[WhatsApp Dispatching Outbound Reply]:', { to: from, replySnippet: replyText.slice(0, 60) });
         await sendWhatsAppMessage(phoneNumberId, from, replyText);
@@ -160,7 +259,6 @@ export default async function handler(req: any, res?: any) {
     return Response.json({ error: 'Method not allowed' }, { status: 405 });
   }
 
-  // Classic Node.js (req, res) signature
   if (res && typeof res.status === 'function') {
     if (req.method === 'GET') {
       const verifyToken = process.env['META_VERIFY_TOKEN'] || 'quicktools_verify_token_2026';
@@ -170,7 +268,7 @@ export default async function handler(req: any, res?: any) {
       if (mode === 'subscribe' && token === verifyToken) {
         return res.status(200).send(challenge || '');
       }
-      return res.status(200).json({ status: 'online', version: '3.0.0' });
+      return res.status(200).json({ status: 'online', version: '3.1.0' });
     }
     if (req.method === 'POST') {
       const fakeReq = new Request('https://www.jsnsworks.site/api/whatsapp', {
@@ -206,19 +304,98 @@ Reply with a *number (1 - 6)*:
 }
 
 /**
- * Command processor - Handles numbered submenus (1, 2, 3), custom names & in-memory image conversion
+ * Handle Photo Editing Actions (Watermarking & Compression)
  */
-async function processUserCommand(rawText: string, phoneNumberId?: string, from?: string): Promise<string> {
+async function handlePhotoAction(
+  phoneNumberId: string,
+  to: string,
+  mediaId: string,
+  actionText: string
+): Promise<boolean> {
+  const upper = actionText.trim().toUpperCase();
+
+  if (upper === '1' || upper === 'HOTEL' || upper === '51') {
+    return await processAndSendWatermark(phoneNumberId, to, mediaId, 'ONLY FOR HOTEL CHECK-IN - NOT FOR ANY OTHER USE');
+  }
+  if (upper === '2' || upper === 'SIM' || upper === '52') {
+    return await processAndSendWatermark(phoneNumberId, to, mediaId, 'FOR NEW SIM ACTIVATION ONLY - NOT FOR BANKING');
+  }
+  if (upper === '3' || upper === 'BANK' || upper === '53') {
+    return await processAndSendWatermark(phoneNumberId, to, mediaId, 'SUBMITTED FOR BANK / LOAN KYC ONLY');
+  }
+  if (upper === '4' || upper === 'JOB' || upper === '54') {
+    return await processAndSendWatermark(phoneNumberId, to, mediaId, 'FOR JOB BACKGROUND VERIFICATION ONLY');
+  }
+  if (upper === '5' || upper === '20KB' || upper === '61') {
+    return await processAndSendCompressedImage(phoneNumberId, to, mediaId, 20);
+  }
+  if (upper === '6' || upper === '50KB' || upper === '62') {
+    return await processAndSendCompressedImage(phoneNumberId, to, mediaId, 50);
+  }
+  if (upper.startsWith('WATERMARK')) {
+    const customText = actionText.replace(/^WATERMARK\s*/i, '').trim() || 'SAFE-KYC VERIFIED DOCUMENT - NOT FOR REUSE';
+    return await processAndSendWatermark(phoneNumberId, to, mediaId, customText);
+  }
+  return false;
+}
+
+/**
+ * Command processor - Handles numbered submenus (1, 2, 3), custom names & persistent session state
+ */
+async function processUserCommand(
+  rawText: string,
+  phoneNumberId?: string,
+  from?: string,
+  session?: UserSession
+): Promise<string> {
   const text = rawText.trim();
   const upper = text.toUpperCase();
-  const session: UserSession = from ? getSession(from) : { currentMenu: 'MAIN', phone: '', updatedAt: 0 };
+  const currentSession = session || (from ? await loadPersistentSession(from) : { currentMenu: 'MAIN' as const, phone: '', updatedAt: 0 });
 
   // ==========================================
   // 0. RESET TO MAIN MENU
   // ==========================================
   if (['0', 'M', 'MENU', 'BACK', 'HOME', 'START', 'HELP', 'HI', 'HELLO', 'TOOLS'].includes(upper)) {
-    if (from) updateSession(from, { currentMenu: 'MAIN' });
+    if (from) await savePersistentSession(from, { currentMenu: 'MAIN' });
     return getMainMenuText();
+  }
+
+  // ==========================================
+  // CHECK ACTIVE PHOTO SESSION FIRST (PRIORITY!)
+  // ==========================================
+  if (currentSession.currentMenu === 'PHOTO' && currentSession.lastMediaId && phoneNumberId && from) {
+    const handled = await handlePhotoAction(phoneNumberId, from, currentSession.lastMediaId, text);
+    if (handled) return '';
+  }
+
+  // Direct keywords for photo editing (works even if menu state was interrupted)
+  if (['HOTEL', 'SIM', 'BANK', 'JOB', '20KB', '50KB'].includes(upper)) {
+    if (currentSession.lastMediaId && phoneNumberId && from) {
+      const handled = await handlePhotoAction(phoneNumberId, from, currentSession.lastMediaId, text);
+      if (handled) return '';
+    }
+    return `📸 *Safe-KYC Photo Editor*
+━━━━━━━━━━━━━━━━━━━━
+Please send your Aadhaar, PAN or photo first!
+💡 *Tip:* You can attach your photo and type *${upper}* in the caption to edit it instantly!`;
+  }
+
+  // Custom Watermark command with custom name: WATERMARK <Name / Purpose>
+  if (upper.startsWith('WATERMARK')) {
+    const customWatermark = text.replace(/^WATERMARK\s*/i, '').trim();
+    if (from && currentSession.lastMediaId && phoneNumberId) {
+      const watermarkString = customWatermark || 'SAFE-KYC VERIFIED DOCUMENT - NOT FOR REUSE';
+      const success = await processAndSendWatermark(phoneNumberId, from, currentSession.lastMediaId, watermarkString);
+      if (success) return '';
+    }
+    return `🛡️ *Safe-KYC Watermark Studio*
+━━━━━━━━━━━━━━━━━━━━
+To stamp *"${customWatermark || 'Your Name'}"* on your ID card:
+1. Send your Aadhaar, PAN or photo here with caption: \`WATERMARK ${customWatermark}\`
+2. Or use our 100% Private In-Browser Studio:
+👉 https://www.jsnsworks.site/tools/watermark
+
+_Reply *0* for Main Menu_`;
   }
 
   // ==========================================
@@ -301,24 +478,6 @@ _Reply *0* for Main Menu_`;
     }
   }
 
-  // Custom Watermark command with custom name: WATERMARK <Name / Purpose>
-  if (upper.startsWith('WATERMARK')) {
-    const customWatermark = text.replace(/^WATERMARK\s*/i, '').trim();
-    if (from && session.lastMediaId && phoneNumberId) {
-      const watermarkString = customWatermark || 'SAFE-KYC VERIFIED DOCUMENT - NOT FOR REUSE';
-      const success = await processAndSendWatermark(phoneNumberId, from, session.lastMediaId, watermarkString);
-      if (success) return '';
-    }
-    return `🛡️ *Safe-KYC Watermark Studio*
-━━━━━━━━━━━━━━━━━━━━
-To stamp *"${customWatermark}"* on your ID card:
-1. Send your Aadhaar, PAN or Voter ID photo here first.
-2. Or use our 100% Private In-Browser Watermark Studio:
-👉 https://www.jsnsworks.site/tools/watermark
-
-_Reply *0* for Main Menu_`;
-  }
-
   // Custom Loan EMI: EMI <Amount> <Rate> <Years>
   if (upper.startsWith('EMI') && text.split(/\s+/).length >= 4) {
     const parts = text.split(/\s+/).slice(1);
@@ -352,39 +511,11 @@ _Reply *0* for Main Menu_`;
   }
 
   // ==========================================
-  // STATE MACHINE: SUBMENU HANDLING
+  // SUBMENU HANDLING (ACTIVE CONTEXT)
   // ==========================================
 
-  // --- SUBMENU: PHOTO RECEIVED (IN-MEMORY CONVERSION) ---
-  if (session.currentMenu === 'PHOTO' && session.lastMediaId && phoneNumberId && from) {
-    if (upper === '1') {
-      const success = await processAndSendWatermark(phoneNumberId, from, session.lastMediaId, 'ONLY FOR HOTEL CHECK-IN - NOT FOR ANY OTHER USE');
-      if (success) return '';
-    }
-    if (upper === '2') {
-      const success = await processAndSendWatermark(phoneNumberId, from, session.lastMediaId, 'FOR NEW SIM ACTIVATION ONLY - NOT FOR BANKING');
-      if (success) return '';
-    }
-    if (upper === '3') {
-      const success = await processAndSendWatermark(phoneNumberId, from, session.lastMediaId, 'SUBMITTED FOR BANK / LOAN KYC ONLY');
-      if (success) return '';
-    }
-    if (upper === '4') {
-      const success = await processAndSendWatermark(phoneNumberId, from, session.lastMediaId, 'FOR JOB BACKGROUND VERIFICATION ONLY');
-      if (success) return '';
-    }
-    if (upper === '5') {
-      const success = await processAndSendCompressedImage(phoneNumberId, from, session.lastMediaId, 20);
-      if (success) return '';
-    }
-    if (upper === '6') {
-      const success = await processAndSendCompressedImage(phoneNumberId, from, session.lastMediaId, 50);
-      if (success) return '';
-    }
-  }
-
   // --- SUBMENU: LOAN EMI ---
-  if (session.currentMenu === 'LOAN') {
+  if (currentSession.currentMenu === 'LOAN') {
     if (upper === '1' || upper === '11') {
       const res = calculateLoanEmi(2500000, 8.5, 15);
       return formatEmiResult(2500000, 8.5, 15, res, 'Home Loan Preset');
@@ -412,7 +543,7 @@ _Reply *0* for Main Menu_`;
   }
 
   // --- SUBMENU: AGE CALCULATOR ---
-  if (session.currentMenu === 'AGE') {
+  if (currentSession.currentMenu === 'AGE') {
     if (upper === '1' || upper === '21') {
       const res = calculateExactAge('01-01-2000');
       if (res) return formatAgeResult(res, '01-01-2000');
@@ -433,7 +564,7 @@ _Reply *0* for Main Menu_`;
   }
 
   // --- SUBMENU: UPI QR & BARCODE ---
-  if (session.currentMenu === 'UPI') {
+  if (currentSession.currentMenu === 'UPI') {
     if (upper === '1' || upper === '31') {
       const demoVpa = 'store@upi';
       const upiUri = buildUpiUri({ vpa: demoVpa, amount: 500, payeeName: 'JSANS Store' });
@@ -527,7 +658,7 @@ _Reply *0* for Main Menu_`;
   }
 
   // --- SUBMENU: GST TAX ---
-  if (session.currentMenu === 'GST') {
+  if (currentSession.currentMenu === 'GST') {
     if (upper === '1' || upper === '41') return formatGstResult(1000, 18, calculateGst(1000, 18));
     if (upper === '2' || upper === '42') return formatGstResult(5000, 18, calculateGst(5000, 18));
     if (upper === '3' || upper === '43') return formatGstResult(2500, 12, calculateGst(2500, 12));
@@ -545,7 +676,7 @@ _Reply *0* for Main Menu_`;
   }
 
   // --- SUBMENU: SAFE-KYC WATERMARK TEXT GUIDE ---
-  if (session.currentMenu === 'WATERMARK') {
+  if (currentSession.currentMenu === 'WATERMARK') {
     if (upper === '1' || upper === '51') {
       return `🏨 *Hotel Check-In Watermark Template*
 ━━━━━━━━━━━━━━━━━━━━
@@ -600,7 +731,7 @@ _Reply *0* for Main Menu_`;
 
   // 1: Enter Loan EMI Submenu
   if (upper === '1' || upper === 'LOAN' || upper === 'EMI') {
-    if (from) updateSession(from, { currentMenu: 'LOAN' });
+    if (from) await savePersistentSession(from, { currentMenu: 'LOAN' });
     return `📊 *Loan EMI Calculator*
 ━━━━━━━━━━━━━━━━━━━━
 Reply with a *number (1 - 4)*:
@@ -615,7 +746,7 @@ Reply with a *number (1 - 4)*:
 
   // 2: Enter Age Submenu
   if (upper === '2' || upper === 'AGE') {
-    if (from) updateSession(from, { currentMenu: 'AGE' });
+    if (from) await savePersistentSession(from, { currentMenu: 'AGE' });
     return `🎂 *Exact Age & Birthday Milestone*
 ━━━━━━━━━━━━━━━━━━━━
 Reply with a *number (1 - 3)*:
@@ -629,7 +760,7 @@ Reply with a *number (1 - 3)*:
 
   // 3: Enter UPI & Barcode Submenu
   if (upper === '3' || upper === 'QR' || upper === 'BARCODE') {
-    if (from) updateSession(from, { currentMenu: 'UPI' });
+    if (from) await savePersistentSession(from, { currentMenu: 'UPI' });
     return `📱 *UPI Payment QR & Barcode Generator*
 ━━━━━━━━━━━━━━━━━━━━
 Reply with a *number (1 - 6)* to receive direct photo 🖼️:
@@ -646,7 +777,7 @@ Reply with a *number (1 - 6)* to receive direct photo 🖼️:
 
   // 4: Enter GST Submenu
   if (upper === '4' || upper === 'GST') {
-    if (from) updateSession(from, { currentMenu: 'GST' });
+    if (from) await savePersistentSession(from, { currentMenu: 'GST' });
     return `🧾 *GST Tax Calculator*
 ━━━━━━━━━━━━━━━━━━━━
 Reply with a *number (1 - 5)*:
@@ -662,7 +793,7 @@ Reply with a *number (1 - 5)*:
 
   // 5: Enter Watermark Submenu
   if (upper === '5' || upper === 'WATERMARK' || upper === 'KYC') {
-    if (from) updateSession(from, { currentMenu: 'WATERMARK' });
+    if (from) await savePersistentSession(from, { currentMenu: 'WATERMARK' });
     return `🛡️ *Safe-KYC Document Watermarker*
 ━━━━━━━━━━━━━━━━━━━━
 Protect Aadhaar, PAN & Voter ID cards from fraud!
@@ -682,7 +813,7 @@ Reply with a *number (1 - 5)*:
 
   // 6: Enter Photo Reducer Submenu
   if (upper === '6' || upper === 'COMPRESS' || upper === 'PHOTO') {
-    if (from) updateSession(from, { currentMenu: 'PHOTO' });
+    if (from) await savePersistentSession(from, { currentMenu: 'PHOTO' });
     return `🗜️ *Photo Size Reducer & Image Resizer*
 ━━━━━━━━━━━━━━━━━━━━
 Reply with a number:
@@ -808,7 +939,6 @@ async function applyWatermarkToBuffer(buffer: Buffer, watermarkText: string): Pr
   // Print repeating watermark lines across the image
   const stepY = Math.max(120, Math.floor(h / 4));
   for (let y = 60; y < h; y += stepY) {
-    // Drop shadow (black) + foreground (white) for readability on dark or light backgrounds
     image.print({ font: fontBlack, x: 22, y: y + 2, text });
     image.print({ font: fontWhite, x: 20, y: y, text });
   }
