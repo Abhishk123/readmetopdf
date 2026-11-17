@@ -6,10 +6,9 @@ import {
   buildUpiUri
 } from './calculators';
 import { askGeminiAi } from './gemini';
-
-export const config = {
-  runtime: 'edge',
-};
+import { Jimp, loadFont } from 'jimp';
+// @ts-ignore
+import * as fonts from 'jimp/fonts';
 
 declare const process: {
   env: Record<string, string | undefined>;
@@ -18,13 +17,41 @@ declare const process: {
 /**
  * PROJECT BLUEPRINT: All-in-One WhatsApp Utility Bot ("QuickTools")
  * Webhook Endpoint: https://www.jsnsworks.site/api/whatsapp
- * Powered by Meta WhatsApp Cloud API
  * Features:
- * - Numbered Main Menu (1 - 6, 0)
- * - Numbered Submenus (11-14, 21-23, 31-36, 41-45, 51-55, 61-64, 0)
- * - Direct Native Image Delivery (UPI QR, Barcodes, Custom QR)
+ * - In-Memory Session State (tracks active submenu per user)
+ * - Single-Digit Submenu Navigation (1, 2, 3...)
+ * - In-Memory Image Watermarking & Compression (Zero DB storage, 100% private)
+ * - Custom User Inputs (Custom Name for Watermark, UPI, EMI, GST)
  * - Google Gemini AI Fallthrough for natural queries
  */
+
+interface UserSession {
+  phone: string;
+  currentMenu: 'MAIN' | 'LOAN' | 'AGE' | 'UPI' | 'GST' | 'WATERMARK' | 'PHOTO';
+  lastMediaId?: string;
+  lastMediaMime?: string;
+  customName?: string;
+  updatedAt: number;
+}
+
+// In-memory session store (30-minute session per user)
+const userSessions = new Map<string, UserSession>();
+
+function getSession(phone: string): UserSession {
+  let session = userSessions.get(phone);
+  if (!session || Date.now() - session.updatedAt > 30 * 60 * 1000) {
+    session = { phone, currentMenu: 'MAIN', updatedAt: Date.now() };
+    userSessions.set(phone, session);
+  }
+  return session;
+}
+
+function updateSession(phone: string, updates: Partial<UserSession>): UserSession {
+  const session = getSession(phone);
+  Object.assign(session, updates, { updatedAt: Date.now() });
+  userSessions.set(phone, session);
+  return session;
+}
 
 export default async function handler(req: Request): Promise<Response> {
   const verifyToken = process.env['META_VERIFY_TOKEN'] || 'quicktools_verify_token_2026';
@@ -48,8 +75,8 @@ export default async function handler(req: Request): Promise<Response> {
       return Response.json({
         status: 'online',
         service: 'JSANS QuickTools WhatsApp Bot Webhook',
-        version: '2.0.0',
-        message: 'Endpoint is active and ready for Meta Webhook verification.'
+        version: '3.0.0',
+        message: 'Endpoint is active with in-memory image conversion & single-digit submenus.'
       });
     }
 
@@ -65,8 +92,6 @@ export default async function handler(req: Request): Promise<Response> {
     } catch {
       return Response.json({ status: 'invalid_json' }, { status: 400 });
     }
-
-    console.log('[WhatsApp Inbound Webhook Payload]:', JSON.stringify(body));
 
     if (body?.object && body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]) {
       const messageData = body.entry[0].changes[0].value.messages[0];
@@ -85,19 +110,25 @@ export default async function handler(req: Request): Promise<Response> {
           const buttonId = messageData.interactive?.button_reply?.id || messageData.interactive?.list_reply?.id || '';
           replyText = await processUserCommand(buttonId, phoneNumberId, from);
         } else if (messageData.type === 'image') {
+          // Save image reference in memory session
+          const mediaId = messageData.image?.id;
+          const mimeType = messageData.image?.mime_type || 'image/jpeg';
+          updateSession(from, { currentMenu: 'PHOTO', lastMediaId: mediaId, lastMediaMime: mimeType });
+
           replyText = `📸 *Photo Received!*
 ━━━━━━━━━━━━━━━━━━━━
-Reply with a *number* to choose an action:
+Reply with a *single number* to edit this photo directly:
 
-5️⃣1️⃣ *Safe-KYC Hotel Check-In Watermark*
-5️⃣2️⃣ *Safe-KYC SIM Activation Watermark*
-5️⃣5️⃣ *Open In-Browser Watermark Studio*
-     👉 https://www.jsnsworks.site/tools/watermark
+1️⃣ *Safe-KYC Hotel Check-In Watermark*
+2️⃣ *Safe-KYC SIM Activation Watermark*
+3️⃣ *Safe-KYC Bank / Loan KYC Watermark*
+4️⃣ *Safe-KYC Job Verification Watermark*
+5️⃣ *Compress Photo to 20 KB* (Govt Exams)
+6️⃣ *Compress Photo to 50 KB* (Passport/Visa)
 
-6️⃣1️⃣ *Compress Photo to 20 KB* (Govt Exams)
-6️⃣2️⃣ *Compress Photo to 50 KB* (Passport/Visa)
-6️⃣3️⃣ *Open Free Web Photo Resizer*
-     👉 https://www.jsnsworks.site/tools/image-converter
+✏️ *Or type custom watermark with your name:*
+\`WATERMARK <Your Name / Purpose>\`
+_(e.g. \`WATERMARK Abhishek - HDFC Bank Only\`)_
 
 0️⃣ *Back to Main Menu*`;
         } else if (messageData.type === 'document') {
@@ -111,7 +142,7 @@ _Or reply *0* to see all tools!_`;
           replyText = getMainMenuText();
         }
 
-        // If replyText is non-empty, send text message (if an image was already sent, replyText will be empty)
+        // Send outbound text message if non-empty (if image was sent, replyText is empty)
         if (replyText && phoneNumberId) {
           console.log('[WhatsApp Dispatching Outbound Reply]:', { to: from, replySnippet: replyText.slice(0, 60) });
           await sendWhatsAppMessage(phoneNumberId, from, replyText);
@@ -123,7 +154,6 @@ _Or reply *0* to see all tools!_`;
       return Response.json({ status: 'ok' });
     }
 
-    console.log('[WhatsApp Non-Message Event (status/delivery)]: Ignored');
     return Response.json({ status: 'ignored' });
   }
 
@@ -136,9 +166,9 @@ _Or reply *0* to see all tools!_`;
 function getMainMenuText(): string {
   return `👋 *Welcome to QuickTools AI!*
 ━━━━━━━━━━━━━━━━━━━━
-Reply with any *number (1 - 6)*:
+Reply with a *number (1 - 6)*:
 
-1️⃣ *Loan & EMI Calculator*
+1️⃣ *Loan EMI Calculator*
 2️⃣ *Exact Age & Birthday Milestone*
 3️⃣ *UPI QR & Barcode (Sends Photo 🖼️)*
 4️⃣ *GST Tax Calculator*
@@ -150,261 +180,45 @@ Reply with any *number (1 - 6)*:
 }
 
 /**
- * Command processor - Handles numbered menus, submenus, direct images & Gemini AI
+ * Command processor - Handles numbered submenus (1, 2, 3), custom names & in-memory image conversion
  */
 async function processUserCommand(rawText: string, phoneNumberId?: string, from?: string): Promise<string> {
   const text = rawText.trim();
   const upper = text.toUpperCase();
+  const session: UserSession = from ? getSession(from) : { currentMenu: 'MAIN', phone: '', updatedAt: 0 };
 
   // ==========================================
-  // 0. MAIN MENU & GREETINGS
+  // 0. RESET TO MAIN MENU
   // ==========================================
   if (['0', 'M', 'MENU', 'BACK', 'HOME', 'START', 'HELP', 'HI', 'HELLO', 'TOOLS'].includes(upper)) {
+    if (from) updateSession(from, { currentMenu: 'MAIN' });
     return getMainMenuText();
   }
 
   // ==========================================
-  // TOOL 1: LOAN & EMI CALCULATOR
+  // GLOBAL COMMANDS (WORK FROM ANYWHERE)
   // ==========================================
-  if (upper === '1' || upper === 'LOAN' || upper === 'EMI') {
-    return `📊 *Loan EMI Calculator*
-━━━━━━━━━━━━━━━━━━━━
-Reply with a number:
 
-1️⃣1️⃣ *Home Loan:* ₹25L @ 8.5% for 15 Yrs
-1️⃣2️⃣ *Car Loan:* ₹8L @ 9.0% for 5 Yrs
-1️⃣3️⃣ *Personal Loan:* ₹3L @ 12.0% for 3 Yrs
-1️⃣4️⃣ *Custom Loan:* Type \`EMI <Amount> <Rate> <Years>\`
-     _(e.g. \`EMI 500000 8.5 5\`)_
-
-0️⃣ *Back to Main Menu*`;
-  }
-
-  // Presets: 11, 12, 13 (and legacy 1A, 1B, 1C)
-  if (upper === '11' || upper === '1A') {
-    const res = calculateLoanEmi(2500000, 8.5, 15);
-    return formatEmiResult(2500000, 8.5, 15, res, 'Home Loan Preset');
-  }
-  if (upper === '12' || upper === '1B') {
-    const res = calculateLoanEmi(800000, 9.0, 5);
-    return formatEmiResult(800000, 9.0, 5, res, 'Car Loan Preset');
-  }
-  if (upper === '13' || upper === '1C') {
-    const res = calculateLoanEmi(300000, 12.0, 3);
-    return formatEmiResult(300000, 12.0, 3, res, 'Personal Loan Preset');
-  }
-  if (upper === '14') {
-    return `✏️ *Custom Loan EMI Calculator*
-━━━━━━━━━━━━━━━━━━━━
-Reply in this format:
-\`EMI <Amount> <Rate%> <Years>\`
-
-_Examples:_
-• \`EMI 1000000 8.5 10\` (₹10 Lakhs, 8.5%, 10 Yrs)
-• \`EMI 500000 10.5 3\` (₹5 Lakhs, 10.5%, 3 Yrs)
-
-_Reply *0* for Main Menu_`;
-  }
-
-  // Custom EMI syntax: EMI 500000 8.5 5
-  if (upper.startsWith('EMI') && text.split(/\s+/).length >= 4) {
-    const parts = text.split(/\s+/).slice(1);
-    const p = parseFloat(parts[0].replace(/,/g, ''));
-    const rAnnual = parseFloat(parts[1].replace(/%/g, ''));
-    const years = parseFloat(parts[2]);
-
-    if (!isNaN(p) && !isNaN(rAnnual) && !isNaN(years) && p > 0 && rAnnual >= 0 && years > 0) {
-      const emiRes = calculateLoanEmi(p, rAnnual, years);
-      return formatEmiResult(p, rAnnual, years, emiRes, 'Custom Loan Calculation');
-    }
-  }
-
-  // ==========================================
-  // TOOL 2: AGE & BIRTHDAY CALCULATOR
-  // ==========================================
-  if (upper === '2' || upper === 'AGE') {
-    return `🎂 *Exact Age & Birthday Milestone*
-━━━━━━━━━━━━━━━━━━━━
-Reply with a number:
-
-2️⃣1️⃣ *Demo:* Born 01-01-2000
-2️⃣2️⃣ *Demo:* Born 15-08-1995
-2️⃣3️⃣ *Calculate your Age:* Type \`AGE DD-MM-YYYY\`
-     _(e.g. \`AGE 25-12-1998\`)_
-
-0️⃣ *Back to Main Menu*`;
-  }
-
-  if (upper === '21') {
-    const ageRes = calculateExactAge('01-01-2000');
-    if (ageRes) return formatAgeResult(ageRes, '01-01-2000');
-  }
-  if (upper === '22') {
-    const ageRes = calculateExactAge('15-08-1995');
-    if (ageRes) return formatAgeResult(ageRes, '15-08-1995');
-  }
-  if (upper === '23') {
-    return `🎂 *Calculate Your Exact Age*
-━━━━━━━━━━━━━━━━━━━━
-Reply with your birth date:
-👉 \`AGE DD-MM-YYYY\`
-_Example:_ \`AGE 15-08-1998\`
-
-_Reply *0* for Main Menu_`;
-  }
-
-  // Custom Age format: AGE 15-08-1998 or direct date like 15-08-1998
-  const dateMatch = text.match(/^(?:AGE\s+)?(\d{1,2}[-/.]\d{1,2}[-/.]\d{4})$/i);
-  if (dateMatch) {
-    const rawDate = dateMatch[1];
-    const ageRes = calculateExactAge(rawDate);
-    if (ageRes) {
-      return formatAgeResult(ageRes, rawDate);
-    }
-  }
-
-  // ==========================================
-  // TOOL 3: UPI QR & BARCODE (DIRECT IMAGE SENDER)
-  // ==========================================
-  if (upper === '3' || upper === 'QR' || upper === 'BARCODE') {
-    return `📱 *UPI Payment QR & Barcode Generator*
-━━━━━━━━━━━━━━━━━━━━
-Reply with a number to receive a *direct photo message 🖼️*:
-
-3️⃣1️⃣ *Demo UPI QR:* ₹500 to store@upi (Sends Image)
-3️⃣2️⃣ *Demo UPI QR:* ₹1,000 to merchant@upi (Sends Image)
-3️⃣3️⃣ *Custom UPI QR:* Type \`UPI <VPA> <Amount>\`
-     _(e.g. \`UPI rahul@upi 500\`)_
-3️⃣4️⃣ *Demo Barcode:* EAN-13 Sample (Sends Image)
-3️⃣5️⃣ *Custom Barcode:* Type \`BARCODE <Number>\`
-     _(e.g. \`BARCODE 890123456789\`)_
-3️⃣6️⃣ *Custom Text/Link QR:* Type \`QR <Text or Link>\`
-
-0️⃣ *Back to Main Menu*`;
-  }
-
-  // 31: Demo UPI QR (₹500) -> Direct Image Delivery
-  if (upper === '31') {
-    const demoVpa = 'store@upi';
-    const demoAmt = 500;
-    const upiUri = buildUpiUri({ vpa: demoVpa, amount: demoAmt, payeeName: 'JSANS Store' });
-    const encoded = encodeURIComponent(upiUri);
-    const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encoded}&format=png`;
-    const caption = `📱 *Demo UPI QR Code (₹500)*
-━━━━━━━━━━━━━━━━━━━━
-• *Payee VPA:* \`${demoVpa}\`
-• *Amount:* ₹500
-• *Note:* Demo Payment
-
-📲 *Scan directly from WhatsApp using GPay, PhonePe, or Paytm!*
-
-_Reply *0* for Main Menu or *3* for UPI options._`;
-
-    if (phoneNumberId && from) {
-      const sent = await sendWhatsAppImage(phoneNumberId, from, qrImageUrl, caption);
-      if (sent) return '';
-    }
-    return `${caption}\n\n🔗 ${qrImageUrl}`;
-  }
-
-  // 32: Demo UPI QR (₹1,000) -> Direct Image Delivery
-  if (upper === '32') {
-    const demoVpa = 'merchant@upi';
-    const demoAmt = 1000;
-    const upiUri = buildUpiUri({ vpa: demoVpa, amount: demoAmt, payeeName: 'JSANS Merchant' });
-    const encoded = encodeURIComponent(upiUri);
-    const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encoded}&format=png`;
-    const caption = `📱 *Demo UPI QR Code (₹1,000)*
-━━━━━━━━━━━━━━━━━━━━
-• *Payee VPA:* \`${demoVpa}\`
-• *Amount:* ₹1,000
-• *Note:* Merchant Demo Payment
-
-📲 *Scan directly from WhatsApp using GPay, PhonePe, or Paytm!*
-
-_Reply *0* for Main Menu or *3* for UPI options._`;
-
-    if (phoneNumberId && from) {
-      const sent = await sendWhatsAppImage(phoneNumberId, from, qrImageUrl, caption);
-      if (sent) return '';
-    }
-    return `${caption}\n\n🔗 ${qrImageUrl}`;
-  }
-
-  if (upper === '33') {
-    return `✏️ *Create Custom UPI Payment QR*
-━━━━━━━━━━━━━━━━━━━━
-Reply in this format:
-\`UPI <yourVPA> <Amount>\`
-
-_Examples:_
-• \`UPI 9876543210@paytm 500\`
-• \`UPI business@okhdfcbank 1500\`
-• \`UPI rahul@upi\` (any amount)
-
-_I will immediately generate and send the scannable QR photo!_`;
-  }
-
-  // 34: Demo Barcode -> Direct Image Delivery
-  if (upper === '34') {
-    const barcodeValue = '8901030865421';
-    const barcodeImageUrl = `https://bwipjs-api.metafloor.com/?bcid=code128&text=${barcodeValue}&scale=3&includetext=true`;
-    const caption = `🏷️ *Demo Barcode (Code-128)*
-━━━━━━━━━━━━━━━━━━━━
-• *Code:* \`${barcodeValue}\`
-• *Format:* Universal Code-128
-
-_Scannable with any optical scanner or scanner app._
-
-_Reply *0* for Main Menu or *3* for options._`;
-
-    if (phoneNumberId && from) {
-      const sent = await sendWhatsAppImage(phoneNumberId, from, barcodeImageUrl, caption);
-      if (sent) return '';
-    }
-    return `${caption}\n\n🔗 ${barcodeImageUrl}`;
-  }
-
-  if (upper === '35') {
-    return `🏷️ *Create Custom Barcode*
-━━━━━━━━━━━━━━━━━━━━
-Reply in this format:
-\`BARCODE <Number or Code>\`
-
-_Examples:_
-• \`BARCODE 890123456789\`
-• \`BARCODE SKU-99420\`
-
-_I will immediately send the generated barcode image!_`;
-  }
-
-  if (upper === '36') {
-    return `🔲 *Create Custom Text/URL QR*
-━━━━━━━━━━━━━━━━━━━━
-Reply in this format:
-\`QR <Your Link or Text>\`
-
-_Examples:_
-• \`QR https://www.jsnsworks.site\`
-• \`QR Welcome to our store!\`
-
-_I will immediately send the generated QR photo!_`;
-  }
-
-  // Custom UPI command: UPI store@upi 500
+  // Custom UPI Command with optional custom Payee Name:
+  // Syntax: UPI <vpa> <amount> [Payee Name]
   if (upper.startsWith('UPI')) {
-    const upiConfig = parseUpiCommand(text);
-    if (upiConfig) {
-      const upiUri = buildUpiUri(upiConfig);
+    const parts = text.split(/\s+/);
+    if (parts.length >= 2) {
+      const vpa = parts[1];
+      const amount = parts.length >= 3 && !isNaN(parseFloat(parts[2])) ? parseFloat(parts[2]) : undefined;
+      const customPayee = parts.length >= 4 ? parts.slice(3).join(' ') : 'JSANS QuickTools';
+
+      const upiUri = buildUpiUri({ vpa, amount, payeeName: customPayee });
       const encoded = encodeURIComponent(upiUri);
       const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encoded}&format=png`;
 
-      const amtText = upiConfig.amount ? `₹${upiConfig.amount.toLocaleString('en-IN')}` : 'Any Amount';
+      const amtText = amount ? `₹${amount.toLocaleString('en-IN')}` : 'Any Amount';
       const caption = `📱 *Instant UPI Payment QR Code!*
 ━━━━━━━━━━━━━━━━━━━━
-• *Payee VPA:* \`${upiConfig.vpa}\`
+• *Payee:* ${customPayee}
+• *VPA:* \`${vpa}\`
 • *Amount:* *${amtText}*
-${upiConfig.transactionNote ? `• *Note:* ${upiConfig.transactionNote}\n` : ''}
+
 📲 *Scan with GPay, PhonePe, or Paytm to pay!*
 
 _Reply *0* for Main Menu_`;
@@ -417,7 +231,7 @@ _Reply *0* for Main Menu_`;
     }
   }
 
-  // Custom Barcode command: BARCODE 123456
+  // Custom Barcode Command: BARCODE <number>
   if (upper.startsWith('BARCODE')) {
     const codeValue = text.replace(/^BARCODE\s*/i, '').trim();
     if (codeValue.length > 0) {
@@ -427,7 +241,7 @@ _Reply *0* for Main Menu_`;
 • *Code:* \`${codeValue}\`
 • *Format:* Universal Code-128
 
-_Scannable with any optical scanner or scanner app._
+_Scannable with any optical scanner or phone reader._
 
 _Reply *0* for Main Menu_`;
 
@@ -439,7 +253,7 @@ _Reply *0* for Main Menu_`;
     }
   }
 
-  // Custom QR command: QR https://...
+  // Custom QR Command: QR <link/text>
   if (upper.startsWith('QR')) {
     const qrData = text.replace(/^QR\s*/i, '').trim();
     if (qrData.length > 0) {
@@ -449,7 +263,7 @@ _Reply *0* for Main Menu_`;
 ━━━━━━━━━━━━━━━━━━━━
 • *Data:* ${qrData.slice(0, 100)}
 
-_Scan with any phone camera or QR reader app._
+_Scan with any phone camera or QR reader._
 
 _Reply *0* for Main Menu_`;
 
@@ -461,41 +275,38 @@ _Reply *0* for Main Menu_`;
     }
   }
 
-  // ==========================================
-  // TOOL 4: GST TAX CALCULATOR
-  // ==========================================
-  if (upper === '4' || upper === 'GST') {
-    return `🧾 *GST Tax Calculator*
+  // Custom Watermark command with custom name: WATERMARK <Name / Purpose>
+  if (upper.startsWith('WATERMARK')) {
+    const customWatermark = text.replace(/^WATERMARK\s*/i, '').trim();
+    if (from && session.lastMediaId && phoneNumberId) {
+      const watermarkString = customWatermark || 'SAFE-KYC VERIFIED DOCUMENT - NOT FOR REUSE';
+      const success = await processAndSendWatermark(phoneNumberId, from, session.lastMediaId, watermarkString);
+      if (success) return '';
+    }
+    return `🛡️ *Safe-KYC Watermark Studio*
 ━━━━━━━━━━━━━━━━━━━━
-Reply with a number:
-
-4️⃣1️⃣ *18% GST on ₹1,000*
-4️⃣2️⃣ *18% GST on ₹5,000*
-4️⃣3️⃣ *12% GST on ₹2,500*
-4️⃣4️⃣ *5% GST on ₹500*
-4️⃣5️⃣ *Custom GST:* Type \`GST <Amount> <Rate>\`
-     _(e.g. \`GST 4500 18\`)_
-
-0️⃣ *Back to Main Menu*`;
-  }
-
-  if (upper === '41' || upper === '4A') return formatGstResult(1000, 18, calculateGst(1000, 18));
-  if (upper === '42' || upper === '4B') return formatGstResult(5000, 18, calculateGst(5000, 18));
-  if (upper === '43' || upper === '4C') return formatGstResult(2500, 12, calculateGst(2500, 12));
-  if (upper === '44' || upper === '4D') return formatGstResult(500, 5, calculateGst(500, 5));
-  if (upper === '45') {
-    return `🧾 *Custom GST Calculator*
-━━━━━━━━━━━━━━━━━━━━
-Reply in this format:
-\`GST <Amount> <Rate%>\`
-
-_Examples:_
-• \`GST 1500 18\` (18% GST on ₹1,500)
-• \`GST 85000 28\` (28% GST on ₹85,000)
+To stamp *"${customWatermark}"* on your ID card:
+1. Send your Aadhaar, PAN or Voter ID photo here first.
+2. Or use our 100% Private In-Browser Watermark Studio:
+👉 https://www.jsnsworks.site/tools/watermark
 
 _Reply *0* for Main Menu_`;
   }
 
+  // Custom Loan EMI: EMI <Amount> <Rate> <Years>
+  if (upper.startsWith('EMI') && text.split(/\s+/).length >= 4) {
+    const parts = text.split(/\s+/).slice(1);
+    const p = parseFloat(parts[0].replace(/,/g, ''));
+    const rAnnual = parseFloat(parts[1].replace(/%/g, ''));
+    const years = parseFloat(parts[2]);
+
+    if (!isNaN(p) && !isNaN(rAnnual) && !isNaN(years) && p > 0 && rAnnual >= 0 && years > 0) {
+      const emiRes = calculateLoanEmi(p, rAnnual, years);
+      return formatEmiResult(p, rAnnual, years, emiRes, 'Custom Loan Calculation');
+    }
+  }
+
+  // Custom GST: GST <Amount> <Rate>
   if (upper.startsWith('GST') && text.split(/\s+/).length >= 3) {
     const parts = text.split(/\s+/).slice(1);
     const amount = parseFloat(parts[0].replace(/,/g, ''));
@@ -506,167 +317,359 @@ _Reply *0* for Main Menu_`;
     }
   }
 
+  // Custom Age: AGE 15-08-1998 or direct date like 15-08-1998
+  const dateMatch = text.match(/^(?:AGE\s+)?(\d{1,2}[-/.]\d{1,2}[-/.]\d{4})$/i);
+  if (dateMatch) {
+    const rawDate = dateMatch[1];
+    const ageRes = calculateExactAge(rawDate);
+    if (ageRes) return formatAgeResult(ageRes, rawDate);
+  }
+
   // ==========================================
-  // TOOL 5: SAFE-KYC DOCUMENT WATERMARKER
+  // STATE MACHINE: SUBMENU HANDLING
   // ==========================================
-  if (upper === '5' || upper === 'WATERMARK' || upper === 'KYC') {
-    return `🛡️ *Safe-KYC Document Watermarker*
-━━━━━━━━━━━━━━━━━━━━
-Prevent identity theft & misuse of Aadhaar, PAN & Voter ID cards!
 
-Reply with a number:
-
-5️⃣1️⃣ *Hotel Check-In Preset Text & Guide*
-5️⃣2️⃣ *SIM Card Activation Preset Text & Guide*
-5️⃣3️⃣ *Bank Account / Loan KYC Preset Text & Guide*
-5️⃣4️⃣ *Job Application Preset Text & Guide*
-5️⃣5️⃣ *Open 100% Private Web Watermark Studio*
-     👉 https://www.jsnsworks.site/tools/watermark
-
-0️⃣ *Back to Main Menu*`;
+  // --- SUBMENU: PHOTO RECEIVED (IN-MEMORY CONVERSION) ---
+  if (session.currentMenu === 'PHOTO' && session.lastMediaId && phoneNumberId && from) {
+    if (upper === '1') {
+      const success = await processAndSendWatermark(phoneNumberId, from, session.lastMediaId, 'ONLY FOR HOTEL CHECK-IN - NOT FOR ANY OTHER USE');
+      if (success) return '';
+    }
+    if (upper === '2') {
+      const success = await processAndSendWatermark(phoneNumberId, from, session.lastMediaId, 'FOR NEW SIM ACTIVATION ONLY - NOT FOR BANKING');
+      if (success) return '';
+    }
+    if (upper === '3') {
+      const success = await processAndSendWatermark(phoneNumberId, from, session.lastMediaId, 'SUBMITTED FOR BANK / LOAN KYC ONLY');
+      if (success) return '';
+    }
+    if (upper === '4') {
+      const success = await processAndSendWatermark(phoneNumberId, from, session.lastMediaId, 'FOR JOB BACKGROUND VERIFICATION ONLY');
+      if (success) return '';
+    }
+    if (upper === '5') {
+      const success = await processAndSendCompressedImage(phoneNumberId, from, session.lastMediaId, 20);
+      if (success) return '';
+    }
+    if (upper === '6') {
+      const success = await processAndSendCompressedImage(phoneNumberId, from, session.lastMediaId, 50);
+      if (success) return '';
+    }
   }
 
-  if (upper === '51') {
-    return `🏨 *Hotel Check-In Watermark Template*
+  // --- SUBMENU: LOAN EMI ---
+  if (session.currentMenu === 'LOAN') {
+    if (upper === '1' || upper === '11') {
+      const res = calculateLoanEmi(2500000, 8.5, 15);
+      return formatEmiResult(2500000, 8.5, 15, res, 'Home Loan Preset');
+    }
+    if (upper === '2' || upper === '12') {
+      const res = calculateLoanEmi(800000, 9.0, 5);
+      return formatEmiResult(800000, 9.0, 5, res, 'Car Loan Preset');
+    }
+    if (upper === '3' || upper === '13') {
+      const res = calculateLoanEmi(300000, 12.0, 3);
+      return formatEmiResult(300000, 12.0, 3, res, 'Personal Loan Preset');
+    }
+    if (upper === '4' || upper === '14') {
+      return `✏️ *Custom Loan EMI Calculator*
 ━━━━━━━━━━━━━━━━━━━━
-Copy & stamp this text across your Aadhaar/ID:
+Reply in this format:
+\`EMI <Amount> <Rate%> <Years>\`
 
-\`ONLY FOR HOTEL CHECK-IN AT [HOTEL NAME] ON [DATE]. NOT VALID FOR ANY OTHER PURPOSE.\`
-
-🔒 *Safety Rules:*
-• Never leave a clean unwatermarked copy with front-desk staff.
-• Mask the first 8 digits of Aadhaar (only show last 4).
-
-👉 *Stamp it immediately in your browser (100% private):*
-https://www.jsnsworks.site/tools/watermark
+_Examples:_
+• \`EMI 1000000 8.5 10\` (₹10L @ 8.5% for 10 Yrs)
+• \`EMI 500000 10.5 3\` (₹5L @ 10.5% for 3 Yrs)
 
 _Reply *0* for Main Menu_`;
+    }
   }
 
-  if (upper === '52') {
-    return `📱 *SIM Activation Watermark Template*
+  // --- SUBMENU: AGE CALCULATOR ---
+  if (session.currentMenu === 'AGE') {
+    if (upper === '1' || upper === '21') {
+      const res = calculateExactAge('01-01-2000');
+      if (res) return formatAgeResult(res, '01-01-2000');
+    }
+    if (upper === '2' || upper === '22') {
+      const res = calculateExactAge('15-08-1995');
+      if (res) return formatAgeResult(res, '15-08-1995');
+    }
+    if (upper === '3' || upper === '23') {
+      return `🎂 *Calculate Your Exact Age*
 ━━━━━━━━━━━━━━━━━━━━
-Copy & stamp this text across your Aadhaar/ID:
-
-\`FOR [AIRTEL/JIO/VI] NEW SIM ACTIVATION ON [DATE] ONLY. NOT VALID FOR BANKING OR LOANS.\`
-
-🔒 *Safety Rules:*
-• Prevents telecom agents from issuing duplicate SIMs in your name.
-
-👉 *Stamp it immediately in your browser:*
-https://www.jsnsworks.site/tools/watermark
+Reply with your birth date:
+👉 \`AGE DD-MM-YYYY\`
+_Example:_ \`AGE 15-08-1998\`
 
 _Reply *0* for Main Menu_`;
+    }
   }
 
-  if (upper === '53') {
-    return `🏦 *Bank & Loan KYC Watermark Template*
+  // --- SUBMENU: UPI QR & BARCODE ---
+  if (session.currentMenu === 'UPI') {
+    if (upper === '1' || upper === '31') {
+      const demoVpa = 'store@upi';
+      const upiUri = buildUpiUri({ vpa: demoVpa, amount: 500, payeeName: 'JSANS Store' });
+      const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(upiUri)}&format=png`;
+      const caption = `📱 *Demo UPI QR Code (₹500)*
 ━━━━━━━━━━━━━━━━━━━━
-Copy & stamp this text across your ID:
+• *Payee:* JSANS Store
+• *VPA:* \`${demoVpa}\`
+• *Amount:* ₹500
 
-\`SUBMITTED FOR [BANK NAME] SAVINGS ACCOUNT / LOAN APPLICATION NO. [XXX] ON [DATE] ONLY.\`
-
-🔒 *Safety Rules:*
-• Prevents loan fraud and mule account creation.
-
-👉 *Stamp it immediately in your browser:*
-https://www.jsnsworks.site/tools/watermark
+📲 *Scan directly from WhatsApp using GPay, PhonePe, or Paytm!*
 
 _Reply *0* for Main Menu_`;
-  }
+      if (phoneNumberId && from) {
+        const sent = await sendWhatsAppImage(phoneNumberId, from, qrImageUrl, caption);
+        if (sent) return '';
+      }
+      return `${caption}\n\n🔗 ${qrImageUrl}`;
+    }
 
-  if (upper === '54') {
-    return `💼 *Job Application Watermark Template*
+    if (upper === '2' || upper === '32') {
+      const demoVpa = 'merchant@upi';
+      const upiUri = buildUpiUri({ vpa: demoVpa, amount: 1000, payeeName: 'Merchant Pay' });
+      const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(upiUri)}&format=png`;
+      const caption = `📱 *Demo UPI QR Code (₹1,000)*
 ━━━━━━━━━━━━━━━━━━━━
-Copy & stamp this text across your ID:
+• *Payee:* Merchant Pay
+• *VPA:* \`${demoVpa}\`
+• *Amount:* ₹1,000
 
-\`SUBMITTED FOR BACKGROUND VERIFICATION AT [COMPANY NAME] ON [DATE] ONLY.\`
-
-👉 *Stamp it immediately in your browser:*
-https://www.jsnsworks.site/tools/watermark
+📲 *Scan directly from WhatsApp using GPay, PhonePe, or Paytm!*
 
 _Reply *0* for Main Menu_`;
+      if (phoneNumberId && from) {
+        const sent = await sendWhatsAppImage(phoneNumberId, from, qrImageUrl, caption);
+        if (sent) return '';
+      }
+      return `${caption}\n\n🔗 ${qrImageUrl}`;
+    }
+
+    if (upper === '3' || upper === '33') {
+      return `✏️ *Create Custom UPI Payment QR*
+━━━━━━━━━━━━━━━━━━━━
+Reply in this format:
+\`UPI <yourVPA> <Amount> [Your Name]\`
+
+_Examples:_
+• \`UPI rahul@paytm 500 Rahul Store\`
+• \`UPI business@okhdfcbank 1500 Abhishek\`
+
+_I will immediately generate and send the scannable QR photo!_`;
+    }
+
+    if (upper === '4' || upper === '34') {
+      const barcodeValue = '8901030865421';
+      const barcodeImageUrl = `https://bwipjs-api.metafloor.com/?bcid=code128&text=${barcodeValue}&scale=3&includetext=true`;
+      const caption = `🏷️ *Demo Barcode (Code-128)*
+━━━━━━━━━━━━━━━━━━━━
+• *Code:* \`${barcodeValue}\`
+• *Format:* Universal Code-128
+
+_Reply *0* for Main Menu_`;
+      if (phoneNumberId && from) {
+        const sent = await sendWhatsAppImage(phoneNumberId, from, barcodeImageUrl, caption);
+        if (sent) return '';
+      }
+      return `${caption}\n\n🔗 ${barcodeImageUrl}`;
+    }
+
+    if (upper === '5' || upper === '35') {
+      return `🏷️ *Create Custom Barcode*
+━━━━━━━━━━━━━━━━━━━━
+Reply in this format:
+\`BARCODE <Number or Code>\`
+
+_Examples:_ \`BARCODE 890123456789\`
+
+_Reply *0* for Main Menu_`;
+    }
+
+    if (upper === '6' || upper === '36') {
+      return `🔲 *Create Custom QR Code*
+━━━━━━━━━━━━━━━━━━━━
+Reply in this format:
+\`QR <Your Link or Text>\`
+
+_Examples:_ \`QR https://www.jsnsworks.site\`
+
+_Reply *0* for Main Menu_`;
+    }
   }
 
-  if (upper === '55') {
-    return `🌐 *Safe-KYC In-Browser Watermark Studio*
+  // --- SUBMENU: GST TAX ---
+  if (session.currentMenu === 'GST') {
+    if (upper === '1' || upper === '41') return formatGstResult(1000, 18, calculateGst(1000, 18));
+    if (upper === '2' || upper === '42') return formatGstResult(5000, 18, calculateGst(5000, 18));
+    if (upper === '3' || upper === '43') return formatGstResult(2500, 12, calculateGst(2500, 12));
+    if (upper === '4' || upper === '44') return formatGstResult(500, 5, calculateGst(500, 5));
+    if (upper === '5' || upper === '45') {
+      return `🧾 *Custom GST Calculator*
+━━━━━━━━━━━━━━━━━━━━
+Reply in this format:
+\`GST <Amount> <Rate%>\`
+
+_Examples:_ \`GST 1500 18\` or \`GST 85000 28\`
+
+_Reply *0* for Main Menu_`;
+    }
+  }
+
+  // --- SUBMENU: SAFE-KYC WATERMARK TEXT GUIDE ---
+  if (session.currentMenu === 'WATERMARK') {
+    if (upper === '1' || upper === '51') {
+      return `🏨 *Hotel Check-In Watermark Template*
+━━━━━━━━━━━━━━━━━━━━
+Recommended watermark text:
+\`ONLY FOR HOTEL CHECK-IN AT [HOTEL] ON [DATE]. NOT VALID FOR ANY OTHER PURPOSE.\`
+
+👉 *Send any ID photo here now, and reply 1 to stamp it!*
+_Or use Web Studio:_ https://www.jsnsworks.site/tools/watermark
+
+_Reply *0* for Main Menu_`;
+    }
+    if (upper === '2' || upper === '52') {
+      return `📱 *SIM Activation Watermark Template*
+━━━━━━━━━━━━━━━━━━━━
+Recommended watermark text:
+\`FOR [AIRTEL/JIO] NEW SIM ACTIVATION ON [DATE] ONLY. NOT VALID FOR BANKING.\`
+
+👉 *Send any ID photo here now, and reply 2 to stamp it!*
+_Reply *0* for Main Menu_`;
+    }
+    if (upper === '3' || upper === '53') {
+      return `🏦 *Bank & Loan KYC Watermark Template*
+━━━━━━━━━━━━━━━━━━━━
+Recommended watermark text:
+\`SUBMITTED FOR [BANK NAME] KYC ON [DATE] ONLY.\`
+
+👉 *Send any ID photo here now, and reply 3 to stamp it!*
+_Reply *0* for Main Menu_`;
+    }
+    if (upper === '4' || upper === '54') {
+      return `💼 *Job Application Watermark Template*
+━━━━━━━━━━━━━━━━━━━━
+Recommended watermark text:
+\`FOR JOB VERIFICATION AT [COMPANY] ON [DATE] ONLY.\`
+
+👉 *Send any ID photo here now, and reply 4 to stamp it!*
+_Reply *0* for Main Menu_`;
+    }
+    if (upper === '5' || upper === '55') {
+      return `🌐 *Safe-KYC In-Browser Watermark Studio*
 ━━━━━━━━━━━━━━━━━━━━
 Safely protect documents without uploading to any server:
 👉 https://www.jsnsworks.site/tools/watermark
 
-✨ *Features:*
-• 100% Client-Side HTML5 Canvas (Zero Cloud Upload)
-• 1-Click Presets (Hotel, SIM, Bank, Job)
-• Repeating fraud-prevention diagonal grid pattern
-• Auto current date-stamping & instant PNG download!
-
 _Reply *0* for Main Menu_`;
+    }
   }
 
   // ==========================================
-  // TOOL 6: PHOTO SIZE REDUCER & RESIZER
+  // MAIN MENU NUMBER NAVIGATION (1 - 6)
   // ==========================================
-  if (upper === '6' || upper === 'COMPRESS' || upper === 'PHOTO') {
-    return `🗜️ *Photo Size Reducer & Image Resizer*
-━━━━━━━━━━━━━━━━━━━━
-Reply with a number:
 
-6️⃣1️⃣ *Reduce Photo to 20 KB* (Govt Exams / UPSC / SSC)
-6️⃣2️⃣ *Reduce Photo to 50 KB* (Passport / Visa / Banking)
-6️⃣3️⃣ *Open Free Web Image Converter Studio*
-     👉 https://www.jsnsworks.site/tools/image-converter
-6️⃣4️⃣ *Convert Photo to PDF Document*
-     👉 https://www.jsnsworks.site/tools/pdf-merger
+  // 1: Enter Loan EMI Submenu
+  if (upper === '1' || upper === 'LOAN' || upper === 'EMI') {
+    if (from) updateSession(from, { currentMenu: 'LOAN' });
+    return `📊 *Loan EMI Calculator*
+━━━━━━━━━━━━━━━━━━━━
+Reply with a *number (1 - 4)*:
+
+1️⃣ *Home Loan:* ₹25L @ 8.5% for 15 Yrs
+2️⃣ *Car Loan:* ₹8L @ 9.0% for 5 Yrs
+3️⃣ *Personal Loan:* ₹3L @ 12.0% for 3 Yrs
+4️⃣ *Custom Loan:* Enter your own amount, rate & years!
 
 0️⃣ *Back to Main Menu*`;
   }
 
-  if (upper === '61') {
-    return `📉 *Reduce Photo to 20 KB (UPSC / SSC / Govt Exams)*
+  // 2: Enter Age Submenu
+  if (upper === '2' || upper === 'AGE') {
+    if (from) updateSession(from, { currentMenu: 'AGE' });
+    return `🎂 *Exact Age & Birthday Milestone*
 ━━━━━━━━━━━━━━━━━━━━
-Most govt application portals reject photos larger than 20 KB:
+Reply with a *number (1 - 3)*:
 
-👉 *1-Click 20 KB Resizer Tool:*
-https://www.jsnsworks.site/tools/image-converter
+1️⃣ *Demo:* Born 01-01-2000
+2️⃣ *Demo:* Born 15-08-1995
+3️⃣ *Custom Age:* Type \`AGE DD-MM-YYYY\` (e.g. \`15-08-1998\`)
 
-1. Upload your photo or signature.
-2. Select target size: *20 KB*.
-3. Click *Download* — crisp quality, perfect dimensions!
-
-_Reply *0* for Main Menu_`;
+0️⃣ *Back to Main Menu*`;
   }
 
-  if (upper === '62') {
-    return `📉 *Reduce Photo to 50 KB (Passport / Visa / Bank)*
+  // 3: Enter UPI & Barcode Submenu
+  if (upper === '3' || upper === 'QR' || upper === 'BARCODE') {
+    if (from) updateSession(from, { currentMenu: 'UPI' });
+    return `📱 *UPI Payment QR & Barcode Generator*
 ━━━━━━━━━━━━━━━━━━━━
-Standard passport & visa applications require under 50 KB:
+Reply with a *number (1 - 6)* to receive direct photo 🖼️:
 
-👉 *1-Click 50 KB Resizer Tool:*
-https://www.jsnsworks.site/tools/image-converter
+1️⃣ *Demo UPI QR:* ₹500 to store@upi
+2️⃣ *Demo UPI QR:* ₹1,000 to merchant@upi
+3️⃣ *Custom UPI QR:* Enter your own VPA, Amount & Name
+4️⃣ *Demo Barcode:* EAN-13 Sample
+5️⃣ *Custom Barcode:* Generate barcode from number
+6️⃣ *Custom QR:* Generate QR from link or text
 
-1. Upload photo.
-2. Choose target size: *50 KB*.
-3. Download instantly with exact dimensions!
-
-_Reply *0* for Main Menu_`;
+0️⃣ *Back to Main Menu*`;
   }
 
-  if (upper === '63') {
-    return `🖼️ *Free Web Image Resizer & Converter*
+  // 4: Enter GST Submenu
+  if (upper === '4' || upper === 'GST') {
+    if (from) updateSession(from, { currentMenu: 'GST' });
+    return `🧾 *GST Tax Calculator*
 ━━━━━━━━━━━━━━━━━━━━
-Resize, crop, and convert JPG, PNG, WEBP:
-👉 https://www.jsnsworks.site/tools/image-converter
+Reply with a *number (1 - 5)*:
 
-_Reply *0* for Main Menu_`;
+1️⃣ *18% GST on ₹1,000*
+2️⃣ *18% GST on ₹5,000*
+3️⃣ *12% GST on ₹2,500*
+4️⃣ *5% GST on ₹500*
+5️⃣ *Custom GST:* Enter your own amount & tax rate
+
+0️⃣ *Back to Main Menu*`;
   }
 
-  if (upper === '64' || upper.includes('CONVERT PDF')) {
-    return `📄 *Convert Photo to PDF Document*
+  // 5: Enter Watermark Submenu
+  if (upper === '5' || upper === 'WATERMARK' || upper === 'KYC') {
+    if (from) updateSession(from, { currentMenu: 'WATERMARK' });
+    return `🛡️ *Safe-KYC Document Watermarker*
 ━━━━━━━━━━━━━━━━━━━━
-Convert single or multiple images into a clean PDF document:
-👉 https://www.jsnsworks.site/tools/pdf-merger
+Protect Aadhaar, PAN & Voter ID cards from fraud!
 
-_Reply *0* for Main Menu_`;
+Reply with a *number (1 - 5)*:
+
+1️⃣ *Hotel Check-In Preset Text & Guide*
+2️⃣ *SIM Card Activation Preset Text & Guide*
+3️⃣ *Bank Account / Loan KYC Preset Text & Guide*
+4️⃣ *Job Application Preset Text & Guide*
+5️⃣ *Open 100% Private Web Watermark Studio*
+     👉 https://www.jsnsworks.site/tools/watermark
+
+💡 *Tip:* Send any photo here to stamp it directly!
+0️⃣ *Back to Main Menu*`;
+  }
+
+  // 6: Enter Photo Reducer Submenu
+  if (upper === '6' || upper === 'COMPRESS' || upper === 'PHOTO') {
+    if (from) updateSession(from, { currentMenu: 'PHOTO' });
+    return `🗜️ *Photo Size Reducer & Image Resizer*
+━━━━━━━━━━━━━━━━━━━━
+Reply with a number:
+
+1️⃣ *Reduce Photo to 20 KB* (Govt Exams / UPSC / SSC)
+2️⃣ *Reduce Photo to 50 KB* (Passport / Visa / Banking)
+3️⃣ *Open Free Web Image Resizer Studio*
+     👉 https://www.jsnsworks.site/tools/image-converter
+4️⃣ *Convert Photo to PDF Document*
+     👉 https://www.jsnsworks.site/tools/pdf-merger
+
+💡 *Tip:* Send your photo here to compress it directly!
+0️⃣ *Back to Main Menu*`;
   }
 
   // ==========================================
@@ -674,6 +677,232 @@ _Reply *0* for Main Menu_`;
   // ==========================================
   console.log('[Routing to Gemini AI]:', text);
   return await askGeminiAi(text);
+}
+
+/**
+ * In-Memory Image Watermarking via Jimp (Zero Database Storage)
+ */
+async function processAndSendWatermark(
+  phoneNumberId: string,
+  to: string,
+  mediaId: string,
+  watermarkText: string
+): Promise<boolean> {
+  try {
+    console.log('[In-Memory Watermarking]: Downloading image bytes from Meta CDN...');
+    const imageBuffer = await fetchMediaFromMeta(mediaId);
+    if (!imageBuffer) {
+      await sendWhatsAppMessage(phoneNumberId, to, '⚠️ Could not download photo from WhatsApp servers. Please send the photo again.');
+      return false;
+    }
+
+    console.log('[In-Memory Watermarking]: Applying watermark on RAM buffer...');
+    const watermarkedBuffer = await applyWatermarkToBuffer(imageBuffer, watermarkText);
+
+    console.log('[In-Memory Watermarking]: Uploading converted image to Meta Media API...');
+    const newMediaId = await uploadMediaToMeta(phoneNumberId, watermarkedBuffer, 'image/jpeg');
+    if (!newMediaId) {
+      await sendWhatsAppMessage(phoneNumberId, to, '⚠️ Failed to prepare image for WhatsApp. Please try again.');
+      return false;
+    }
+
+    console.log('[In-Memory Watermarking]: Sending converted photo message...');
+    const caption = `🛡️ *Safe-KYC Document Watermarked!*
+━━━━━━━━━━━━━━━━━━━━
+• *Stamp:* "${watermarkText}"
+• *Protection:* Diagonal repeating tamper-evident pattern
+
+🔒 *Zero Cloud Storage:* Processed directly in memory for your privacy!
+
+_Reply *0* for Main Menu_`;
+
+    return await sendWhatsAppMediaId(phoneNumberId, to, newMediaId, caption);
+  } catch (err) {
+    console.error('[Process Watermark Exception]:', err);
+    return false;
+  }
+}
+
+/**
+ * In-Memory Image Compression via Jimp (Zero Database Storage)
+ */
+async function processAndSendCompressedImage(
+  phoneNumberId: string,
+  to: string,
+  mediaId: string,
+  targetKb: number
+): Promise<boolean> {
+  try {
+    console.log('[In-Memory Compression]: Downloading image bytes from Meta CDN...');
+    const imageBuffer = await fetchMediaFromMeta(mediaId);
+    if (!imageBuffer) {
+      await sendWhatsAppMessage(phoneNumberId, to, '⚠️ Could not download photo from WhatsApp servers. Please send the photo again.');
+      return false;
+    }
+
+    console.log(`[In-Memory Compression]: Compressing image to target ~${targetKb} KB in RAM...`);
+    const compressedBuffer = await applyCompressionToBuffer(imageBuffer, targetKb);
+    const finalSizeKb = (compressedBuffer.length / 1024).toFixed(1);
+
+    console.log('[In-Memory Compression]: Uploading compressed image to Meta Media API...');
+    const newMediaId = await uploadMediaToMeta(phoneNumberId, compressedBuffer, 'image/jpeg');
+    if (!newMediaId) {
+      await sendWhatsAppMessage(phoneNumberId, to, '⚠️ Failed to prepare compressed image. Please try again.');
+      return false;
+    }
+
+    console.log('[In-Memory Compression]: Sending compressed photo message...');
+    const caption = `🗜️ *Photo Compressed Successfully!*
+━━━━━━━━━━━━━━━━━━━━
+• *Target Size:* ${targetKb} KB
+• *Resulting Size:* ~${finalSizeKb} KB
+• *Format:* JPEG (Optimized for Govt Exams / UPSC / Passport)
+
+_Reply *0* for Main Menu_`;
+
+    return await sendWhatsAppMediaId(phoneNumberId, to, newMediaId, caption);
+  } catch (err) {
+    console.error('[Process Compression Exception]:', err);
+    return false;
+  }
+}
+
+/**
+ * Draw repeating diagonal watermark lines over the image in RAM
+ */
+async function applyWatermarkToBuffer(buffer: Buffer, watermarkText: string): Promise<Buffer> {
+  const image = await Jimp.read(buffer);
+  const fontWhite = await loadFont(fonts.SANS_32_WHITE);
+  const fontBlack = await loadFont(fonts.SANS_32_BLACK);
+
+  const w = image.bitmap.width;
+  const h = image.bitmap.height;
+  const text = watermarkText.toUpperCase();
+
+  // Print repeating watermark lines across the image
+  const stepY = Math.max(120, Math.floor(h / 4));
+  for (let y = 60; y < h; y += stepY) {
+    // Drop shadow (black) + foreground (white) for readability on dark or light backgrounds
+    image.print({ font: fontBlack, x: 22, y: y + 2, text });
+    image.print({ font: fontWhite, x: 20, y: y, text });
+  }
+
+  return await image.getBuffer('image/jpeg', { quality: 85 });
+}
+
+/**
+ * Resize and compress image in RAM
+ */
+async function applyCompressionToBuffer(buffer: Buffer, targetKb: number): Promise<Buffer> {
+  const image = await Jimp.read(buffer);
+  if (image.bitmap.width > 500) {
+    image.resize({ w: 450 });
+  }
+  const quality = targetKb <= 25 ? 40 : 60;
+  return await image.getBuffer('image/jpeg', { quality });
+}
+
+/**
+ * Fetch media binary from Meta Graph API
+ */
+async function fetchMediaFromMeta(mediaId: string): Promise<Buffer | null> {
+  const token = process.env['WHATSAPP_ACCESS_TOKEN'];
+  if (!token) return null;
+
+  try {
+    const metaRes = await fetch(`https://graph.facebook.com/v21.0/${mediaId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!metaRes.ok) return null;
+    const mediaInfo = (await metaRes.json()) as any;
+    if (!mediaInfo?.url) return null;
+
+    const fileRes = await fetch(mediaInfo.url, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!fileRes.ok) return null;
+    const arrayBuffer = await fileRes.arrayBuffer();
+    return Buffer.from(arrayBuffer);
+  } catch (e) {
+    console.error('[Fetch Media Error]:', e);
+    return null;
+  }
+}
+
+/**
+ * Upload binary buffer to Meta Media API
+ */
+async function uploadMediaToMeta(phoneNumberId: string, imageBuffer: Buffer, mimeType = 'image/jpeg'): Promise<string | null> {
+  const token = process.env['WHATSAPP_ACCESS_TOKEN'];
+  if (!token) return null;
+
+  const url = `https://graph.facebook.com/v21.0/${phoneNumberId}/media`;
+  const formData = new FormData();
+  formData.append('file', new Blob([new Uint8Array(imageBuffer)], { type: mimeType }), 'converted.jpg');
+  formData.append('type', mimeType);
+  formData.append('messaging_product', 'whatsapp');
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.error('[Meta Media Upload Error]:', err);
+      return null;
+    }
+
+    const data = (await res.json()) as any;
+    return data?.id || null;
+  } catch (err) {
+    console.error('[Meta Media Upload Exception]:', err);
+    return null;
+  }
+}
+
+/**
+ * Send an image message using Meta media ID
+ */
+async function sendWhatsAppMediaId(
+  phoneNumberId: string,
+  to: string,
+  mediaId: string,
+  caption?: string
+): Promise<boolean> {
+  const token = process.env['WHATSAPP_ACCESS_TOKEN'];
+  if (!token) return false;
+
+  const url = `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`;
+  const payload: any = {
+    messaging_product: 'whatsapp',
+    recipient_type: 'individual',
+    to: to,
+    type: 'image',
+    image: {
+      id: mediaId
+    }
+  };
+  if (caption) payload.image.caption = caption.slice(0, 1024);
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    return res.ok;
+  } catch (e) {
+    console.error('[Send WhatsApp MediaId Error]:', e);
+    return false;
+  }
 }
 
 function formatEmiResult(p: number, rAnnual: number, years: number, emiRes: any, title: string): string {
@@ -725,12 +954,11 @@ _Reply *0* for Main Menu_`;
 async function sendWhatsAppMessage(phoneNumberId: string, to: string, text: string): Promise<void> {
   const token = process.env['WHATSAPP_ACCESS_TOKEN'];
   if (!token) {
-    console.error('[WhatsApp Config Error]: WHATSAPP_ACCESS_TOKEN is missing or undefined in environment variables.');
+    console.error('[WhatsApp Config Error]: WHATSAPP_ACCESS_TOKEN is missing or undefined.');
     return;
   }
 
   const url = `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`;
-
   const payload = {
     messaging_product: 'whatsapp',
     recipient_type: 'individual',
@@ -761,7 +989,7 @@ async function sendWhatsAppMessage(phoneNumberId: string, to: string, text: stri
 }
 
 /**
- * Dispatch outbound direct image message using Meta Graph API
+ * Dispatch outbound direct image URL message using Meta Graph API
  */
 async function sendWhatsAppImage(
   phoneNumberId: string,
@@ -770,13 +998,9 @@ async function sendWhatsAppImage(
   caption?: string
 ): Promise<boolean> {
   const token = process.env['WHATSAPP_ACCESS_TOKEN'];
-  if (!token) {
-    console.error('[WhatsApp Config Error]: WHATSAPP_ACCESS_TOKEN is missing or undefined in environment variables.');
-    return false;
-  }
+  if (!token) return false;
 
   const url = `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`;
-
   const payload: any = {
     messaging_product: 'whatsapp',
     recipient_type: 'individual',
@@ -786,10 +1010,7 @@ async function sendWhatsAppImage(
       link: imageUrl
     }
   };
-
-  if (caption) {
-    payload.image.caption = caption.slice(0, 1024);
-  }
+  if (caption) payload.image.caption = caption.slice(0, 1024);
 
   try {
     const response = await fetch(url, {
