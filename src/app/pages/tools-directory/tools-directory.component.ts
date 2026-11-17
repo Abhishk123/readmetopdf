@@ -72,7 +72,7 @@ export class ToolsDirectoryComponent {
         accentClass: 'accent-image',
         badgeBg: '#f0f9ff',
         badgeText: '#0284c7',
-        tools: this.allTools.filter(t => ['image-compressor', 'image-converter', 'favicon-generator', 'color-picker'].includes(t.id))
+        tools: this.allTools.filter(t => ['bg-remover', 'image-compressor', 'image-converter', 'favicon-generator', 'color-picker'].includes(t.id))
       },
       {
         id: 'finance-banking',
@@ -134,7 +134,7 @@ export class ToolsDirectoryComponent {
 
   private getGroupForTool(toolId: string): string {
     if (['watermark', 'pdf-merger', 'readme-to-pdf'].includes(toolId)) return 'pdf-docs';
-    if (['image-compressor', 'image-converter', 'favicon-generator', 'color-picker'].includes(toolId)) return 'image-media';
+    if (['bg-remover', 'image-compressor', 'image-converter', 'favicon-generator', 'color-picker'].includes(toolId)) return 'image-media';
     if (['finance-calculator', 'percentage-calculator', 'tip-calculator'].includes(toolId)) return 'finance-banking';
     if (['base64-tool', 'json-formatter', 'password-generator', 'url-tools'].includes(toolId)) return 'dev-security';
     return 'math-everyday';

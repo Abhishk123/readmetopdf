@@ -35,16 +35,16 @@ export class HomeComponent {
       category: 'Web Platform',
       badge: 'Live & Free',
       badgeClass: 'badge-live',
-      description: 'A comprehensive suite of 16+ fast, private web utilities for document handling, image compression, financial math, developer tokens, and daily calculations.',
+      description: 'A comprehensive suite of 18+ fast, private web utilities for AI background removal, document handling, image compression, financial math, developer tokens, and daily calculations.',
       features: [
+        'AI Background Remover (WebGPU Accelerated)',
+        'Safe-KYC Document Watermarker',
         'PDF Merger & In-Browser Combiner',
         'Image Size Reducer & Format Converter',
-        'Multi-Currency Loan EMI, FD & PPF Calculators',
-        'Hardware Crypto Password & Secret Key Maker',
-        'Barcode & 2D QR Code Generator with SVG/PNG Export'
+        'Multi-Currency Loan EMI, FD & PPF Calculators'
       ],
       route: '/tools',
-      actionText: 'Open Utilities Suite (16+ Tools)'
+      actionText: 'Open Utilities Suite (18+ Tools)'
     },
     {
       id: 'whatsapp-bot',
