@@ -1204,7 +1204,7 @@ async function sendWhatsAppMessage(phoneNumberId: string, to: string, text: stri
     recipient_type: 'individual',
     to: to,
     type: 'text',
-    text: { preview_url: true, body: text }
+    text: { preview_url: false, body: text }
   };
 
   try {
