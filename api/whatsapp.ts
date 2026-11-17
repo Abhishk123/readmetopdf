@@ -827,6 +827,21 @@ Reply with a number:
 0️⃣ *Back to Main Menu*`;
   }
 
+  // Background Remover Link
+  if (upper.includes('REMOVE BG') || upper.includes('REMOVE BACKGROUND') || upper.includes('BACKGROUND REMOVER') || upper.includes('BG REMOVER')) {
+    return `🖼️ *AI Background Remover (Free & Private)*
+━━━━━━━━━━━━━━━━━━━━
+Remove photo backgrounds in 1 click using device GPU acceleration:
+👉 https://www.jsnsworks.site/tools/bg-remover
+
+✨ *Features:*
+• Transparent PNG download
+• 1-Click Passport White & Visa Blue backgrounds
+• 100% In-browser processing (zero cloud upload)
+
+_Reply 0 for Main Menu_`;
+  }
+
   // ==========================================
   // 7. NATURAL LANGUAGE & AI QUERIES (GEMINI)
   // ==========================================
