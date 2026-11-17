@@ -1,0 +1,262 @@
+<div class="tool-container">
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="separator">/</span>
+    <a routerLink="/tools">All Tools</a>
+    <span class="separator">/</span>
+    <span class="current">AI Background Remover</span>
+  </nav>
+
+  <!-- Header Banner -->
+  <div class="tool-header">
+    <div class="badge-row">
+      <span class="tool-badge">⚡ WebGPU Accelerated</span>
+      <span class="tool-badge privacy-badge">🔒 100% Private (Zero Upload)</span>
+    </div>
+    <h1>AI Background Remover</h1>
+    <p class="tool-subtitle">
+      Instantly remove backgrounds from portraits, e-commerce products, and pets with AI neural networks running directly on your device GPU.
+    </p>
+  </div>
+
+  <app-ad-banner slot="top-leaderboard"></app-ad-banner>
+
+  <!-- Error Alert -->
+  <div *ngIf="errorMessage()" class="alert-error">
+    <span>⚠️ {{ errorMessage() }}</span>
+    <button (click)="errorMessage.set('')" class="close-btn">&times;</button>
+  </div>
+
+  <!-- UPLOAD / WORKSPACE AREA -->
+  <div class="workspace-card">
+
+    <!-- STATE 1: UPLOAD DROPZONE -->
+    <div
+      *ngIf="!originalImageUrl()"
+      class="dropzone"
+      [class.dragging]="isDragging()"
+      (drop)="onDrop($event)"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (click)="fileInput.click()">
+      
+      <input
+        #fileInput
+        type="file"
+        accept="image/*"
+        (change)="onFileSelected($event)"
+        style="display: none;">
+
+      <div class="dropzone-content">
+        <div class="upload-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+        </div>
+        <h3>Drop your image here, or <span class="browse-link">Browse</span></h3>
+        <p class="format-hint">Supports JPG, PNG, WEBP, HEIC up to 25 MB</p>
+        
+        <div class="privacy-notice">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+          </svg>
+          Processed 100% locally in your browser's GPU. Photos never touch our servers.
+        </div>
+      </div>
+    </div>
+
+    <!-- STATE 2: AI PROCESSING LOADER -->
+    <div *ngIf="isProcessing()" class="processing-overlay">
+      <div class="loader-spinner"></div>
+      <h3>{{ progressStage() }}</h3>
+      <p class="loader-hint">First run initializes the AI neural network model into device cache.</p>
+      
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" [style.width.%]="progressPercent()"></div>
+      </div>
+      <span class="progress-pct">{{ progressPercent() }}%</span>
+    </div>
+
+    <!-- STATE 3: INTERACTIVE EDITOR & PREVIEW -->
+    <div *ngIf="originalImageUrl() && !isProcessing()" class="editor-layout">
+
+      <!-- LEFT: CUSTOMIZATION CONTROLS -->
+      <div class="controls-panel">
+        <div class="panel-header">
+          <h3>Background Options</h3>
+          <button (click)="resetAll()" class="btn-text-danger">↺ Upload New</button>
+        </div>
+
+        <!-- Mode Selector -->
+        <div class="mode-tabs">
+          <button
+            class="tab-btn"
+            [class.active]="bgMode() === 'transparent'"
+            (click)="bgMode.set('transparent')">
+            🏁 Transparent
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="bgMode() === 'color'"
+            (click)="bgMode.set('color')">
+            🎨 Solid Color
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="bgMode() === 'gradient'"
+            (click)="bgMode.set('gradient')">
+            🌈 Gradient
+          </button>
+        </div>
+
+        <!-- Mode A: Solid Color Swatches -->
+        <div *ngIf="bgMode() === 'color'" class="section-block">
+          <label class="section-label">Preset Colors</label>
+          <div class="swatches-grid">
+            <button
+              *ngFor="let p of colorPresets"
+              class="swatch-btn"
+              [style.background-color]="p.hex"
+              [class.selected]="selectedColor() === p.hex"
+              (click)="selectedColor.set(p.hex)"
+              [title]="p.name">
+            </button>
+          </div>
+
+          <div class="custom-color-picker">
+            <label>Custom Color:</label>
+            <div class="color-input-wrapper">
+              <input type="color" [(ngModel)]="selectedColor" (change)="selectedColor.set(selectedColor())">
+              <input type="text" [(ngModel)]="selectedColor" class="hex-text" maxlength="7">
+            </div>
+          </div>
+        </div>
+
+        <!-- Mode B: Gradient Presets -->
+        <div *ngIf="bgMode() === 'gradient'" class="section-block">
+          <label class="section-label">Gradient Presets</label>
+          <div class="gradients-grid">
+            <button
+              *ngFor="let g of gradientPresets"
+              class="gradient-card"
+              [style.background]="g.css"
+              [class.selected]="gradientPreset() === g.css"
+              (click)="gradientPreset.set(g.css)">
+              <span>{{ g.name }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons-group">
+          <button
+            *ngIf="bgMode() === 'transparent'"
+            (click)="downloadImage('png')"
+            class="btn-primary-action">
+            ⬇️ Download Transparent PNG
+          </button>
+          <button
+            *ngIf="bgMode() !== 'transparent'"
+            (click)="downloadImage('jpg')"
+            class="btn-primary-action">
+            ⬇️ Download High-Res Image (JPG)
+          </button>
+          <button
+            *ngIf="bgMode() !== 'transparent'"
+            (click)="downloadImage('png')"
+            class="btn-secondary-action">
+            ⬇️ Download as PNG
+          </button>
+        </div>
+      </div>
+
+      <!-- RIGHT: VISUAL CANVAS PREVIEW -->
+      <div class="preview-panel">
+        <div class="preview-header">
+          <span class="preview-label">Live Preview</span>
+          <span class="preview-hint">Rendered at original photo resolution</span>
+        </div>
+
+        <div class="canvas-viewport" [class.checkerboard]="bgMode() === 'transparent'">
+          <canvas #outputCanvas class="interactive-canvas"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <app-ad-banner slot="bottom-rectangle"></app-ad-banner>
+
+  <!-- SEO / Features & Highlights -->
+  <section class="info-section">
+    <h2>Why Choose JSANS AI Background Remover?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feat-icon">⚡</div>
+        <h3>WebGPU Acceleration</h3>
+        <p>Uses deep learning segmentation neural networks executed directly on your graphics card for near-instant edge detection.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">🔒</div>
+        <h3>100% Client-Side Privacy</h3>
+        <p>Unlike other websites that upload your personal selfies to remote servers, your images never leave your browser.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">💎</div>
+        <h3>Full 4K HD Quality</h3>
+        <p>Zero compression downgrades or arbitrary watermarks. Download in the exact native resolution of your original photo.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">🛂</div>
+        <h3>Passport & Visa Ready</h3>
+        <p>1-Click solid white and light-blue background presets to instantly meet official govt, passport, and visa photo requirements.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How-To Guide -->
+  <section class="guide-section">
+    <h2>How to Remove Image Backgrounds in 3 Easy Steps</h2>
+    <div class="steps-flow">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h4>Upload Your Photo</h4>
+        <p>Drag and drop any JPG, PNG, or WEBP portrait, product, or selfie.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h4>AI Auto-Cutout</h4>
+        <p>The on-device AI automatically detects the subject and removes the background in seconds.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h4>Customize & Download</h4>
+        <p>Keep transparent, choose an official white/blue background, and download in 1 click.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-accordion">
+      <div class="faq-item">
+        <h3>Is this AI Background Remover completely free?</h3>
+        <p>Yes! It is 100% free with unlimited downloads. There are no credits, subscriptions, or watermarks.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Are my photos uploaded to any server?</h3>
+        <p>No. We utilize WebGPU and WebAssembly machine learning models that execute directly inside your browser. Your photos remain 100% private on your own device.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Can I use this for official passport or exam photos?</h3>
+        <p>Absolutely! Switch the background mode to "Solid Color", select Pure White or Light Blue, and download your compliant photo instantly.</p>
+      </div>
+    </div>
+  </section>
+
+</div>

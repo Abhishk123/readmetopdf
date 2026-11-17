@@ -21,6 +21,7 @@ import { BarcodeGeneratorComponent } from './tools/barcode-generator/barcode-gen
 import { UrlToolsComponent } from './tools/url-tools/url-tools.component';
 import { PasswordGeneratorComponent } from './tools/password-generator/password-generator.component';
 import { WatermarkComponent } from './tools/watermark/watermark.component';
+import { BgRemoverComponent } from './tools/bg-remover/bg-remover.component';
 import { RedirectComponent } from './pages/redirect/redirect.component';
 import { AboutComponent } from './pages/about/about.component';
 import { ContactComponent } from './pages/contact/contact.component';
@@ -77,6 +78,21 @@ export const routes: Routes = [
     path: 'tools/image-converter',
     component: ImageConverterComponent,
     title: 'Image Format Converter - PNG ⇄ JPG ⇄ WebP | JSANS DevStudio'
+  },
+  {
+    path: 'tools/bg-remover',
+    component: BgRemoverComponent,
+    title: 'AI Background Remover - WebGPU Accelerated, 100% Free & Private | JSANS DevStudio'
+  },
+  {
+    path: 'tools/background-remover',
+    redirectTo: 'tools/bg-remover',
+    pathMatch: 'full'
+  },
+  {
+    path: 'tools/remove-background',
+    redirectTo: 'tools/bg-remover',
+    pathMatch: 'full'
   },
   {
     path: 'tools/favicon-generator',

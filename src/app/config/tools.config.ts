@@ -117,6 +117,34 @@ export const TOOLS_CONFIG: ToolItem[] = [
     ]
   },
   {
+    id: 'bg-remover',
+    title: 'AI Background Remover',
+    shortDescription: 'Remove image backgrounds automatically with WebGPU neural networks in your browser. 100% Free & Private.',
+    fullDescription: 'State-of-the-art AI background remover. Uses on-device WebGPU machine learning models to isolate portraits, products, and objects down to fine hair strands. Customize with solid passport white, light blue, or gradients. Zero server upload.',
+    category: 'media',
+    route: '/tools/bg-remover',
+    icon: 'sparkles',
+    badge: 'WebGPU AI',
+    isPopular: true,
+    keywords: ['remove background', 'background remover', 'ai background removal', 'transparent background', 'passport photo background', 'remove bg free'],
+    features: [
+      'WebGPU AI neural network running directly on your graphics card',
+      '100% Private — photos never leave your browser',
+      'Download transparent PNG or high-res JPG',
+      'Passport & Visa ready: 1-click white & blue background fills',
+      'Unlimited 4K resolution downloads with zero watermarks'
+    ],
+    howToSteps: [
+      { name: 'Upload Photo', text: 'Drag and drop any portrait, selfie, or product photo.' },
+      { name: 'AI Removes Background', text: 'The on-device neural network separates the subject automatically in seconds.' },
+      { name: 'Customize & Download', text: 'Keep transparent or choose an official background color, then click Download.' }
+    ],
+    faqs: [
+      { question: 'Is this AI background remover completely free?', answer: 'Yes! It is 100% free with unlimited downloads. There are no credits, subscriptions, or watermarks.' },
+      { question: 'Are my photos uploaded to any server?', answer: 'No. WebGPU runs the neural network directly on your device GPU. Your photos remain 100% private.' }
+    ]
+  },
+  {
     id: 'image-converter',
     title: 'Image Format Converter',
     shortDescription: 'Convert any image instantly between PNG, JPEG, and modern WebP formats.',
