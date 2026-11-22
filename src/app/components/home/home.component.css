@@ -337,6 +337,30 @@
 .box-footer {
   padding-top: 14px;
   border-top: 1px solid #f1f5f9;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.box-footer .btn-box-action {
+  flex: 1;
+  min-width: 130px;
+}
+
+.btn-box-action.btn-wa-direct {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-box-action.btn-wa-direct:hover {
+  background: #dcfce7;
+  border-color: #86efac;
+  color: #14532d;
 }
 
 .btn-box-action {

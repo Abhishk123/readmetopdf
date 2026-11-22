@@ -80,13 +80,104 @@
   margin: 0 0 32px;
 }
 
+.qt-hero-main-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+  flex-wrap: wrap;
+  margin: 0 auto 40px;
+  background: linear-gradient(135deg, rgba(240, 253, 244, 0.6) 0%, rgba(248, 250, 252, 0.9) 100%);
+  border: 1px solid #bbf7d0;
+  padding: 28px;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.qt-cta-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.qt-number-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  font-size: 13.5px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.pill-dot {
+  width: 7px;
+  height: 7px;
+  background-color: #16a34a;
+  border-radius: 50%;
+}
+
+.qt-qr-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #ffffff;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease;
+}
+
+.qt-qr-card:hover {
+  transform: scale(1.03);
+}
+
+.qr-img-wrap {
+  border-radius: 10px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.qt-qr-img {
+  display: block;
+  border-radius: 8px;
+}
+
+.qt-qr-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 8px;
+  gap: 2px;
+}
+
+.qr-badge {
+  font-size: 10px;
+  font-weight: 800;
+  color: #166534;
+  letter-spacing: 0.8px;
+  background: #dcfce7;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.qr-sub {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+}
+
 .qt-cta-group {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 16px;
   flex-wrap: wrap;
-  margin-bottom: 40px;
 }
 
 .btn-wa-primary {

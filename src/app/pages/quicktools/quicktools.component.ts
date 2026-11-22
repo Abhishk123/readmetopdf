@@ -21,6 +21,10 @@ interface FeatureCard {
   styleUrl: './quicktools.component.css'
 })
 export class QuicktoolsComponent {
+  readonly botPhoneNumber = '+1 (555) 804-5735';
+  readonly botWaLink = 'https://wa.me/15558045735?text=Hi';
+  readonly botQrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=8&data=https%3A%2F%2Fwa.me%2F15558045735%3Ftext%3DHi';
+
   readonly features: FeatureCard[] = [
     {
       title: 'Admit Card & Exam Photo Resizer',

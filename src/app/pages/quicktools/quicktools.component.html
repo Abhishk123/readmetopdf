@@ -28,17 +28,36 @@
       Compress exam photos under 20KB/50KB, calculate loan EMIs, verify age eligibility for govt applications, generate instant UPI payment QRs, and protect IDs with KYC watermarksâ€”all inside your WhatsApp chat.
     </p>
 
-    <!-- Hero CTA Buttons -->
-    <div class="qt-cta-group">
-      <a href="https://api.whatsapp.com/send?phone=&text=Hi%20QuickTools" target="_blank" rel="noopener" class="btn-wa-primary">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-          <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm.01 18.08c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.03 8.03 0 0 1-1.23-4.31c0-4.43 3.61-8.04 8.05-8.04 2.15 0 4.17.84 5.69 2.36a7.99 7.99 0 0 1 2.35 5.68c0 4.44-3.61 8.05-8.07 8.05z"/>
-        </svg>
-        <span>Open QuickTools in WhatsApp</span>
-      </a>
-      <a routerLink="/contact" class="btn-wa-secondary">
-        <span>Request Enterprise Bot Integration</span>
-      </a>
+    <!-- Hero CTA Buttons & QR Card -->
+    <div class="qt-hero-main-row">
+      <div class="qt-cta-column">
+        <div class="qt-cta-group">
+          <a [href]="botWaLink" target="_blank" rel="noopener" class="btn-wa-primary">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+              <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm.01 18.08c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.03 8.03 0 0 1-1.23-4.31c0-4.43 3.61-8.04 8.05-8.04 2.15 0 4.17.84 5.69 2.36a7.99 7.99 0 0 1 2.35 5.68c0 4.44-3.61 8.05-8.07 8.05z"/>
+            </svg>
+            <span>Chat on WhatsApp: {{ botPhoneNumber }}</span>
+          </a>
+          <a routerLink="/contact" class="btn-wa-secondary">
+            <span>Enterprise Integration</span>
+          </a>
+        </div>
+        <div class="qt-number-pill">
+          <span class="pill-dot"></span>
+          <span>Official Number: <strong>{{ botPhoneNumber }}</strong> &bull; Free 24/7 AI & Tools</span>
+        </div>
+      </div>
+
+      <!-- Live QR Code Card -->
+      <div class="qt-qr-card">
+        <div class="qr-img-wrap">
+          <img [src]="botQrCodeUrl" alt="Scan QR code to chat with QuickTools on WhatsApp" width="128" height="128" class="qt-qr-img" />
+        </div>
+        <div class="qt-qr-info">
+          <span class="qr-badge">SCAN TO CHAT</span>
+          <span class="qr-sub">Point phone camera to start</span>
+        </div>
+      </div>
     </div>
 
     <!-- Quick Stat Badges -->
