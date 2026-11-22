@@ -175,7 +175,10 @@ export async function POST(req: Request): Promise<Response> {
   if (body?.object && body?.entry?.[0]?.changes?.[0]?.value?.messages?.[0]) {
     const messageData = body.entry[0].changes[0].value.messages[0];
     const from = messageData.from; // Sender WhatsApp phone number
-    const phoneNumberId = body.entry[0].changes[0].value.metadata?.phone_number_id || process.env['WHATSAPP_PHONE_NUMBER_ID'];
+    const envPhoneId = process.env['WHATSAPP_PHONE_NUMBER_ID'];
+    const validEnvPhoneId = (envPhoneId && envPhoneId !== '123456123') ? envPhoneId : '1463978776794959';
+    const rawMetadataId = body.entry[0].changes[0].value.metadata?.phone_number_id;
+    const phoneNumberId = (rawMetadataId && rawMetadataId !== '123456123') ? rawMetadataId : validEnvPhoneId;
 
     console.log('[WhatsApp Processing User Message]:', { from, phoneNumberId, type: messageData.type, body: messageData.text?.body });
 
